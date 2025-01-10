@@ -1,0 +1,1 @@
+export const SOLANA_LEND_NAME = "solana_lend"; 

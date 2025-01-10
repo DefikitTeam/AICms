@@ -1,0 +1,1 @@
+export const SOLANA_LEND_PROMPT = `Lend USDC for yield using Lulo. Requires one parameter: amount of USDC to lend. You can only lend USDC.`; 
