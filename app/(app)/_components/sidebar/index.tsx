@@ -18,8 +18,9 @@ import ColorModeToggle from './color-mode-toggle';
 import Logo from './logo';
 import ChatsGroup from './chats-group';
 import { manageAIGroup } from '../../_data/sidebar-groups/manageAI';
-import { Badge, Button } from '@radix-ui/themes';
+import { Button } from '@radix-ui/themes';
 import { BrainCog } from 'lucide-react';
+import Link from 'next/link';
 
 interface Props {
 	children: React.ReactNode;
@@ -34,30 +35,32 @@ const Sidebar: React.FC<Props> = ({ children }) => {
 					<AuthButton />
 				</SidebarHeader>
 				<SidebarContent>
-					{/* <ChatsGroup /> */}
 					<SidebarGroup group={manageAIGroup} />
+					<ChatsGroup />
 					<SidebarGroup group={platformGroup} />
 					<SidebarGroup group={agentsGroup} />
 				</SidebarContent>
 			</SidebarUI>
 			<SidebarInset>
-				<header className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-800">
+				<header className="flex items-center justify-between p-2 border-b border-neutral-200 dark:border-neutral-800">
 					<div className="flex items-center gap-2">
 						<SidebarTrigger />
 						<Separator orientation="vertical" className="h-4" />
 					</div>
 					<div className="flex gap-2">
-						<Button
-							variant="surface"
-							className="flex items-center gap-2"
-							color="gray"
-						>
-							<BrainCog size={16} />
-							Your Agent
-							<div className="border-brand-600 rounded-full bg-brand-600 text-white size-5">
-								3
-							</div>
-						</Button>
+						<Link href="/manageAI">
+							<Button
+								variant="surface"
+								className="flex items-center gap-2"
+								color="gray"
+							>
+								<BrainCog size={16} />
+								Your Agent
+								<div className="border-brand-600 rounded-full bg-brand-600 text-white size-5">
+									3
+								</div>
+							</Button>
+						</Link>
 						<ColorModeToggle />
 					</div>
 				</header>
