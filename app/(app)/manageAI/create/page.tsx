@@ -1,14 +1,105 @@
 'use client';
 import { Button } from '@radix-ui/themes';
 import { Camera, Pencil, Trash2 } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { use, useRef, useState } from 'react';
+import {
+	FieldValues,
+	useFieldArray,
+	UseFieldArrayProps,
+	useForm,
+} from 'react-hook-form';
 import FormFieldArray from './_components/FormField';
 import MessageExample from './_components/MessageExample';
+import PostExample from './_components/PostExample';
 
 const page = () => {
+	const {
+		register,
+		handleSubmit,
+		control,
+		formState: { errors },
+	} = useForm<FieldValues>();
+
+	const {
+		fields: fieldsPostExample,
+		append: appendPostExample,
+		remove: removePostExample,
+	} = useFieldArray({
+		control,
+		name: 'postExample',
+	});
+
+	const {
+		fields: fieldsMessageExample,
+		append: appendMessageExample,
+		remove: removeMessageExample,
+	} = useFieldArray({
+		control,
+		name: 'messageExample',
+	});
+
+	const {
+		fields: fieldsTopic,
+		append: appendTopic,
+		remove: removeTopic,
+	} = useFieldArray({
+		control,
+		name: 'topic',
+	});
+
+	const {
+		fields: fieldsKnowledge,
+		append: appendKnowledge,
+		remove: removeKnowledge,
+	} = useFieldArray({
+		control,
+		name: 'knowledge',
+	});
+
+	const {
+		fields: fieldsAdjective,
+		append: appendAdjective,
+		remove: removeAdjective,
+	} = useFieldArray({
+		control,
+		name: 'adjective',
+	});
+
+	const {
+		fields: fieldsStyleAll,
+		append: appendStyleAll,
+		remove: removeStyleAll,
+	} = useFieldArray({
+		control,
+		name: 'styleAll',
+	});
+
+	const {
+		fields: fieldsStyleChat,
+		append: appendStyleChat,
+		remove: removeStyleChat,
+	} = useFieldArray({
+		control,
+		name: 'styleChat',
+	});
+
+	const {
+		fields: fieldsStylePost,
+		append: appendStylePost,
+		remove: removeStylePost,
+	} = useFieldArray({
+		control,
+		name: 'stylePost',
+	});
+
+	const onSubmit = (data: any) => {
+		console.log(data);
+	};
+
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [avatar, setAvatar] = useState<string | null>(null);
 
+	// Handle image change
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
@@ -28,7 +119,10 @@ const page = () => {
 		<div className="flex flex-col">
 			<div>
 				<h1 className="text-2xl font-semibold">Create new AI Agent</h1>
-				<form className="mt-4 flex flex-col gap-4">
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="mt-4 flex flex-col gap-4"
+				>
 					<div className="col-span-1 flex items-center gap-4">
 						{avatar ? (
 							<div className="group relative w-fit">
@@ -86,6 +180,9 @@ const page = () => {
 								</span>
 							</label>
 							<input
+								{...register('name', {
+									required: 'This field is required',
+								})}
 								type="text"
 								placeholder="Agent Name"
 								className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
@@ -95,7 +192,12 @@ const page = () => {
 							<label className="label">
 								<span className="label-text font-medium">Clients</span>
 							</label>
-							<select className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+							<select
+								{...register('clients', {
+									required: 'This field is required',
+								})}
+								className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							>
 								<option value="openAI">Telegram</option>
 								<option value="gemini">X</option>
 								<option value="claude">Discord</option>
@@ -108,6 +210,9 @@ const page = () => {
 								</span>
 							</label>
 							<select
+								{...register('modelProvider', {
+									required: 'This field is required',
+								})}
 								id="countries"
 								className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 							>
@@ -151,87 +256,100 @@ const page = () => {
 						<div className="grid grid-cols-3 gap-4">
 							{/* Topics */}
 							<div className="col-span-1">
-								<label className="label mb-2">
-									<span className="label-text font-medium">
-										Topics
-									</span>
-								</label>
 								<FormFieldArray
-									name="Topic"
+									label="Topics"
+									name="topic"
 									placeholder="Blockchain, Cryptocurrency, NFTs"
+									fields={fieldsTopic}
+									append={appendTopic}
+									remove={removeTopic}
+									register={register}
 								/>
 							</div>
 
 							{/* Knowledge */}
 							<div className="col-span-1">
-								<label className="label mb-3">
-									<span className="label-text font-medium">
-										Knowledges
-									</span>
-								</label>
 								<FormFieldArray
-									name="Knowledge"
-									placeholder="Blockchain technology and its applications"
+									label="Knowledge"
+									name="knowledge"
+									placeholder="DeFi, Staking, Decentralized"
+									fields={fieldsKnowledge}
+									append={appendKnowledge}
+									remove={removeKnowledge}
+									register={register}
 								/>
 							</div>
 
 							{/* Addjective */}
 							<div className="col-span-1">
-								<label className="label mb-3">
-									<span className="label-text font-medium">
-										Adjectives
-									</span>
-								</label>
 								<FormFieldArray
-									name="Adjective"
-									placeholder="visionary, ambitious, innovative"
+									label="Adjective"
+									name="adjective"
+									placeholder="Innovative, Creative, Unique"
+									fields={fieldsAdjective}
+									append={appendAdjective}
+									remove={removeAdjective}
+									register={register}
 								/>
 							</div>
 						</div>
 
 						<div className="grid grid-cols-3 gap-4">
-							{/* Topics */}
 							<div className="col-span-1">
-								<label className="label mb-2">
-									<span className="label-text font-medium">
-										Style for all
-									</span>
-								</label>
 								<FormFieldArray
-									name="All"
-									placeholder="Enthusiastic, friendly, professional"
+									label="Style for all"
+									name="styleAll"
+									placeholder="Friendly, Professional, Engaging"
+									fields={fieldsStyleAll}
+									append={appendStyleAll}
+									remove={removeStyleAll}
+									register={register}
 								/>
 							</div>
 
-							{/* Knowledge */}
 							<div className="col-span-1">
-								<label className="label mb-3">
-									<span className="label-text font-medium">
-										Chat style
-									</span>
-								</label>
 								<FormFieldArray
-									name="Chat"
-									placeholder="Devoted, Eager, Passionate"
-								/>
-							</div>
-
-							{/* Addjective */}
-							<div className="col-span-1">
-								<label className="label mb-3">
-									<span className="label-text font-medium">
-										Post style
-									</span>
-								</label>
-								<FormFieldArray
-									name="Post"
+									label="Chat Style"
+									name="styleChat"
 									placeholder="Helpful, Knowledgeable, Supportive"
+									fields={fieldsStyleChat}
+									append={appendStyleChat}
+									remove={removeStyleChat}
+									register={register}
+								/>
+							</div>
+
+							<div className="col-span-1">
+								<FormFieldArray
+									label="Post Style"
+									name="stylePost"
+									placeholder="Informative, Engaging, Fun"
+									fields={fieldsStylePost}
+									append={appendStylePost}
+									remove={removeStylePost}
+									register={register}
 								/>
 							</div>
 						</div>
-
-						<MessageExample />
 					</div>
+					<MessageExample
+						name="messageExample"
+						fields={fieldsMessageExample}
+						append={appendMessageExample}
+						remove={removeMessageExample}
+						register={register}
+					/>
+					<PostExample
+						label="Post Example"
+						name="postExample"
+						fields={fieldsPostExample}
+						append={appendPostExample}
+						remove={removePostExample}
+						register={register}
+					/>
+					<Button type="submit" size="2" className="mt-4 self-start">
+						Create AI Agent
+					</Button>
 				</form>
 			</div>
 		</div>
