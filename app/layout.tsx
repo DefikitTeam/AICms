@@ -4,6 +4,7 @@ import { DM_Sans, DM_Mono } from 'next/font/google';
 
 import './globals.css';
 import Providers from './_contexts';
+import FlyonuiScript from './_components/FlyonuiScript';
 
 const dmSans = DM_Sans({
 	variable: '--font-dm-sans',
@@ -33,6 +34,7 @@ export default function RootLayout({
 			>
 				<Providers>{children}</Providers>
 			</body>
+			<FlyonuiScript />
 		</html>
 	);
 }

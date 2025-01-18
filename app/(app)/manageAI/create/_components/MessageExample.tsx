@@ -11,7 +11,7 @@ import {
 	useForm,
 	UseFormRegister,
 } from 'react-hook-form';
-import { FormFieldProps } from './FormField';
+import { FormFieldProps } from './FormFieldArray';
 
 const MessageExample = ({
 	name,
@@ -20,12 +20,6 @@ const MessageExample = ({
 	remove,
 	register,
 }: FormFieldProps) => {
-	useEffect(() => {
-		if (fields.length === 0) {
-			append({ user: '', agent: '' });
-		}
-	}, []);
-
 	return (
 		<div className="flex flex-col gap-4 mb-2 p-2 bg-neutral-100 dark:bg-neutral-600 rounded-lg">
 			<label className="label">

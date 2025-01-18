@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { FormFieldProps } from './FormField';
-import { Button } from '@radix-ui/themes';
+import { FormFieldProps } from './FormFieldArray';
+import { Button, TextArea } from '@radix-ui/themes';
 import { Trash2 } from 'lucide-react';
 
 const PostExample = ({
@@ -13,27 +13,33 @@ const PostExample = ({
 }: FormFieldProps) => {
 	useEffect(() => {
 		if (fields.length === 0) {
-			append('');
+			append(null);
 		}
 	}, []);
 
 	return (
-		<div className="flex flex-col gap-4 p-2 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+		<div className="flex flex-col gap-2 p-2 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
 			<label className="label">
 				<span className="label-text font-medium">{label}</span>
 			</label>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-2">
 				{fields.map((field, index) => (
 					<div
 						key={field.id}
 						className="flex gap-2 items-center bg-neutral-200 dark:bg-neutral-800 rounded-lg p-2"
 					>
-						<textarea
+						<TextArea
+							{...register(`${name}.${index}` as const)}
+							size="3"
+							placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here’s a beginner-friendly guide. #DeFi #Blockchain #Crypto"
+							className="w-full placeholder:text-xs"
+						/>
+						{/* <textarea
 							{...register(`${name}.${index}` as const)}
 							rows={5}
 							placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here’s a beginner-friendly guide. #DeFi #Blockchain #Crypto"
 							className="input block w-full focus:outline-none focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg focus:ring-brand-600 focus:border-brand-600"
-						/>
+						/> */}
 						<Button
 							size="3"
 							color="tomato"
@@ -48,7 +54,7 @@ const PostExample = ({
 			<Button
 				onClick={(e) => {
 					e.preventDefault();
-					append('');
+					append(null);
 				}}
 			>
 				Add
