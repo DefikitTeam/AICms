@@ -1,8 +1,15 @@
 import { Avatar, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
 import { BrainCircuit, House, WalletCards } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
-const CardAgent = () => {
+export type CardAgentType = {
+	id: string;
+	clients: string[];
+	username: string;
+};
+
+const CardAgent = ({ id, clients, username }: CardAgentType) => {
 	return (
 		<Box maxWidth="100%">
 			<Card className="shadow-lg">
@@ -14,25 +21,27 @@ const CardAgent = () => {
 						fallback="T"
 					/>
 					<Flex direction="column">
-						<Text size="3" weight="medium">
-							DeFiSimpli
-						</Text>
-						<ul className="flex gap-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
-							<li className="flex gap-1 items-center">
-								<House strokeWidth={3} size={12} />
-								Zksync
-							</li>
-							<li className="flex gap-1 items-center">
-								<WalletCards strokeWidth={3} size={12} />
-								0.1 ETH
-							</li>
-						</ul>
+						<Link href={`/manageAI/update/${id}`}>
+							<Text size="3" weight="medium">
+								{username}
+							</Text>
+						</Link>
+						{/* <ul className="flex gap-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+              <li className="flex gap-1 items-center">
+                <House strokeWidth={3} size={12} />
+                Zksync
+              </li>
+              <li className="flex gap-1 items-center">
+                <WalletCards strokeWidth={3} size={12} />
+                0.1 ETH
+              </li>
+            </ul> */}
 					</Flex>
 				</Flex>
-				<Text size="2" className="mt-4 block" weight="medium">
-					You are DeFiSimpli! A friendly and approachable AI agent
-					dedicated to demystifying blockchain ...
-				</Text>
+				{/* <Text size="2" className="mt-4 block" weight="medium">
+          You are DeFiSimpli! A friendly and approachable AI agent dedicated to
+          demystifying blockchain ...
+        </Text> */}
 				<Box className="mt-4 border border-neutral-200 dark:border-neutral-700 p-4 rounded-lg">
 					<ul className="flex flex-col gap-4">
 						<li className="flex justify-between">
@@ -44,26 +53,6 @@ const CardAgent = () => {
 								/>
 								<Text size="2" weight="medium">
 									Connect X
-								</Text>
-							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Connect
-							</Button>
-						</li>
-						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
-								<img
-									src="./logos/telegram.png"
-									className="size-8 rounded-full"
-									alt=""
-								/>
-								<Text size="2" weight="medium">
-									Connect Telegram
 								</Text>
 							</div>
 							<Button
@@ -98,6 +87,26 @@ const CardAgent = () => {
 						<li className="flex justify-between">
 							<div className="flex items-center gap-2">
 								<img
+									src="./logos/telegram.png"
+									className="size-8 rounded-full"
+									alt=""
+								/>
+								<Text size="2" weight="medium">
+									Connect Telegram
+								</Text>
+							</div>
+							<Button
+								style={{ maxWidth: '80px', width: '100%' }}
+								color="gray"
+								variant="solid"
+								highContrast
+							>
+								Connect
+							</Button>
+						</li>
+						<li className="flex justify-between">
+							<div className="flex items-center gap-2">
+								<img
 									src="https://eternalai.org/images/abilities/edit-personality.svg"
 									className="size-8 rounded-full"
 									alt=""
@@ -106,35 +115,37 @@ const CardAgent = () => {
 									Edit Personality
 								</Text>
 							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Edit
-							</Button>
+							<Link role="button" href={`/manageAI/update/${id}`}>
+								<Button
+									style={{ maxWidth: '80px', width: '100%' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Edit
+								</Button>
+							</Link>
 						</li>
-						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
-								<img
-									src="./logos/token.png"
-									className="size-8 rounded-full"
-									alt=""
-								/>
-								<Text size="2" weight="medium">
-									Add Token
-								</Text>
-							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Add
-							</Button>
-						</li>
+						{/* <li className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <img
+                  src="./logos/token.png"
+                  className="size-8 rounded-full"
+                  alt=""
+                />
+                <Text size="2" weight="medium">
+                  Add Token
+                </Text>
+              </div>
+              <Button
+                style={{ maxWidth: "80px", width: "100%" }}
+                color="gray"
+                variant="solid"
+                highContrast
+              >
+                Add
+              </Button>
+            </li> */}
 					</ul>
 				</Box>
 			</Card>

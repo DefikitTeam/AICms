@@ -4,7 +4,7 @@ import { DM_Sans, DM_Mono } from 'next/font/google';
 
 import './globals.css';
 import Providers from './_contexts';
-import FlyonuiScript from './_components/FlyonuiScript';
+import { Toaster } from 'react-hot-toast';
 
 const dmSans = DM_Sans({
 	variable: '--font-dm-sans',
@@ -33,8 +33,8 @@ export default function RootLayout({
 				className={`${dmSans.variable} ${dmMono.variable} antialiased bg-white dark:bg-neutral-900`}
 			>
 				<Providers>{children}</Providers>
+				<Toaster />
 			</body>
-			<FlyonuiScript />
 		</html>
 	);
 }
