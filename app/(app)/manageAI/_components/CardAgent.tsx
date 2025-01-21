@@ -1,5 +1,4 @@
 import { Avatar, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
-import { BrainCircuit, House, WalletCards } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -10,6 +9,7 @@ export type CardAgentType = {
 };
 
 const CardAgent = ({ id, clients, username }: CardAgentType) => {
+	console.log(clients);
 	return (
 		<Box maxWidth="100%">
 			<Card className="shadow-lg">
