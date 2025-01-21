@@ -1,4 +1,5 @@
 import { Avatar, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
+import { Bot } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -6,10 +7,21 @@ export type CardAgentType = {
 	id: string;
 	clients: string[];
 	username: string;
+	bio: string;
+	isRunning: boolean;
+	email: string;
+	modelProvider: string;
 };
 
-const CardAgent = ({ id, clients, username }: CardAgentType) => {
-	console.log(clients);
+const CardAgent = ({
+	id,
+	clients,
+	username,
+	bio,
+	isRunning,
+	modelProvider,
+	email,
+}: CardAgentType) => {
 	return (
 		<Box maxWidth="100%">
 			<Card className="shadow-lg">
@@ -26,84 +38,86 @@ const CardAgent = ({ id, clients, username }: CardAgentType) => {
 								{username}
 							</Text>
 						</Link>
-						{/* <ul className="flex gap-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
-              <li className="flex gap-1 items-center">
-                <House strokeWidth={3} size={12} />
-                Zksync
-              </li>
-              <li className="flex gap-1 items-center">
-                <WalletCards strokeWidth={3} size={12} />
-                0.1 ETH
-              </li>
-            </ul> */}
+						<ul className="flex gap-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+							<li className="flex gap-1 items-center">
+								<Bot size={16} />
+								<span>{modelProvider}</span>
+							</li>
+							<li className="flex gap-1 items-center"></li>
+						</ul>
 					</Flex>
 				</Flex>
-				{/* <Text size="2" className="mt-4 block" weight="medium">
-          You are DeFiSimpli! A friendly and approachable AI agent dedicated to
-          demystifying blockchain ...
-        </Text> */}
+				<Text size="2" className="mt-4 block" weight="medium">
+					{bio}
+				</Text>
 				<Box className="mt-4 border border-neutral-200 dark:border-neutral-700 p-4 rounded-lg">
 					<ul className="flex flex-col gap-4">
-						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
-								<img
-									src="./logos/x.png"
-									className="size-8 bg-black rounded-full"
-									alt=""
-								/>
-								<Text size="2" weight="medium">
-									Connect X
-								</Text>
-							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Connect
-							</Button>
-						</li>
-						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
-								<img
-									src="./logos/discord.png"
-									className="size-8 rounded-full"
-									alt=""
-								/>
-								<Text size="2" weight="medium">
-									Connect Discord
-								</Text>
-							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Connect
-							</Button>
-						</li>
-						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
-								<img
-									src="./logos/telegram.png"
-									className="size-8 rounded-full"
-									alt=""
-								/>
-								<Text size="2" weight="medium">
-									Connect Telegram
-								</Text>
-							</div>
-							<Button
-								style={{ maxWidth: '80px', width: '100%' }}
-								color="gray"
-								variant="solid"
-								highContrast
-							>
-								Connect
-							</Button>
-						</li>
+						{!clients.includes('twitter') && (
+							<li className="flex justify-between">
+								<div className="flex items-center gap-2">
+									<img
+										src="./logos/x.png"
+										className="size-8 bg-black rounded-full"
+										alt=""
+									/>
+									<Text size="2" weight="medium">
+										Connect X
+									</Text>
+								</div>
+								<Button
+									style={{ maxWidth: '80px', width: '100%' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Connect
+								</Button>
+							</li>
+						)}
+						{!clients.includes('discord') && (
+							<li className="flex justify-between">
+								<div className="flex items-center gap-2">
+									<img
+										src="./logos/discord.png"
+										className="size-8 rounded-full"
+										alt=""
+									/>
+									<Text size="2" weight="medium">
+										Connect Discord
+									</Text>
+								</div>
+								<Button
+									style={{ maxWidth: '80px', width: '100%' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Connect
+								</Button>
+							</li>
+						)}
+						{!clients.includes('telegram') && (
+							<li className="flex justify-between">
+								<div className="flex items-center gap-2">
+									<img
+										src="./logos/telegram.png"
+										className="size-8 rounded-full"
+										alt=""
+									/>
+									<Text size="2" weight="medium">
+										Connect Telegram
+									</Text>
+								</div>
+								<Button
+									style={{ maxWidth: '80px', width: '100%' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Connect
+								</Button>
+							</li>
+						)}
 						<li className="flex justify-between">
 							<div className="flex items-center gap-2">
 								<img
@@ -117,7 +131,7 @@ const CardAgent = ({ id, clients, username }: CardAgentType) => {
 							</div>
 							<Link role="button" href={`/manageAI/update/${id}`}>
 								<Button
-									style={{ maxWidth: '80px', width: '100%' }}
+									style={{ width: '80px' }}
 									color="gray"
 									variant="solid"
 									highContrast

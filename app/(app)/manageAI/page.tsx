@@ -49,6 +49,10 @@ const ManageAI = () => {
 							key={index}
 							username={agent.username}
 							clients={agent.clients}
+							bio={agent.bio}
+							modelProvider={agent.modelProvider}
+							isRunning={agent.isRunning}
+							email={agent.email}
 						/>
 					))}
 				</div>
