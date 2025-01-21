@@ -79,16 +79,14 @@ const CreateAgent = () => {
 
 	const { createAgent } = useAgent();
 
-	const fieldArrays = fieldConfigs.reduce(
-		(acc, field) => {
-			acc[field.name] = useFieldArray({
-				control,
-				name: field.name,
-			});
-			return acc;
-		},
-		{} as Record<string, ReturnType<typeof useFieldArray>>
-	);
+	const fieldArrays: Record<string, ReturnType<typeof useFieldArray>> = {};
+
+	fieldConfigs.forEach((field) => {
+		fieldArrays[field.name] = useFieldArray({
+			control,
+			name: field.name,
+		});
+	});
 
 	const onSubmit = async (data: FieldValues) => {
 		const message = toast.loading('Creating AI Agent...');
