@@ -10,7 +10,6 @@ import { KnowledgeInput } from '@/db/types';
 
 export const POST = async (req: NextRequest) => {
 	const { url, name, includePaths, excludePaths, authCode } = await req.json();
-
 	if (authCode !== process.env.NEXT_PUBLIC_CRAWL_AUTH_CODE) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
