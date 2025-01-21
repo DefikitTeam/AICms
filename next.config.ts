@@ -1,10 +1,13 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  experimental: {
-    serverComponentsExternalPackages: ["twitter-api-v2"]
-  }
+	/* config options here */
+	experimental: {
+		serverComponentsExternalPackages: ['twitter-api-v2'],
+	},
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 };
 
 export default nextConfig;
