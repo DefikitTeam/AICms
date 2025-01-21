@@ -5,10 +5,8 @@ import { PrivyClient } from '@privy-io/server-auth';
 import { findChatsByUser } from '@/db/services/chats';
 
 const privy = new PrivyClient(
-	process.env.NEXT_PUBLIC_PRIVY_APP_ID ||
-		'fc-2152b9cb5d8f414c95c450277e74beb9',
-	process.env.PRIVY_APP_SECRET ||
-		'3ePht1EXY8BsNT6j5cJeRiMe3hJsGdmLVXgyV2XjjPcV2WjywfKro3jHJTCg2TDXtfzWs6zqAcixiXymREDtHJEY'
+	'fc-2152b9cb5d8f414c95c450277e74beb9',
+	'3ePht1EXY8BsNT6j5cJeRiMe3hJsGdmLVXgyV2XjjPcV2WjywfKro3jHJTCg2TDXtfzWs6zqAcixiXymREDtHJEY'
 );
 
 export const GET = async (req: NextRequest) => {
