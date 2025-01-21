@@ -6,7 +6,7 @@ import Link from 'next/link';
 import NotLoggedInAlert from '../chat/_components/not-logged-in-alert';
 import useAgent from './_hooks/useAgent';
 
-const manageAI = () => {
+const ManageAI = () => {
 	const { getAgents } = useAgent();
 	const [agents, setAgents] = React.useState<CardAgentType[]>([]);
 
@@ -58,4 +58,4 @@ const manageAI = () => {
 	);
 };
 
-export default manageAI;
+export default ManageAI;
