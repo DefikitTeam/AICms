@@ -139,3 +139,5 @@ const CreateAgent = () => {
 };
 
 export default CreateAgent;
+
+export const runtime = 'edge';

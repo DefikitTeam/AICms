@@ -84,3 +84,5 @@ export const POST = async (req: NextRequest) => {
 
 	return NextResponse.json(knowledge);
 };
+
+export const runtime = 'edge';

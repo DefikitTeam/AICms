@@ -1,12 +1,14 @@
-import Chat from "./_components/chat";
+import Chat from './_components/chat';
 
-import NotLoggedInAlert from "./_components/not-logged-in-alert";
+import NotLoggedInAlert from './_components/not-logged-in-alert';
 
 export default function Home() {
-  return (
-    <div className="h-full w-full">
-      <Chat />
-      <NotLoggedInAlert />
-    </div>
-  );
+	return (
+		<div className="h-full w-full">
+			<Chat />
+			<NotLoggedInAlert />
+		</div>
+	);
 }
+
+export const runtime = 'edge';
