@@ -63,5 +63,3 @@ const ManageAI = () => {
 };
 
 export default ManageAI;
-
-export const runtime = 'edge';
