@@ -21,7 +21,9 @@ const solanaConnectors = toSolanaWalletConnectors({
 export const PrivyProvider: React.FC<Props> = ({ children }) => {
 	return (
 		<PrivyProviderBase
-			appId="fc-2152b9cb5d8f414c95c450277e74beb9"
+			appId={
+				process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'cm5np560104c76o17yz1ls1yg'
+			}
 			config={{
 				appearance: {
 					theme: 'dark',

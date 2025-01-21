@@ -6,59 +6,7 @@ import BasicInfo from './_components/BasicInfo';
 import AdvanceSetting from './_components/AdvanceSetting';
 import toast from 'react-hot-toast';
 import useAgent from '../_hooks/useAgent';
-
-const fieldConfigs = [
-	{
-		name: 'topics',
-		label: 'Topics',
-		placeholder: 'Blockchain, Cryptocurrency, NFTs',
-	},
-	{
-		name: 'knowledge',
-		label: 'Knowledge',
-		placeholder: 'DeFi, Staking, Decentralized',
-	},
-	{
-		name: 'adjectives',
-		label: 'Adjectives',
-		placeholder: 'Innovative, Creative, Unique',
-	},
-	{
-		name: 'all',
-		label: 'Style for All',
-		placeholder: 'Friendly, Professional, Engaging',
-	},
-	{
-		name: 'chat',
-		label: 'Chat Style',
-		placeholder: 'Helpful, Knowledgeable, Supportive',
-	},
-	{
-		name: 'post',
-		label: 'Post Style',
-		placeholder: 'Informative, Engaging, Fun',
-	},
-	{
-		name: 'postExamples',
-		label: 'Post Example',
-		placeholder: 'Example post content',
-	},
-	{
-		name: 'messageExamples',
-		label: 'Message Examples',
-		placeholder: 'Example message content',
-	},
-	{
-		name: 'bio',
-		label: 'Biography',
-		placeholder: 'Short bio about the agent',
-	},
-	{
-		name: 'lore',
-		label: 'Agent background lore',
-		placeholder: 'Agent lore',
-	},
-];
+import { formFields } from './data/utils';
 
 const CreateAgent = () => {
 	const {
@@ -79,7 +27,7 @@ const CreateAgent = () => {
 
 	const { createAgent } = useAgent();
 
-	const fieldArrays = fieldConfigs.reduce(
+	const fieldArrays = formFields.reduce(
 		(acc, field) => {
 			acc[field.name] = useFieldArray({
 				control,
