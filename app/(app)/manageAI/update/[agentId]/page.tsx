@@ -25,54 +25,54 @@ const UpdateAgent = () => {
 		formState: { errors },
 	} = useForm<FieldValues>();
 
-	useEffect(() => {
-		const fetchAgent = async () => {
-			try {
-				setLoading(true);
-				const response = await getDetailAgent(agentId as string);
-				const { character } = response;
-				setAgent(response);
-				console.log(character);
+	const fetchAgent = async () => {
+		try {
+			setLoading(true);
+			const response = await getDetailAgent(agentId as string);
+			const { character } = response;
+			setAgent(response);
+			console.log(character);
 
-				const fieldsToSet = [
-					'name',
-					'adjectives',
-					'knowledge',
-					'topics',
-					'system',
-					'clients',
-					'modelProvider',
-					'bio',
-					'lore',
-					'postExamples',
-				];
+			const fieldsToSet = [
+				'name',
+				'adjectives',
+				'knowledge',
+				'topics',
+				'system',
+				'clients',
+				'modelProvider',
+				'bio',
+				'lore',
+				'postExamples',
+			];
 
-				fieldsToSet.forEach((field) => setValue(field, character[field]));
+			fieldsToSet.forEach((field) => setValue(field, character[field]));
 
-				['all', 'chat', 'post'].forEach((style) =>
-					setValue(style, character.style[style])
-				);
+			['all', 'chat', 'post'].forEach((style) =>
+				setValue(style, character.style[style])
+			);
 
-				for (const [key, value] of Object.entries(
-					character.settings.secrets
-				)) {
-					setValue(`secrets.${key}`, value);
-				}
-
-				setValue(
-					'messageExamples',
-					character.messageExamples.map((message: any) => ({
-						user: message[0].content.text,
-						agent: message[1].content.text,
-					}))
-				);
-			} catch (error) {
-				console.error('Failed to fetch agent details', error);
-				toast.error('Failed to fetch agent details');
-			} finally {
-				setLoading(false);
+			for (const [key, value] of Object.entries(
+				character.settings.secrets
+			)) {
+				setValue(`secrets.${key}`, value);
 			}
-		};
+
+			setValue(
+				'messageExamples',
+				character.messageExamples.map((message: any) => ({
+					user: message[0].content.text,
+					agent: message[1].content.text,
+				}))
+			);
+		} catch (error) {
+			console.error('Failed to fetch agent details', error);
+			toast.error('Failed to fetch agent details');
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
 		fetchAgent();
 	}, []);
 
@@ -158,6 +158,7 @@ const UpdateAgent = () => {
 			if (response.success) {
 				toast.success('AI Agent updated successfully');
 			}
+			fetchAgent();
 		} catch (error) {
 			toast.error('Failed to update AI Agent', {
 				id: message,
@@ -225,5 +226,3 @@ const UpdateAgent = () => {
 };
 
 export default UpdateAgent;
-
-export const runtime = 'edge';
