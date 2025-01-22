@@ -51,7 +51,7 @@ const Sidebar: React.FC<Props> = ({ children }) => {
 						<Link href="/manageAI">
 							<Button
 								variant="surface"
-								className="flex items-center gap-2"
+								className="flex items-center gap-2 cursor-pointer"
 								color="gray"
 							>
 								<BrainCog size={16} />
