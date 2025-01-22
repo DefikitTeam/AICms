@@ -59,12 +59,13 @@ const UpdateAgent = () => {
 					setValue(`secrets.${key}`, value);
 				}
 
-				character.messageExamples.forEach((message: any) => {
-					fieldArrays.messageExamples.append({
+				setValue(
+					'messageExamples',
+					character.messageExamples.map((message: any) => ({
 						user: message[0].content.text,
 						agent: message[1].content.text,
-					});
-				});
+					}))
+				);
 			} catch (error) {
 				console.error('Failed to fetch agent details', error);
 				toast.error('Failed to fetch agent details');
