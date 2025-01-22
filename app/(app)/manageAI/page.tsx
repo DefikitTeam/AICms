@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Spinner } from '@radix-ui/themes';
 import CardAgent, { CardAgentType } from './_components/CardAgent';
 import Link from 'next/link';
-import NotLoggedInAlert from '../chat/_components/not-logged-in-alert';
 import useAgent from './_hooks/useAgent';
+import NotLoggedInAlert from '../_components/not-logged-in-alert';
 
 const ManageAI = () => {
 	const { getAgents } = useAgent();

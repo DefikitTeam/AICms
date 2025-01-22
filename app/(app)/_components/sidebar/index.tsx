@@ -16,7 +16,6 @@ import { platformGroup, agentsGroup } from '../../_data';
 import AuthButton from './auth-button';
 import ColorModeToggle from './color-mode-toggle';
 import Logo from './logo';
-import ChatsGroup from './chats-group';
 import { manageAIGroup } from '../../_data/sidebar-groups/manageAI';
 import { Button } from '@radix-ui/themes';
 import { BrainCog } from 'lucide-react';
@@ -36,9 +35,8 @@ const Sidebar: React.FC<Props> = ({ children }) => {
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup group={manageAIGroup} />
-					<ChatsGroup />
-					<SidebarGroup group={platformGroup} />
-					<SidebarGroup group={agentsGroup} />
+					{/* <SidebarGroup group={platformGroup} />
+					<SidebarGroup group={agentsGroup} /> */}
 				</SidebarContent>
 			</SidebarUI>
 			<SidebarInset>
