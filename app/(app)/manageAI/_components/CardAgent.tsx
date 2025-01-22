@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
+import { Avatar, Badge, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
 import { Bot } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
@@ -6,7 +6,7 @@ import React from 'react';
 export type CardAgentType = {
 	id: string;
 	clients: string[];
-	username: string;
+	name: string;
 	bio: string;
 	isRunning: boolean;
 	email: string;
@@ -16,7 +16,7 @@ export type CardAgentType = {
 const CardAgent = ({
 	id,
 	clients,
-	username,
+	name,
 	bio,
 	isRunning,
 	modelProvider,
@@ -35,7 +35,7 @@ const CardAgent = ({
 					<Flex direction="column">
 						<Link href={`/manageAI/update/${id}`}>
 							<Text size="3" weight="medium">
-								{username}
+								{name}
 							</Text>
 						</Link>
 						<ul className="flex gap-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
@@ -43,7 +43,11 @@ const CardAgent = ({
 								<Bot size={16} />
 								<span>{modelProvider}</span>
 							</li>
-							<li className="flex gap-1 items-center"></li>
+							<li className="flex gap-1 items-center">
+								<Badge color={isRunning ? 'green' : 'red'}>
+									{isRunning ? 'Running' : 'Stopped'}
+								</Badge>
+							</li>
 						</ul>
 					</Flex>
 				</Flex>

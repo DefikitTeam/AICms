@@ -13,6 +13,7 @@ const CreateAgent = () => {
 		register,
 		handleSubmit,
 		control,
+		getValues,
 		formState: { errors },
 	} = useForm<FieldValues>({
 		defaultValues: {
@@ -44,20 +45,20 @@ const CreateAgent = () => {
 			config: {
 				name: data.name as string,
 				plugins: [] as string[],
-				adjectives: [...data.adjectives] as string[],
+				adjectives: data.adjectives as string[],
 				people: [] as string[],
-				topics: [...data.topics] as string[],
+				topics: data.topics as string[],
 				style: {
 					all: [...data.all] as string[],
 					chat: [...data.chat] as string[],
 					post: [...data.post] as string[],
 				},
 				system: data.system as string,
-				clients: [...data.clients] as string[],
+				clients: data.clients as string[],
 				modelProvider: data.modelProvider as string,
 				bio: data.bio as string[],
 				lore: data.lore as string[],
-				postExamples: [...data.postExamples] as string[],
+				postExamples: data.postExamples as string[],
 				settings: {
 					secrets: {
 						...(data.secrets as Record<string, string>),
@@ -117,6 +118,7 @@ const CreateAgent = () => {
 								register={register}
 								errors={errors}
 								fieldArrays={fieldArrays}
+								getValues={getValues}
 							/>
 						</Tabs.Content>
 
@@ -139,5 +141,3 @@ const CreateAgent = () => {
 };
 
 export default CreateAgent;
-
-export const runtime = 'edge';

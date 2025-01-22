@@ -1,6 +1,6 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Button } from '@radix-ui/themes';
+import React, { useEffect, useState } from 'react';
+import { Button, Spinner } from '@radix-ui/themes';
 import CardAgent, { CardAgentType } from './_components/CardAgent';
 import Link from 'next/link';
 import NotLoggedInAlert from '../chat/_components/not-logged-in-alert';
@@ -8,16 +8,26 @@ import useAgent from './_hooks/useAgent';
 
 const ManageAI = () => {
 	const { getAgents } = useAgent();
-	const [agents, setAgents] = React.useState<CardAgentType[]>([]);
+	const [agents, setAgents] = useState<CardAgentType[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		const fetchAgents = async () => {
+			setLoading(true);
 			const data = await getAgents();
-			console.log(data);
 			setAgents(data.agents);
+			setLoading(false);
 		};
 		fetchAgents();
 	}, []);
+
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center h-full w-full">
+				<Spinner size="3" />
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -47,7 +57,7 @@ const ManageAI = () => {
 						<CardAgent
 							id={agent.id}
 							key={index}
-							username={agent.username}
+							name={agent.name}
 							clients={agent.clients}
 							bio={agent.bio}
 							modelProvider={agent.modelProvider}
