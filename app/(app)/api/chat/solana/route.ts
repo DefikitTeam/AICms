@@ -55,3 +55,5 @@ export const POST = async (req: NextRequest) => {
 
 	return stream.toDataStreamResponse();
 };
+
+export const runtime = 'edge';

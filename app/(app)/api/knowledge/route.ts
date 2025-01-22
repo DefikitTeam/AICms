@@ -8,3 +8,5 @@ export async function POST(req: Request) {
 	const knowledge = await findKnowledgeByUrl(url);
 	return NextResponse.json(knowledge.length > 0 ? knowledge[0] : null);
 }
+
+export const runtime = 'edge';

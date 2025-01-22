@@ -52,3 +52,5 @@ export const POST = async (req: NextRequest) => {
 		outAmount: quoteResponse.outAmount,
 	});
 };
+
+export const runtime = 'edge';
