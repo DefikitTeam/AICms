@@ -225,3 +225,5 @@ const UpdateAgent = () => {
 };
 
 export default UpdateAgent;
+
+export const runtime = 'edge';
