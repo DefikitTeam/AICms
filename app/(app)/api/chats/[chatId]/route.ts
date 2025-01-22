@@ -97,5 +97,3 @@ const generateTagline = async (messages: Omit<Message, 'id'>[]) => {
 
 	return text;
 };
-
-export const runtime = 'edge';

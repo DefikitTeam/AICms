@@ -26,5 +26,3 @@ export const POST = async (req: NextRequest) => {
 
 	return result.toDataStreamResponse();
 };
-
-export const runtime = 'nodejs';

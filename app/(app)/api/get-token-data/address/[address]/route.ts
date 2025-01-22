@@ -21,5 +21,3 @@ export const GET = async (
 		return NextResponse.json(null, { status: 500 });
 	}
 };
-
-export const runtime = 'edge';
