@@ -40,6 +40,17 @@ const CreateAgent = () => {
 	);
 
 	const onSubmit = async (data: FieldValues) => {
+		if (data.clients.includes('discord')) {
+			if (
+				!data?.secrets?.DISCORD_APPLICATION_ID ||
+				!data?.secrets?.DISCORD_API_TOKEN
+			) {
+				toast.error(
+					'Please fill in the Discord Application ID and Discord API Token'
+				);
+				return;
+			}
+		}
 		const message = toast.loading('Creating AI Agent...');
 		const dataSubmit = {
 			config: {

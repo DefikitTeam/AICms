@@ -104,6 +104,19 @@ const UpdateAgent = () => {
 	};
 
 	const onSubmit = async (data: FieldValues) => {
+		if (data.clients.includes('discord')) {
+			if (
+				!data?.secrets?.DISCORD_APPLICATION_ID ||
+				!data?.secrets?.DISCORD_API_TOKEN
+			) {
+				toast.error(
+					'Please fill in the Discord Application ID and Discord API Token'
+				);
+				return;
+			}
+		}
+
+		setLoadingUpdate(true);
 		const message = toast.loading('Updating AI Agent...');
 		const dataSubmit = {
 			name: data.name as string,
@@ -117,7 +130,7 @@ const UpdateAgent = () => {
 				post: data.post as string[],
 			},
 			system: data.system as string,
-			knowkedge: data.knowledge as string[],
+			knowledge: data.knowledge as string[],
 			clients: data.clients as string[],
 			modelProvider: data.modelProvider as string,
 			bio: data.bio as string[],
@@ -163,6 +176,8 @@ const UpdateAgent = () => {
 				id: message,
 			});
 			console.error(error.response.data.message);
+		} finally {
+			setLoadingUpdate(false);
 		}
 	};
 
@@ -213,6 +228,7 @@ const UpdateAgent = () => {
 				</Tabs.Root>
 				<div className="flex justify-end mt-4">
 					<button
+						disabled={loadingUpdate}
 						type="submit"
 						className="w-full bg-orange-500 text-white rounded-md py-2"
 					>

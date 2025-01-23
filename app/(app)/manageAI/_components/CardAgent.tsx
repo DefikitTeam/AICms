@@ -28,7 +28,7 @@ const CardAgent = ({
 				<Flex gap="3" align="center">
 					<Avatar
 						size="6"
-						src="https://www.google.com.vn/url?sa=i&url=https%3A%2F%2Fwww.nuvei.com%2Fsolutions%2Fcrypto-digital-assets&psig=AOvVaw3QXrDhAZnhIMM4PcZEmm1n&ust=1736924649583000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLDSx93S9IoDFQAAAAAdAAAAABAE"
+						src={`https://ui-avatars.com/api/?name=${name}&background=random`}
 						radius="large"
 						fallback="T"
 					/>

@@ -36,20 +36,12 @@ const useAgent = () => {
 
 	const createAgent = async (agent: CreateAgentData) => {
 		const accessToken = await getAccessToken();
-		try {
-			const response = await axios.post(
-				`${BACKEND_URL}/agents/create`,
-				agent,
-				{
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				}
-			);
-			return response.data;
-		} catch (error) {
-			console.error(error);
-		}
+		const response = await axios.post(`${BACKEND_URL}/agents/create`, agent, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+		return response.data;
 	};
 
 	const updateAgent = async (id: string, agent: UpdateAgentData) => {
@@ -68,22 +60,18 @@ const useAgent = () => {
 
 	const toggleAgent = async (agentId: string) => {
 		const accessToken = await getAccessToken();
-		try {
-			const response = await axios.post(
-				`${BACKEND_URL}/agents/toggle`,
-				{
-					agentId,
+		const response = await axios.post(
+			`${BACKEND_URL}/agents/toggle`,
+			{
+				agentId,
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
 				},
-				{
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				}
-			);
-			return response.data;
-		} catch (error) {
-			console.error(error);
-		}
+			}
+		);
+		return response.data;
 	};
 
 	return { getAgents, createAgent, getDetailAgent, updateAgent, toggleAgent };
