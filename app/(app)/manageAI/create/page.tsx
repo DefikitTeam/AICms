@@ -27,6 +27,7 @@ const CreateAgent = () => {
 	});
 
 	const { createAgent } = useAgent();
+	const [loading, setLoading] = React.useState(false);
 
 	const fieldArrays = formFields.reduce(
 		(acc, field) => {
@@ -52,6 +53,7 @@ const CreateAgent = () => {
 			}
 		}
 		const message = toast.loading('Creating AI Agent...');
+		setLoading(true);
 		const dataSubmit = {
 			config: {
 				name: data.name as string,
@@ -65,6 +67,7 @@ const CreateAgent = () => {
 					post: [...data.post] as string[],
 				},
 				system: data.system as string,
+				knowledge: data.knowledge as string[],
 				clients: data.clients as string[],
 				modelProvider: data.modelProvider as string,
 				bio: data.bio as string[],
@@ -102,7 +105,6 @@ const CreateAgent = () => {
 		try {
 			const response = await createAgent(dataSubmit);
 			toast.dismiss(message);
-			console.log(response);
 			if (response.success) {
 				toast.success('AI Agent created successfully');
 			}
@@ -110,7 +112,8 @@ const CreateAgent = () => {
 			toast.error('Failed to create AI Agent', {
 				id: message,
 			});
-			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -140,8 +143,9 @@ const CreateAgent = () => {
 				</Tabs.Root>
 				<div className="flex justify-end mt-4">
 					<button
+						disabled={loading}
 						type="submit"
-						className="w-full bg-orange-500 text-white rounded-md py-2"
+						className={`w-full ${loading ? 'bg-orange-800' : 'bg-orange-500'} text-white rounded-md py-2`}
 					>
 						Create AI Agent
 					</button>

@@ -8,7 +8,7 @@ export type CardAgentType = {
 	clients: string[];
 	name: string;
 	bio: string;
-	isRunning: boolean;
+	status: string;
 	email: string;
 	modelProvider: string;
 };
@@ -18,7 +18,7 @@ const CardAgent = ({
 	clients,
 	name,
 	bio,
-	isRunning,
+	status,
 	modelProvider,
 	email,
 }: CardAgentType) => {
@@ -44,8 +44,8 @@ const CardAgent = ({
 								<span>{modelProvider}</span>
 							</li>
 							<li className="flex gap-1 items-center">
-								<Badge color={isRunning ? 'green' : 'red'}>
-									{isRunning ? 'Running' : 'Stopped'}
+								<Badge color={status ? 'green' : 'red'}>
+									{status ? 'Running' : 'Stopped'}
 								</Badge>
 							</li>
 						</ul>

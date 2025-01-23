@@ -31,7 +31,6 @@ const UpdateAgent = () => {
 			const response = await getDetailAgent(agentId as string);
 			const { character } = response;
 			setAgent(response);
-			console.log(character);
 
 			const fieldsToSet = [
 				'name',
@@ -97,7 +96,11 @@ const UpdateAgent = () => {
 				setAgent((prev: any) => ({ ...prev, isRunning: !prev.isRunning }));
 			}
 		} catch (error: any) {
-			toast.error(error.response.data.message);
+			if (error.response.data) {
+				toast.error(error.response.data.message);
+			} else {
+				toast.error('Failed to toggle agent status');
+			}
 		} finally {
 			setLoadingUpdate(false);
 		}
@@ -172,10 +175,15 @@ const UpdateAgent = () => {
 			}
 			fetchAgent();
 		} catch (error: any) {
-			toast.error(error.response.data.message, {
-				id: message,
-			});
-			console.error(error.response.data.message);
+			if (error.response.data.message) {
+				toast.error(error.response.data.message, {
+					id: message,
+				});
+			} else {
+				toast.error('Failed to update AI Agent', {
+					id: message,
+				});
+			}
 		} finally {
 			setLoadingUpdate(false);
 		}
@@ -230,7 +238,9 @@ const UpdateAgent = () => {
 					<button
 						disabled={loadingUpdate}
 						type="submit"
-						className="w-full bg-orange-500 text-white rounded-md py-2"
+						className={`w-full ${
+							loadingUpdate ? 'bg-orange-800' : 'bg-orange-500'
+						} text-white rounded-md py-2`}
 					>
 						Update AI Agent
 					</button>

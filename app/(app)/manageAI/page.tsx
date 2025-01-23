@@ -15,6 +15,7 @@ const ManageAI = () => {
 		const fetchAgents = async () => {
 			setLoading(true);
 			const data = await getAgents();
+			console.log(data);
 			setAgents(data.agents);
 			setLoading(false);
 		};
@@ -61,7 +62,7 @@ const ManageAI = () => {
 							clients={agent.clients}
 							bio={agent.bio}
 							modelProvider={agent.modelProvider}
-							isRunning={agent.isRunning}
+							status={agent.status}
 							email={agent.email}
 						/>
 					))}
