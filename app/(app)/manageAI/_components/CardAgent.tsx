@@ -8,8 +8,7 @@ export type CardAgentType = {
 	clients: string[];
 	name: string;
 	bio: string;
-	status: string;
-	email: string;
+	status: boolean;
 	modelProvider: string;
 };
 
@@ -20,7 +19,6 @@ const CardAgent = ({
 	bio,
 	status,
 	modelProvider,
-	email,
 }: CardAgentType) => {
 	return (
 		<Box maxWidth="100%">

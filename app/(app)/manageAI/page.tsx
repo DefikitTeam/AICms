@@ -6,16 +6,21 @@ import Link from 'next/link';
 import useAgent from './_hooks/useAgent';
 import NotLoggedInAlert from '../_components/not-logged-in-alert';
 
+interface AgentResponse extends CardAgentType {
+	isRunning: boolean;
+	lore: string[];
+	username: string;
+	email: string;
+}
 const ManageAI = () => {
 	const { getAgents } = useAgent();
-	const [agents, setAgents] = useState<CardAgentType[]>([]);
+	const [agents, setAgents] = useState<AgentResponse[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		const fetchAgents = async () => {
 			setLoading(true);
 			const data = await getAgents();
-			console.log(data);
 			setAgents(data.agents);
 			setLoading(false);
 		};
@@ -62,8 +67,7 @@ const ManageAI = () => {
 							clients={agent.clients}
 							bio={agent.bio}
 							modelProvider={agent.modelProvider}
-							status={agent.status}
-							email={agent.email}
+							status={agent.isRunning}
 						/>
 					))}
 				</div>
