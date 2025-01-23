@@ -96,9 +96,8 @@ const UpdateAgent = () => {
 			if (response.success) {
 				setAgent((prev: any) => ({ ...prev, isRunning: !prev.isRunning }));
 			}
-		} catch (error) {
-			console.error(error);
-			toast.error('Failed to toggle AI Agent status');
+		} catch (error: any) {
+			toast.error(error.response.data.message);
 		} finally {
 			setLoadingUpdate(false);
 		}
@@ -159,11 +158,11 @@ const UpdateAgent = () => {
 				toast.success('AI Agent updated successfully');
 			}
 			fetchAgent();
-		} catch (error) {
-			toast.error('Failed to update AI Agent', {
+		} catch (error: any) {
+			toast.error(error.response.data.message, {
 				id: message,
 			});
-			console.error(error);
+			console.error(error.response.data.message);
 		}
 	};
 

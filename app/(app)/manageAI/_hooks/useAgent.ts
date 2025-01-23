@@ -54,20 +54,16 @@ const useAgent = () => {
 
 	const updateAgent = async (id: string, agent: UpdateAgentData) => {
 		const accessToken = await getAccessToken();
-		try {
-			const response = await axios.post(
-				`${BACKEND_URL}/agents/${id}/set`,
-				agent,
-				{
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				}
-			);
-			return response.data;
-		} catch (error) {
-			console.error(error);
-		}
+		const response = await axios.post(
+			`${BACKEND_URL}/agents/${id}/set`,
+			agent,
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			}
+		);
+		return response.data;
 	};
 
 	const toggleAgent = async (agentId: string) => {

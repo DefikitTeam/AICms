@@ -68,14 +68,16 @@ const CardAgent = ({
 										Connect X
 									</Text>
 								</div>
-								<Button
-									style={{ maxWidth: '80px', width: '100%' }}
-									color="gray"
-									variant="solid"
-									highContrast
-								>
-									Connect
-								</Button>
+								<Link role="button" href={`/manageAI/update/${id}`}>
+									<Button
+										style={{ maxWidth: '80px', width: '100%' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Connect
+									</Button>
+								</Link>
 							</li>
 						)}
 						{!clients.includes('discord') && (
@@ -90,14 +92,16 @@ const CardAgent = ({
 										Connect Discord
 									</Text>
 								</div>
-								<Button
-									style={{ maxWidth: '80px', width: '100%' }}
-									color="gray"
-									variant="solid"
-									highContrast
-								>
-									Connect
-								</Button>
+								<Link role="button" href={`/manageAI/update/${id}`}>
+									<Button
+										style={{ maxWidth: '80px', width: '100%' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Connect
+									</Button>
+								</Link>
 							</li>
 						)}
 						{!clients.includes('telegram') && (
@@ -112,14 +116,16 @@ const CardAgent = ({
 										Connect Telegram
 									</Text>
 								</div>
-								<Button
-									style={{ maxWidth: '80px', width: '100%' }}
-									color="gray"
-									variant="solid"
-									highContrast
-								>
-									Connect
-								</Button>
+								<Link role="button" href={`/manageAI/update/${id}`}>
+									<Button
+										style={{ maxWidth: '80px', width: '100%' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Connect
+									</Button>
+								</Link>
 							</li>
 						)}
 						<li className="flex justify-between">

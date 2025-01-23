@@ -47,10 +47,6 @@ export const clientsPlatform = [
 		value: 'discord',
 	},
 	{
-		name: 'Direct',
-		value: 'direct',
-	},
-	{
 		name: 'Twitter',
 		value: 'twitter',
 	},
@@ -65,10 +61,6 @@ export const clientsPlatform = [
 	{
 		name: 'Lens',
 		value: 'lens',
-	},
-	{
-		name: 'Auto',
-		value: 'auto',
 	},
 	{
 		name: 'Slack',
