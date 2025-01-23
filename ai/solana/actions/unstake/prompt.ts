@@ -1,1 +1,0 @@
-export const SOLANA_UNSTAKE_PROMPT = `Unstake SOL from Jupiter. Requires one parameter: amount of JupSOL to unstake.`; 

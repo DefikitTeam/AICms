@@ -1,1 +1,0 @@
-export const SOLANA_STAKE_PROMPT = `Stake SOL for yield using Jupiter. Requires one parameter: amount of SOL to stake.`; 
