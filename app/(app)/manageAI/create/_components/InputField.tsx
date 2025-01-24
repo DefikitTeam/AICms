@@ -45,19 +45,23 @@ const InputField = ({
 					<option value="true">Active</option>
 				</select>
 			) : (
-				<input
-					{...register(name)}
-					placeholder={placeholder}
-					type="text"
-					className="input block w-full focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg placeholder:text-xs"
-				/>
+				<div className="relative">
+					<input
+						{...register(name)}
+						placeholder={placeholder}
+						type={isSecure ? (show ? 'text' : 'password') : 'text'}
+						className="input block w-full focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg placeholder:text-xs"
+					/>
+					<div className="absolute top-[50%] right-2 transform -translate-y-1/2">
+						{isSecure &&
+							(show ? (
+								<EyeOff size={16} onClick={() => setShow(false)} />
+							) : (
+								<Eye size={16} onClick={() => setShow(true)} />
+							))}
+					</div>
+				</div>
 			)}
-			{isSecure &&
-				(show ? (
-					<EyeOff onClick={() => setShow(false)} />
-				) : (
-					<Eye onClick={() => setShow(true)} />
-				))}
 		</div>
 	);
 };
