@@ -443,11 +443,6 @@ const envConfigs = [
 				description: 'Maximum number of retry attempts for Twitter login.',
 				type: 'number',
 			},
-		],
-	},
-	{
-		name: 'X Server Settings',
-		value: [
 			{
 				name: 'X_SERVER_URL',
 				label: 'X Server URL',
