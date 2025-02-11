@@ -1,40 +1,45 @@
-"use client";
+'use client';
 
-import { useConnectWallet, usePrivy, useLogin as usePrivyLogin, Wallet } from "@privy-io/react-auth";
+import {
+	useConnectWallet,
+	usePrivy,
+	useLogin as usePrivyLogin,
+	Wallet,
+} from '@privy-io/react-auth';
 
-import { useFundWallet, useSolanaWallets } from "@privy-io/react-auth/solana";
+import { useFundWallet, useSolanaWallets } from '@privy-io/react-auth/solana';
 
 export const useLogin = ({
-    onComplete
+	onComplete,
 }: {
-    onComplete?: (wallet: Wallet) => void
+	onComplete?: (wallet: Wallet) => void;
 } = {}) => {
-    const { user, ready, logout } = usePrivy();
+	const { user, ready, logout } = usePrivy();
 
-    const { wallets, createWallet } = useSolanaWallets();
+	const { wallets, createWallet } = useSolanaWallets();
 
-    const { login } = usePrivyLogin({
-        onComplete: async (user, isNewUser, _) => {
-            if(isNewUser && !user.wallet) {
-                const wallet = await createWallet();
-                onComplete?.(wallet);
-            } else {
-                onComplete?.(user.wallet!);
-            }
-        }
-    });
+	const { login } = usePrivyLogin({
+		onComplete: async (user, isNewUser, _) => {
+			if (isNewUser && !user.wallet) {
+				const wallet = await createWallet();
+				onComplete?.(wallet);
+			} else {
+				onComplete?.(user.wallet!);
+			}
+		},
+	});
 
-    const { connectWallet } = useConnectWallet();
+	const { connectWallet } = useConnectWallet();
 
-    const { fundWallet } = useFundWallet();
+	const { fundWallet } = useFundWallet();
 
-    return {
-        user,
-        ready,
-        login,
-        connectWallet,
-        logout,
-        wallets,
-        fundWallet
-    }
-}
+	return {
+		user,
+		ready,
+		login,
+		connectWallet,
+		logout,
+		wallets,
+		fundWallet,
+	};
+};
