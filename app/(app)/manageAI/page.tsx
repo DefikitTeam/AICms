@@ -47,8 +47,9 @@ const page = () => {
 						<CardAgent
 							id={agent.id}
 							key={index}
-							username={agent.username}
+							username={agent.username}	
 							clients={agent.clients}
+							isRunning={agent.isRunning}
 						/>
 					))}
 				</div>
