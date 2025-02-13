@@ -8,6 +8,59 @@ import toast from 'react-hot-toast';
 import useAgent from '../_hooks/useAgent';
 import { formFields } from './data/utils';
 
+const fieldConfigs = [
+	{
+		name: 'topics',
+		label: 'Topics',
+		placeholder: 'Blockchain, Cryptocurrency, NFTs',
+	},
+	{
+		name: 'knowledge',
+		label: 'Knowledge',
+		placeholder: 'DeFi, Staking, Decentralized',
+	},
+	{
+		name: 'adjectives',
+		label: 'Adjectives',
+		placeholder: 'Innovative, Creative, Unique',
+	},
+	{
+		name: 'all',
+		label: 'Style for All',
+		placeholder: 'Friendly, Professional, Engaging',
+	},
+	{
+		name: 'chat',
+		label: 'Chat Style',
+		placeholder: 'Helpful, Knowledgeable, Supportive',
+	},
+	{
+		name: 'post',
+		label: 'Post Style',
+		placeholder: 'Informative, Engaging, Fun',
+	},
+	{
+		name: 'postExamples',
+		label: 'Post Example',
+		placeholder: 'Example post content',
+	},
+	{
+		name: 'messageExamples',
+		label: 'Message Examples',
+		placeholder: 'Example message content',
+	},
+	{
+		name: 'bio',
+		label: 'Biography',
+		placeholder: 'Short bio about the agent',
+	},
+	{
+		name: 'lore',
+		label: 'Agent background lore',
+		placeholder: 'Agent lore',
+	},
+];
+
 const CreateAgent = () => {
 	const {
 		register,
@@ -132,7 +185,6 @@ const CreateAgent = () => {
 								register={register}
 								errors={errors}
 								fieldArrays={fieldArrays}
-								getValues={getValues}
 							/>
 						</Tabs.Content>
 

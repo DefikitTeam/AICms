@@ -111,16 +111,16 @@ export interface UpdateAgentData {
 }
 
 export type messageExamples = [
-	{
-		user: string;
-		content: {
-			text: string;
-		};
-	},
-	{
-		user: string;
-		content: {
-			text: string;
-		};
-	},
+  {
+    user: string;
+    content: {
+      text: string;
+    };
+  },
+  {
+    user: string;
+    content: {
+      text: string;
+    };
+  },
 ];

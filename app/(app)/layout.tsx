@@ -1,12 +1,11 @@
-import React from 'react';
+import React from 'react'
 
 import { SidebarProvider } from '@/components/ui';
 
 import Sidebar from './_components/sidebar';
 import ExperimentalAlertDialog from './_components/experimental-alert-dialog';
-
-import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
+import '@radix-ui/themes/styles.css';
 
 interface Props {
 	children: React.ReactNode;

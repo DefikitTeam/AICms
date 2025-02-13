@@ -29,38 +29,38 @@ const BasicInfo = ({
 	// const fileInputRef = useRef<HTMLInputElement>(null);
 	// const [avatar, setAvatar] = useState<string | null>(null);
 
-	// const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const file = e.target.files?.[0];
-	// 	if (file) {
-	// 		const reader = new FileReader();
-	// 		reader.onloadend = () => {
-	// 			setAvatar(reader.result as string);
-	// 		};
-	// 		reader.readAsDataURL(file);
-	// 	}
-	// };
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 	const file = e.target.files?.[0];
+  // 	if (file) {
+  // 		const reader = new FileReader();
+  // 		reader.onloadend = () => {
+  // 			setAvatar(reader.result as string);
+  // 		};
+  // 		reader.readAsDataURL(file);
+  // 	}
+  // };
 
-	// const handleDeleteImage = (e: React.MouseEvent<HTMLButtonElement>) => {
-	// 	e.preventDefault();
-	// 	setAvatar(null);
-	// };
+  // const handleDeleteImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // 	e.preventDefault();
+  // 	setAvatar(null);
+  // };
 
-	const [dropdownOpen, setDropdownOpen] = useState(false);
-	const dropdownRef = useRef<HTMLDivElement>(null);
-	const [clients, setClients] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [clients, setClients] = useState<string[]>([]);
 
-	const toggleDropdown = () => {
-		setDropdownOpen(!dropdownOpen);
-	};
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
-	const handleClickOutside = (event: MouseEvent) => {
-		if (
-			dropdownRef.current &&
-			!dropdownRef.current.contains(event.target as Node)
-		) {
-			setDropdownOpen(false);
-		}
-	};
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
+    }
+  };
 
 	const handleClientsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
@@ -80,52 +80,52 @@ const BasicInfo = ({
 		};
 	}, []);
 
-	return (
-		<div className="mt-4 flex flex-col gap-4">
-			{/* <div className="col-span-1 flex items-center gap-4">*/}
-			{/*  {avatar ? (*/}
-			{/*    <div className="group relative w-fit">*/}
-			{/*      <img*/}
-			{/*        src={avatar}*/}
-			{/*        alt="Avatar"*/}
-			{/*        className="relative size-32 rounded-full cursor-pointer"*/}
-			{/*      />*/}
-			{/*      <div className="group-hover:flex hidden gap-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-200 dark:bg-neutral-700 rounded-sm p-1">*/}
-			{/*        <Button*/}
-			{/*          onClick={(e) => {*/}
-			{/*            e.preventDefault();*/}
-			{/*            fileInputRef.current?.click();*/}
-			{/*          }}*/}
-			{/*          color="gray"*/}
-			{/*          size="1"*/}
-			{/*        >*/}
-			{/*          <Pencil size={14} />*/}
-			{/*        </Button>*/}
-			{/*        <Button onClick={handleDeleteImage} color="gray" size="1">*/}
-			{/*          <Trash2 size={14} />*/}
-			{/*        </Button>*/}
-			{/*      </div>*/}
-			{/*    </div>*/}
-			{/*  ) : (*/}
-			{/*    <div*/}
-			{/*      onClick={() => fileInputRef.current?.click()}*/}
-			{/*      className="size-32 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center"*/}
-			{/*    >*/}
-			{/*      <Camera color="#646464" size={20} />*/}
-			{/*    </div>*/}
-			{/*  )}*/}
-			{/*  <input*/}
-			{/*    ref={fileInputRef}*/}
-			{/*    type="file"*/}
-			{/*    accept="image/*"*/}
-			{/*    className="hidden"*/}
-			{/*    onChange={handleImageChange}*/}
-			{/*  />*/}
-			{/*  <div>*/}
-			{/*    <p>AI Agent</p>*/}
-			{/*    <p className="text-neutral-500">Profile Picture</p>*/}
-			{/*  </div>*/}
-			{/*</div> */}
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+      {/* <div className="col-span-1 flex items-center gap-4">*/}
+      {/*  {avatar ? (*/}
+      {/*    <div className="group relative w-fit">*/}
+      {/*      <img*/}
+      {/*        src={avatar}*/}
+      {/*        alt="Avatar"*/}
+      {/*        className="relative size-32 rounded-full cursor-pointer"*/}
+      {/*      />*/}
+      {/*      <div className="group-hover:flex hidden gap-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-200 dark:bg-neutral-700 rounded-sm p-1">*/}
+      {/*        <Button*/}
+      {/*          onClick={(e) => {*/}
+      {/*            e.preventDefault();*/}
+      {/*            fileInputRef.current?.click();*/}
+      {/*          }}*/}
+      {/*          color="gray"*/}
+      {/*          size="1"*/}
+      {/*        >*/}
+      {/*          <Pencil size={14} />*/}
+      {/*        </Button>*/}
+      {/*        <Button onClick={handleDeleteImage} color="gray" size="1">*/}
+      {/*          <Trash2 size={14} />*/}
+      {/*        </Button>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  ) : (*/}
+      {/*    <div*/}
+      {/*      onClick={() => fileInputRef.current?.click()}*/}
+      {/*      className="size-32 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center"*/}
+      {/*    >*/}
+      {/*      <Camera color="#646464" size={20} />*/}
+      {/*    </div>*/}
+      {/*  )}*/}
+      {/*  <input*/}
+      {/*    ref={fileInputRef}*/}
+      {/*    type="file"*/}
+      {/*    accept="image/*"*/}
+      {/*    className="hidden"*/}
+      {/*    onChange={handleImageChange}*/}
+      {/*  />*/}
+      {/*  <div>*/}
+      {/*    <p>AI Agent</p>*/}
+      {/*    <p className="text-neutral-500">Profile Picture</p>*/}
+      {/*  </div>*/}
+      {/*</div> */}
 
 			{/* Basic Information */}
 			<div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">
@@ -282,64 +282,64 @@ const BasicInfo = ({
 				errors={errors}
 			/>
 
-			{/* Dynamic Field Arrays */}
-			<div className="form-control flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-600 p-2 rounded-lg">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-					{fieldConfigs.slice(0, 3).map(({ name, label, placeholder }) => (
-						<div className="col-span-1" key={name}>
-							<FormFieldArray
-								label={label}
-								name={name}
-								placeholder={placeholder}
-								fields={fieldArrays[name].fields}
-								append={fieldArrays[name].append}
-								remove={fieldArrays[name].remove}
-								register={register}
-								errors={errors}
-							/>
-						</div>
-					))}
-				</div>
+      {/* Dynamic Field Arrays */}
+      <div className="form-control flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-600 p-2 rounded-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          {fieldConfigs.slice(0, 3).map(({ name, label, placeholder }) => (
+            <div className="col-span-1" key={name}>
+              <FormFieldArray
+                label={label}
+                name={name}
+                placeholder={placeholder}
+                fields={fieldArrays[name].fields}
+                append={fieldArrays[name].append}
+                remove={fieldArrays[name].remove}
+                register={register}
+                errors={errors}
+              />
+            </div>
+          ))}
+        </div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-					{fieldConfigs.slice(3, 6).map(({ name, label, placeholder }) => (
-						<div className="col-span-1" key={name}>
-							<FormFieldArray
-								label={label}
-								name={name}
-								placeholder={placeholder}
-								fields={fieldArrays[name].fields}
-								append={fieldArrays[name].append}
-								remove={fieldArrays[name].remove}
-								register={register}
-								errors={errors}
-							/>
-						</div>
-					))}
-				</div>
-			</div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          {fieldConfigs.slice(3, 6).map(({ name, label, placeholder }) => (
+            <div className="col-span-1" key={name}>
+              <FormFieldArray
+                label={label}
+                name={name}
+                placeholder={placeholder}
+                fields={fieldArrays[name].fields}
+                append={fieldArrays[name].append}
+                remove={fieldArrays[name].remove}
+                register={register}
+                errors={errors}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
-			{/* Examples */}
-			<MessageExample
-				name="messageExamples"
-				fields={fieldArrays.messageExamples.fields}
-				append={fieldArrays.messageExamples.append}
-				remove={fieldArrays.messageExamples.remove}
-				register={register}
-				errors={errors}
-			/>
-			<TextAreaField
-				label="Post Example"
-				name="postExamples"
-				placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here’s a beginner-friendly guide. #DeFi #Blockchain #Crypto"
-				fields={fieldArrays.postExamples.fields}
-				append={fieldArrays.postExamples.append}
-				remove={fieldArrays.postExamples.remove}
-				register={register}
-				errors={errors}
-			/>
-		</div>
-	);
+      {/* Examples */}
+      <MessageExample
+        name="messageExamples"
+        fields={fieldArrays.messageExamples.fields}
+        append={fieldArrays.messageExamples.append}
+        remove={fieldArrays.messageExamples.remove}
+        register={register}
+        errors={errors}
+      />
+      <TextAreaField
+        label="Post Example"
+        name="postExamples"
+        placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here’s a beginner-friendly guide. #DeFi #Blockchain #Crypto"
+        fields={fieldArrays.postExamples.fields}
+        append={fieldArrays.postExamples.append}
+        remove={fieldArrays.postExamples.remove}
+        register={register}
+        errors={errors}
+      />
+    </div>
+  );
 };
 
 export default BasicInfo;

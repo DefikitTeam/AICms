@@ -1,6 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import axios from 'axios';
 import { CreateAgentData, UpdateAgentData } from '../interfaces/agent';
+import { AgentSubmitForm } from '../interfaces/agent';
 
 const useAgent = () => {
 	const { getAccessToken } = usePrivy();

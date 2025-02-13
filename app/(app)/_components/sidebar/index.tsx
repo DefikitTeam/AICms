@@ -11,8 +11,6 @@ import {
 
 import SidebarGroup from './group';
 
-import { platformGroup, agentsGroup } from '../../_data';
-
 import AuthButton from './auth-button';
 import ColorModeToggle from './color-mode-toggle';
 import Logo from './logo';

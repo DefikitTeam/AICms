@@ -4,14 +4,14 @@ import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { Tooltip } from '@radix-ui/themes';
 
 type InputFieldProps<TFieldValues extends FieldValues = FieldValues> = {
-	label?: string;
-	name: string;
-	placeholder?: string;
-	register: UseFormRegister<TFieldValues>;
-	// errors: FieldErrors<TFieldValues>;
-	isSecure?: boolean;
-	description?: string;
-	type?: string;
+  label?: string;
+  name: string;
+  placeholder?: string;
+  register: UseFormRegister<TFieldValues>;
+  // errors: FieldErrors<TFieldValues>;
+  isSecure?: boolean;
+  description?: string;
+  type?: string;
 };
 
 const InputField = ({
