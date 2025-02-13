@@ -1,13 +1,11 @@
-import React from 'react';
+import React from 'react'
 
 import { SidebarProvider } from '@/components/ui';
 
 import Sidebar from './_components/sidebar';
 import ExperimentalAlertDialog from './_components/experimental-alert-dialog';
-
-import { ChatProvider } from './chat/_contexts/chat';
-import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
+import '@radix-ui/themes/styles.css';
 
 interface Props {
 	children: React.ReactNode;
@@ -18,9 +16,7 @@ const Layout: React.FC<Props> = ({ children }) => {
 		<Theme>
 			<SidebarProvider>
 				<ExperimentalAlertDialog />
-				<ChatProvider>
-					<Sidebar>{children}</Sidebar>
-				</ChatProvider>
+				<Sidebar>{children}</Sidebar>
 			</SidebarProvider>
 		</Theme>
 	);
