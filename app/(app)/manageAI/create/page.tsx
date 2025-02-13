@@ -6,6 +6,7 @@ import BasicInfo from './_components/BasicInfo';
 import AdvanceSetting from './_components/AdvanceSetting';
 import toast from 'react-hot-toast';
 import useAgent from '../_hooks/useAgent';
+import { formFields } from './data/utils';
 
 const fieldConfigs = [
 	{
@@ -65,6 +66,7 @@ const CreateAgent = () => {
 		register,
 		handleSubmit,
 		control,
+		getValues,
 		formState: { errors },
 	} = useForm<FieldValues>({
 		defaultValues: {
@@ -78,8 +80,9 @@ const CreateAgent = () => {
 	});
 
 	const { createAgent } = useAgent();
+	const [loading, setLoading] = React.useState(false);
 
-	const fieldArrays = fieldConfigs.reduce(
+	const fieldArrays = formFields.reduce(
 		(acc, field) => {
 			acc[field.name] = useFieldArray({
 				control,
@@ -91,25 +94,38 @@ const CreateAgent = () => {
 	);
 
 	const onSubmit = async (data: FieldValues) => {
+		if (data.clients.includes('discord')) {
+			if (
+				!data?.secrets?.DISCORD_APPLICATION_ID ||
+				!data?.secrets?.DISCORD_API_TOKEN
+			) {
+				toast.error(
+					'Please fill in the Discord Application ID and Discord API Token'
+				);
+				return;
+			}
+		}
 		const message = toast.loading('Creating AI Agent...');
+		setLoading(true);
 		const dataSubmit = {
 			config: {
 				name: data.name as string,
 				plugins: [] as string[],
-				adjectives: [...data.adjectives] as string[],
+				adjectives: data.adjectives as string[],
 				people: [] as string[],
-				topics: [...data.topics] as string[],
+				topics: data.topics as string[],
 				style: {
 					all: [...data.all] as string[],
 					chat: [...data.chat] as string[],
 					post: [...data.post] as string[],
 				},
 				system: data.system as string,
-				clients: [...data.clients] as string[],
+				knowledge: data.knowledge as string[],
+				clients: data.clients as string[],
 				modelProvider: data.modelProvider as string,
 				bio: data.bio as string[],
 				lore: data.lore as string[],
-				postExamples: [...data.postExamples] as string[],
+				postExamples: data.postExamples as string[],
 				settings: {
 					secrets: {
 						...(data.secrets as Record<string, string>),
@@ -142,7 +158,6 @@ const CreateAgent = () => {
 		try {
 			const response = await createAgent(dataSubmit);
 			toast.dismiss(message);
-			console.log(response);
 			if (response.success) {
 				toast.success('AI Agent created successfully');
 			}
@@ -150,7 +165,8 @@ const CreateAgent = () => {
 			toast.error('Failed to create AI Agent', {
 				id: message,
 			});
-			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -179,8 +195,9 @@ const CreateAgent = () => {
 				</Tabs.Root>
 				<div className="flex justify-end mt-4">
 					<button
+						disabled={loading}
 						type="submit"
-						className="w-full bg-orange-500 text-white rounded-md py-2"
+						className={`w-full ${loading ? 'bg-orange-800' : 'bg-orange-500'} text-white rounded-md py-2`}
 					>
 						Create AI Agent
 					</button>

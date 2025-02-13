@@ -1,23 +1,39 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Button } from '@radix-ui/themes';
+import React, { useEffect, useState } from 'react';
+import { Button, Spinner } from '@radix-ui/themes';
 import CardAgent, { CardAgentType } from './_components/CardAgent';
 import Link from 'next/link';
-import NotLoggedInAlert from '../chat/_components/not-logged-in-alert';
 import useAgent from './_hooks/useAgent';
+import NotLoggedInAlert from '../_components/not-logged-in-alert';
 
-const page = () => {
+interface AgentResponse extends CardAgentType {
+	isRunning: boolean;
+	lore: string[];
+	username: string;
+	email: string;
+}
+const ManageAI = () => {
 	const { getAgents } = useAgent();
-	const [agents, setAgents] = React.useState<CardAgentType[]>([]);
+	const [agents, setAgents] = useState<AgentResponse[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		const fetchAgents = async () => {
+			setLoading(true);
 			const data = await getAgents();
-			console.log(data);
 			setAgents(data.agents);
+			setLoading(false);
 		};
 		fetchAgents();
 	}, []);
+
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center h-full w-full">
+				<Spinner size="3" />
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -42,13 +58,16 @@ const page = () => {
 						Create New Agent
 					</Button>
 				</Link>
-				<div className="mt-6 w-full grid grid-cols-1 gap-4 lg:grid-cols-3">
+				<div className="mt-6 w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4">
 					{agents.map((agent, index) => (
 						<CardAgent
 							id={agent.id}
 							key={index}
-							username={agent.username}
+							name={agent.name}
 							clients={agent.clients}
+							bio={agent.bio}
+							modelProvider={agent.modelProvider}
+							status={agent.isRunning}
 						/>
 					))}
 				</div>
@@ -58,4 +77,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default ManageAI;

@@ -15,7 +15,7 @@ const LoginButton: React.FC = () => {
 	const { login } = useLogin({
 		onComplete: (_, __, wasAlreadyAuthenticated) => {
 			if (!wasAlreadyAuthenticated) {
-				router.replace('/chat');
+				router.replace('/manageAI');
 			}
 		},
 	});

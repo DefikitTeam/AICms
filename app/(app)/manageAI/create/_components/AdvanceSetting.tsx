@@ -27,6 +27,7 @@ const AdvanceSetting = ({ register }: ReactHookFormProps) => {
 									register={register}
 									description={field.description}
 									type={field.type}
+									isSecure={field.isSecure}
 								/>
 							</div>
 						))}
