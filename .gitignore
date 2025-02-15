@@ -42,3 +42,5 @@ next-env.d.ts
 yarn-lock.json
 package-lock.json
 pnpm-lock.yaml
+
+wrangler.toml
