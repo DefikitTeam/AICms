@@ -1,5 +1,6 @@
 "use client";
 
+import { PrivyProvider } from "./privy";
 import { ColorModeProvider } from "./color-mode";
 
 interface Props {
@@ -8,11 +9,11 @@ interface Props {
 
 const Providers: React.FC<Props> = ({ children }) => {
     return (
-        // <PrivyProvider>
+        <PrivyProvider>
             <ColorModeProvider>
                 {children}
             </ColorModeProvider>
-        // </PrivyProvider>
+        </PrivyProvider>
     )
 }
 
