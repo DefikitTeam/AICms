@@ -1,4 +1,4 @@
-name = "AI_Agent_CMS"
+name = "AI cms"
 
 compatibility_date = "2025-01-21"
 compatibility_flags = ["nodejs_compat"]
