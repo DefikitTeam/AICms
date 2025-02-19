@@ -1,13 +1,12 @@
 'use client';
 
 import type { NextConfig } from 'next';
-import path from 'path';
 
 const nextConfig = {
 
 	/* config options here */
 	experimental: {
-		serverComponentsExternalPackages: ['twitter-api-v2'],
+		serverExternalPackages: ['twitter-api-v2'],
 	},
 	eslint: {
 		ignoreDuringBuilds: true,
