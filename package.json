@@ -55,6 +55,7 @@
     "lucide-react": "^0.469.0",
     "motion": "^11.15.0",
     "next": "15.1.2",
+    "node-gyp": "^11.1.0",
     "pnpm": "^9.15.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -66,7 +67,7 @@
     "recharts": "^2.15.0",
     "shadcn": "^2.1.8",
     "shadcn-ui": "^0.9.4",
-    "sharp": "^0.33.5",
+    "sharp": "0.32.6",
     "solana-agent-kit": "^1.2.0",
     "swr": "^2.3.0",
     "tailwind-merge": "^2.5.5",
@@ -93,5 +94,6 @@
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
-  }
+  },
+  "packageManager": "yarn@3.6.3"
 }

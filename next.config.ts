@@ -3,7 +3,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig = {
-
+	output: 'export',
 	/* config options here */
 	experimental: {
 		serverExternalPackages: ['twitter-api-v2'],
