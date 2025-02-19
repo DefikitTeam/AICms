@@ -9243,7 +9243,6 @@ __metadata:
     tailwind-merge: ^2.5.5
     tailwindcss: ^3.4.1
     tailwindcss-animate: ^1.0.7
-    twitter-api-v2: ^1.18.2
     typescript: ^5
     viem: ^2.22.8
     wagmi: ^2.14.7
@@ -20817,13 +20816,6 @@ __metadata:
   version: 1.0.3
   resolution: "tweetnacl@npm:1.0.3"
   checksum: e4a57cac188f0c53f24c7a33279e223618a2bfb5fea426231991652a13247bea06b081fd745d71291fcae0f4428d29beba1b984b1f1ce6f66b06a6d1ab90645c
-  languageName: node
-  linkType: hard
-
-"twitter-api-v2@npm:^1.18.2":
-  version: 1.20.1
-  resolution: "twitter-api-v2@npm:1.20.1"
-  checksum: e9cee7a5a9fc958269c8524782364038295e0f5c73ece449b3421298f165897fb7de0f34b3b96a3e88f32a05466e108f9830c0735792b276644b87a487a05369
   languageName: node
   linkType: hard
 
