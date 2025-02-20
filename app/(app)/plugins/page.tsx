@@ -32,7 +32,13 @@ interface DashboardConfig {
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 }
 
-const CodeSnippet = ({ agentId }: { agentId: string }) => {
+const CodeSnippet = ({ 
+  agentId, 
+  position = 'bottom-right'
+}: { 
+  agentId: string;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+}) => {
   const code = `
     <!-- Add this to your <head> -->
     <link rel="stylesheet" href="${process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL}/styling.css" />
@@ -44,6 +50,7 @@ const CodeSnippet = ({ agentId }: { agentId: string }) => {
         __html: \`AIChatWidget.init({
           agentId: '${agentId}',
           serverUrl: '${process.env.NEXT_PUBLIC_BACKEND_URL}',
+          position: '${position}'
         });\`
       }}
     />
@@ -172,6 +179,30 @@ function ConfigContent() {
     fetchToken();
   }, [authenticated, getAccessToken]);
 
+  // Add cleanup effect when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up widget on unmount
+      const existingContainer = document.getElementById('ai-chat-widget-container');
+      const existingModal = document.querySelector('.ai-chat-modal-wrapper');
+      const existingIntegrated = document.getElementById('preview-area')?.firstChild;
+      
+      existingContainer?.remove();
+      existingModal?.remove();
+      if (existingIntegrated) {
+        document.getElementById('preview-area')!.innerHTML = '';
+      }
+
+      // Remove widget scripts
+      const widgetScripts = document.querySelectorAll(`script[src*="${config.widgetUrl}"]`);
+      widgetScripts.forEach(script => script.remove());
+
+      // Remove widget styles
+      const widgetStyles = document.querySelectorAll(`link[href*="${config.widgetUrl}"]`);
+      widgetStyles.forEach(style => style.remove());
+    };
+  }, []); // Empty dependency array to run only on unmount
+
   return (
     <div className="grid gap-8">
       <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
@@ -187,7 +218,7 @@ function ConfigContent() {
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="displayMode" className="text-black dark:text-white">Display Mode</Label>
             <Select<DisplayMode>
               id="displayMode"
@@ -237,9 +268,9 @@ function ConfigContent() {
                 required
               />
             </div>
-          )}
+          )} */}
 
-          {/* {config.displayMode === 'widget' && (
+          {config.displayMode === 'widget' && (
             <div className="space-y-2">
               <Label htmlFor="position" className="text-black dark:text-white">Widget Position</Label>
               <Select<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>
@@ -257,7 +288,7 @@ function ConfigContent() {
                 <option value="top-left">Top Left</option>
               </Select>
             </div>
-          )} */}
+          )}
 
           <Button type="submit" className="w-full">Save Configuration</Button>
         </form>
@@ -293,6 +324,7 @@ function ConfigContent() {
             {authenticated ? (
               <CodeSnippet
                 agentId={config.agentId}
+                position={config.position}
               />
             ) : (
               <div className="text-red-500 dark:text-red-400">

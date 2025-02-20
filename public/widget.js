@@ -8,10 +8,11 @@ window.AIChatWidget = {
       localStorage.setItem('ai-chat-widget-token', config.authToken);
     }
     
-    // Create container and set theme
+    // Create container and set theme and position
     const widgetContainer = document.createElement('div');
     widgetContainer.id = 'ai-chat-widget-container';
     widgetContainer.setAttribute('data-theme', config.theme || 'light');
+    widgetContainer.setAttribute('data-position', config.position || 'bottom-right'); // Add position attribute
     
     // Load styles
     if (!document.querySelector('link[href$="/styling.css"]')) {
@@ -19,6 +20,11 @@ window.AIChatWidget = {
       styleLink.rel = 'stylesheet';
       styleLink.href = `${this.config.widgetUrl}/styling.css`;
       document.head.appendChild(styleLink);
+
+      // Initialize external triggers after styles are loaded
+      styleLink.onload = () => initializeExternalTriggers();
+    } else {
+      initializeExternalTriggers();
     }
 
     this.renderWidget(widgetContainer);
@@ -75,7 +81,10 @@ window.AIChatWidget = {
               class="flex-1 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 dark:text-white dark:placeholder-gray-400" 
               placeholder="Type a message..."
             />
-            <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 text-sm font-medium">
+            <button 
+              type="submit" 
+              class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 text-sm font-medium transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+            >
               Send
             </button>
           </form>
@@ -140,30 +149,55 @@ window.AIChatWidget = {
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const input = form.querySelector('input');
+      const submitButton = form.querySelector('button[type="submit"]');
       const message = input?.value.trim();
       
       if (!message) return;
-      input.value = '';
 
-      // Add user message to UI
-      messagesContainer.innerHTML += `
-        <div class="flex justify-end">
-          <div class="max-w-[80%]">
-            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
-              ${message}
-            </div>
-          </div>
-        </div>
-      `;
+      // Disable input and button
+      input.disabled = true;
+      submitButton.disabled = true;
+      // Add visual feedback class
+      submitButton.setAttribute('disabled', 'disabled');
 
       try {
-        // Use the existing sendMessage method that handles auth correctly
+        // Add user message to UI
+        messagesContainer.innerHTML += `
+          <div class="flex justify-end">
+            <div class="max-w-[80%]">
+              <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
+                ${message}
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Add loading message bubble for agent
+        const loadingBubbleId = `loading-${Date.now()}`;
+        messagesContainer.innerHTML += `
+          <div class="flex justify-start" id="${loadingBubbleId}">
+            <div class="max-w-[80%]">
+              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm min-h-[2.5rem] flex items-center justify-center">
+                <span class="typing-dots text-center">
+                  <span class="dot animate-bounce" style="animation-delay: 0ms">.</span>
+                  <span class="dot animate-bounce" style="animation-delay: 200ms">.</span>
+                  <span class="dot animate-bounce" style="animation-delay: 400ms">.</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Send message to agent
         const token = this.getStoredToken();
         const response = await fetch(`${this.config.serverUrl}/${this.config.agentId}/message`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}` // Add auth token here
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ 
             agentId: this.config.agentId, 
@@ -181,15 +215,22 @@ window.AIChatWidget = {
         const data = await response.json();
         const reply = Array.isArray(data) && data.length > 0 ? data[0].text : 'No reply from agent.';
 
-        messagesContainer.innerHTML += `
-          <div class="flex justify-start">
-            <div class="max-w-[80%]">
-              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
-                ${reply}
-              </div>
-            </div>
-          </div>
-        `;
+        // Replace loading bubble with actual response
+        const loadingBubble = document.getElementById(loadingBubbleId);
+        if (loadingBubble) {
+          const bubbleContent = loadingBubble.querySelector('.bg-gray-100, .dark\\:bg-neutral-700');
+          
+          // Fade out dots
+          const dots = bubbleContent.querySelector('.typing-dots');
+          dots.style.opacity = '0';
+          dots.style.transition = 'opacity 0.2s ease-out';
+
+          // After dots fade, update content
+          setTimeout(() => {
+            bubbleContent.innerHTML = reply;
+            bubbleContent.style.minHeight = 'unset'; // Remove fixed height
+          }, 200);
+        }
 
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       } catch (error) {
@@ -203,6 +244,13 @@ window.AIChatWidget = {
             </div>
           </div>
         `;
+      } finally {
+        // Re-enable input and button
+        input.disabled = false;
+        submitButton.disabled = false;
+        // Remove visual feedback class
+        submitButton.removeAttribute('disabled');
+        input.focus();
       }
     });
 
@@ -229,3 +277,58 @@ window.AIChatWidget = {
     `;
   }
 };
+
+function initializeExternalTriggers() {
+  // Find all external trigger buttons
+  const externalTriggers = document.querySelectorAll('[data-widget-trigger]');
+  
+  externalTriggers.forEach(trigger => {
+    // Add necessary classes
+    trigger.classList.add('ai-chat-widget-button');
+    
+    // Create send icon SVG
+    const sendIcon = document.createElement('span');
+    sendIcon.className = 'send-icon';
+    sendIcon.innerHTML = `
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        class="h-5 w-5"
+      >
+        <path d="M22 2L11 13"></path>
+        <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+      </svg>
+    `;
+    
+    // Create loading spinner
+    const spinner = document.createElement('span');
+    spinner.className = 'loading-spinner hidden';
+    spinner.innerHTML = `
+      <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    `;
+
+    // Clear existing content and add new elements
+    trigger.innerHTML = '';
+    trigger.appendChild(sendIcon);
+    trigger.appendChild(spinner);
+
+    // Add styles directly to button
+    trigger.style.display = 'inline-flex';
+    trigger.style.alignItems = 'center';
+    trigger.style.justifyContent = 'center';
+    trigger.style.width = '40px';
+    trigger.style.height = '40px';
+    trigger.style.padding = '8px';
+    trigger.style.borderRadius = '6px';
+    trigger.style.color = '#2563eb'; // blue-600
+    trigger.style.cursor = 'pointer';
+  });
+}

@@ -2,6 +2,7 @@ import { Avatar, Badge, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
 import { Bot } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type CardAgentType = {
 	id: string;
@@ -113,16 +114,36 @@ const CardAgent = ({
 									Embed Agent
 								</Text>
 							</div>
-							<Link role="button" href={`/plugins?agentId=${id}`}>
-								<Button
-									style={{ width: '80px' }}
-									color="gray"
-									variant="solid"
-									highContrast
-								>
-									Embed
-								</Button>
-							</Link>
+							{status ? (
+								<Link role="button" href={`/plugins?agentId=${id}`}>
+									<Button
+										style={{ width: '80px' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Embed
+									</Button>
+								</Link>
+							) : (
+								<TooltipProvider delayDuration={0}>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												style={{ width: '80px' }}
+												color="gray"
+												disabled
+												highContrast
+											>
+												Embed
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											Your agent must be toggled on to use this feature
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							)}
 						</li>
 						{!clients.includes('telegram') && (
 							<li className="flex justify-between">

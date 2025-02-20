@@ -1,10 +1,12 @@
 window.AIIntegratedChat = {
+  config: {},
   init: function(config) {
-    // this.config = config;
+    this.config = config;
     
-    // // Set theme on container
-    // const container = document.createElement('div');
-    // container.setAttribute('data-theme', config.theme);
+    // Store auth token in localStorage
+    if (config.authToken) {
+      localStorage.setItem('ai-chat-widget-token', config.authToken);
+    }
 
     const targetElement = document.getElementById(config.targetId);
     if (!targetElement) {
@@ -60,14 +62,24 @@ window.AIIntegratedChat = {
       `;
 
       try {
-        const response = await fetch(`${config.serverUrl}/api/agent`, {
+        const token = localStorage.getItem('ai-chat-widget-token');
+        const response = await fetch(`${this.config.serverUrl}/${this.config.agentId}/message`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({ 
-            agentId: config.agentId, 
-            text: message 
+            agentId: this.config.agentId,
+            text: message,
+            userId: 'widget-user',
+            userName: 'Widget User'
           }),
         });
+
+        if (!response.ok) {
+          throw new Error('Failed to get response from agent');
+        }
 
         const data = await response.json();
         const reply = Array.isArray(data) && data.length > 0 ? data[0].text : 'No reply from agent.';
