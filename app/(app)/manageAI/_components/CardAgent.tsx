@@ -102,6 +102,28 @@ const CardAgent = ({
 								</Link>
 							</li>
 						)}
+						<li className="flex justify-between">
+							<div className="flex items-center gap-2">
+								<img
+									src="/logo-light.png"
+									className="size-8 rounded-full"
+									alt=""
+								/>
+								<Text size="2" weight="medium">
+									Embed Agent
+								</Text>
+							</div>
+							<Link role="button" href={`/plugins?agentId=${id}`}>
+								<Button
+									style={{ width: '80px' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Embed
+								</Button>
+							</Link>
+						</li>
 						{!clients.includes('telegram') && (
 							<li className="flex justify-between">
 								<div className="flex items-center gap-2">
