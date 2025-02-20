@@ -1,21 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useLogin, usePrivy } from '@privy-io/react-auth';
 import { Button } from '@/components/ui';
+import { useLogin, usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
-// Export a function to get token instead of the token directly
-export const getAuthToken = async () => {
-  const { getAccessToken } = usePrivy();
-  return await getAccessToken();
-};
 
 const LoginButton: React.FC = () => {
   const router = useRouter();
   const { authenticated, getAccessToken } = usePrivy();
-  const [token, setToken] = useState<string | null>(null);
+  const [, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (authenticated) {

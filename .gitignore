@@ -40,6 +40,11 @@ yarn-error.log*
 next-env.d.ts
 
 # package lock
-package-lock.json
 pnpm-lock.yaml
-yarn-lock.json
+yarn-lock
+
+.open-next
+.dev.vars
+
+# Binary builds
+*.node

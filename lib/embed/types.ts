@@ -30,13 +30,3 @@ export interface ChatWidgetProps {
   position?: string;
 }
 
-interface DashboardConfig {
-  agentId: string;
-  serverUrl: string;
-  theme: 'light' | 'dark';
-  displayMode: DisplayMode;
-  triggerSelector?: string;
-  targetId?: string;
-  position?: WidgetPosition;
-}
-

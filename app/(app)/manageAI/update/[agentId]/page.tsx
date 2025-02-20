@@ -1,13 +1,12 @@
 'use client';
 import { Box, Spinner, Tabs } from '@radix-ui/themes';
-import React, { useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useEffect } from 'react';
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import useAgent from '../../_hooks/useAgent';
-import { formFields } from '../../create/data/utils';
-import BasicInfo from '../../create/_components/BasicInfo';
 import AdvanceSetting from '../../create/_components/AdvanceSetting';
-import { useParams } from 'next/navigation';
+import BasicInfo from '../../create/_components/BasicInfo';
 
 const UpdateAgent = () => {
 	const [agent, setAgent] = React.useState<any>(null);
@@ -25,7 +24,7 @@ const UpdateAgent = () => {
 		formState: { errors },
 	} = useForm<FieldValues>();
 
-	const fetchAgent = async () => {
+	const fetchAgent = useCallback(async () => {
 		try {
 			setLoading(true);
 			const response = await getDetailAgent(agentId as string);
@@ -70,23 +69,37 @@ const UpdateAgent = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [agentId, getDetailAgent, setValue]);
+	
 	useEffect(() => {
 		fetchAgent();
-	}, []);
+	}, [fetchAgent]);
 
 	const { updateAgent, toggleAgent } = useAgent();
 
-	const fieldArrays = formFields.reduce(
-		(acc, field) => {
-			acc[field.name] = useFieldArray({
-				control,
-				name: field.name,
-			});
-			return acc;
-		},
-		{} as Record<string, ReturnType<typeof useFieldArray>>
-	);
+	const topicsArray = useFieldArray({ control, name: "topics" });
+	const knowledgeArray = useFieldArray({ control, name: "knowledge" });
+	const adjectivesArray = useFieldArray({ control, name: "adjectives" });
+	const allArray = useFieldArray({ control, name: "all" });
+	const chatArray = useFieldArray({ control, name: "chat" });
+	const postArray = useFieldArray({ control, name: "post" });
+	const postExamplesArray = useFieldArray({ control, name: "postExamples" });
+	const messageExamplesArray = useFieldArray({ control, name: "messageExamples" });
+	const bioArray = useFieldArray({ control, name: "bio" });
+	const loreArray = useFieldArray({ control, name: "lore" });
+
+	const fieldArrays = {
+		topics: topicsArray,
+		knowledge: knowledgeArray,
+		adjectives: adjectivesArray,
+		all: allArray,
+		chat: chatArray,
+		post: postArray,
+		postExamples: postExamplesArray,
+		messageExamples: messageExamplesArray,
+		bio: bioArray,
+		lore: loreArray,
+	};
 
 	const toggleAgentStatus = async () => {
 		try {

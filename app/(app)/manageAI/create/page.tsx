@@ -2,64 +2,10 @@
 import { Box, Tabs } from "@radix-ui/themes";
 import React from "react";
 import { FieldValues, useFieldArray, useForm } from "react-hook-form";
-import BasicInfo from "./_components/BasicInfo";
-import AdvanceSetting from "./_components/AdvanceSetting";
 import toast from "react-hot-toast";
 import useAgent from "../_hooks/useAgent";
-import { formFields } from "./data/utils";
-
-const fieldConfigs = [
-  {
-    name: "topics",
-    label: "Topics",
-    placeholder: "Blockchain, Cryptocurrency, NFTs",
-  },
-  {
-    name: "knowledge",
-    label: "Knowledge",
-    placeholder: "DeFi, Staking, Decentralized",
-  },
-  {
-    name: "adjectives",
-    label: "Adjectives",
-    placeholder: "Innovative, Creative, Unique",
-  },
-  {
-    name: "all",
-    label: "Style for All",
-    placeholder: "Friendly, Professional, Engaging",
-  },
-  {
-    name: "chat",
-    label: "Chat Style",
-    placeholder: "Helpful, Knowledgeable, Supportive",
-  },
-  {
-    name: "post",
-    label: "Post Style",
-    placeholder: "Informative, Engaging, Fun",
-  },
-  {
-    name: "postExamples",
-    label: "Post Example",
-    placeholder: "Example post content",
-  },
-  {
-    name: "messageExamples",
-    label: "Message Examples",
-    placeholder: "Example message content",
-  },
-  {
-    name: "bio",
-    label: "Biography",
-    placeholder: "Short bio about the agent",
-  },
-  {
-    name: "lore",
-    label: "Agent background lore",
-    placeholder: "Agent lore",
-  },
-];
+import AdvanceSetting from "./_components/AdvanceSetting";
+import BasicInfo from "./_components/BasicInfo";
 
 const CreateAgent = () => {
   const {
@@ -82,16 +28,29 @@ const CreateAgent = () => {
   const { createAgent } = useAgent();
   const [loading, setLoading] = React.useState(false);
 
-  const fieldArrays = formFields.reduce(
-    (acc, field) => {
-      acc[field.name] = useFieldArray({
-        control,
-        name: field.name,
-      });
-      return acc;
-    },
-    {} as Record<string, ReturnType<typeof useFieldArray>>,
-  );
+  const topicsArray = useFieldArray({ control, name: "topics" });
+  const knowledgeArray = useFieldArray({ control, name: "knowledge" });
+  const adjectivesArray = useFieldArray({ control, name: "adjectives" });
+  const allArray = useFieldArray({ control, name: "all" });
+  const chatArray = useFieldArray({ control, name: "chat" });
+  const postArray = useFieldArray({ control, name: "post" });
+  const postExamplesArray = useFieldArray({ control, name: "postExamples" });
+  const messageExamplesArray = useFieldArray({ control, name: "messageExamples" });
+  const bioArray = useFieldArray({ control, name: "bio" });
+  const loreArray = useFieldArray({ control, name: "lore" });
+
+  const fieldArrays = {
+    topics: topicsArray,
+    knowledge: knowledgeArray,
+    adjectives: adjectivesArray,
+    all: allArray,
+    chat: chatArray,
+    post: postArray,
+    postExamples: postExamplesArray,
+    messageExamples: messageExamplesArray,
+    bio: bioArray,
+    lore: loreArray,
+  };
 
   const onSubmit = async (data: FieldValues) => {
     if (data.clients.includes("discord")) {
@@ -161,10 +120,11 @@ const CreateAgent = () => {
       if (response.success) {
         toast.success("AI Agent created successfully");
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to create AI Agent", {
         id: message,
       });
+      console.error(error);
     } finally {
       setLoading(false);
     }

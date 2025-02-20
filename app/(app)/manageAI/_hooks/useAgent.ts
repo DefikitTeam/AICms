@@ -1,6 +1,7 @@
 import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { CreateAgentData, UpdateAgentData } from "../interfaces/agent";
+import { useCallback } from "react";
 
 const useAgent = () => {
   const { getAccessToken } = usePrivy();
@@ -20,7 +21,7 @@ const useAgent = () => {
     }
   };
 
-  const getDetailAgent = async (id: string) => {
+  const getDetailAgent = useCallback(async (id: string) => {
     const accessToken = await getAccessToken();
     try {
       const response = await axios.get(`${BACKEND_URL}/agents/${id}`, {
@@ -32,7 +33,7 @@ const useAgent = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [BACKEND_URL, getAccessToken]);
 
   const createAgent = async (agent: CreateAgentData) => {
     const accessToken = await getAccessToken();
