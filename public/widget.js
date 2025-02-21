@@ -78,7 +78,7 @@ window.AIChatWidget = {
           <form class="flex gap-2" id="chat-form">
             <input 
               name="message" 
-              class="flex-1 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 dark:text-white dark:placeholder-gray-400" 
+              class="flex-1 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 text-black dark:text-white dark:placeholder-gray-400" 
               placeholder="Type a message..."
             />
             <button 
@@ -332,3 +332,20 @@ function initializeExternalTriggers() {
     trigger.style.cursor = 'pointer';
   });
 }
+
+function initializeWidget() {
+  const widget = document.getElementById('ai-cms-widget');
+  if (!widget) return;
+
+  // Force widget to use its own styles
+  widget.setAttribute('data-theme-independent', 'true');
+  
+  // Ensure all inputs within widget use our styles
+  const inputs = widget.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.style.setProperty('color', '#000000', 'important');
+    input.style.setProperty('background-color', '#ffffff', 'important');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initializeWidget);

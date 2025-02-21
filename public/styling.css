@@ -450,3 +450,81 @@ input:focus {
   }
 }
 
+/* Widget input styles with forced colors */
+#ai-cms-widget input,
+#ai-cms-widget textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Ensure placeholders are visible */
+#ai-cms-widget input::placeholder,
+#ai-cms-widget textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Force these styles even in dark mode */
+@media (prefers-color-scheme: dark) {
+  #ai-cms-widget input,
+  #ai-cms-widget textarea {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* Override input styles with maximum specificity */
+#ai-chat-widget-container #chat-messages,
+#ai-chat-widget-container .ai-chat-widget-modal input,
+#ai-chat-widget-container .ai-chat-widget-modal textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Message bubbles specific overrides */
+#ai-chat-widget-container #chat-messages .bg-gray-100 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+#ai-chat-widget-container #chat-messages .bg-blue-600 {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Form specific overrides */
+#ai-chat-widget-container #chat-form {
+  background-color: #ffffff !important;
+}
+
+#ai-chat-widget-container #chat-form input {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Placeholder color override */
+#ai-chat-widget-container #chat-form input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode specific overrides */
+@media (prefers-color-scheme: dark) {
+  #ai-chat-widget-container #chat-messages,
+  #ai-chat-widget-container .ai-chat-widget-modal input,
+  #ai-chat-widget-container .ai-chat-widget-modal textarea,
+  #ai-chat-widget-container #chat-form input {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+  
+  #ai-chat-widget-container #chat-messages .bg-gray-100 {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+}
+
