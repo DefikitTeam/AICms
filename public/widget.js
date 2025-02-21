@@ -68,17 +68,17 @@ window.AIChatWidget = {
     dialog.style.transform = 'scale(0)';
     
     dialog.innerHTML = `
-      <div class="h-[600px] flex flex-col bg-white dark:bg-neutral-800">
+      <div class="flex flex-col bg-white dark:bg-neutral-800 h-full">
         <div class="border-b p-4 flex justify-between items-center dark:border-neutral-700">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">AI Assistant</h3>
           <button class="close-button text-gray-500 hover:text-gray-700 dark:text-gray-200 dark:hover:text-gray-100">&times;</button>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages"></div>
-        <div class="border-t p-4 dark:border-neutral-700 dark:bg-neutral-700">
-          <form class="flex gap-2" id="chat-form">
+        <div class="border-t dark:border-neutral-700 dark:bg-neutral-700">
+          <form class="flex flex-wrap gap-2" id="chat-form">
             <input 
               name="message" 
-              class="flex-1 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 text-black dark:text-white dark:placeholder-gray-400" 
+              class="flex-1 min-w-0 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 text-black dark:text-white dark:placeholder-gray-400" 
               placeholder="Type a message..."
             />
             <button 
@@ -120,6 +120,20 @@ window.AIChatWidget = {
             <span>Close Chat</span>
           </div>
         `;
+
+        // Add welcome message if messages container is empty
+        const messagesContainer = dialog.querySelector('#chat-messages');
+        if (messagesContainer && !messagesContainer.hasChildNodes()) {
+          messagesContainer.innerHTML = `
+            <div class="flex justify-start">
+              <div class="max-w-[80%]">
+                <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
+                  Hello, how can I help you?
+                </div>
+              </div>
+            </div>
+          `;
+        }
       } else {
         this.closeWidget(dialog, button);
       }
