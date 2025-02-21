@@ -94,7 +94,7 @@
 /* Widget specific styles */
 .ai-chat-widget-modal {
   position: fixed;
-  width: 400px; /* Fixed width */
+  width: min(400px, 90vw); /* Use min to handle smaller screens */
   max-height: 80vh;
   opacity: 0;
   visibility: hidden;
@@ -138,7 +138,9 @@
 /* Fix the flex container */
 .ai-chat-widget-modal > div {
   width: 100%; /* Ensure full width */
-  height: 600px;
+  height: 100%; /* Change from fixed height to 100% */
+  max-height: 80vh;
+  min-height: 500px; /* Increased from 300px */
   display: flex;
   flex-direction: column;
 }
@@ -177,14 +179,20 @@
 /* Form layout */
 #chat-form {
   display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
   gap: 0.5rem;
   width: 100%;
+  padding: 0.75rem;
 }
 
 /* Input field */
 #chat-form input {
-  flex: 1;
-  min-width: 0; /* Allow input to shrink */
+  flex: 1 1 200px; /* Allow input to grow and shrink with min width */
+  min-height: 40px;
+  max-width: 100%;
+  margin-bottom: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Modal specific styles */
@@ -216,7 +224,7 @@
 
 .ai-chat-modal > div {
   height: auto; /* Remove fixed height */
-  min-height: 300px; /* Minimum height for better UX */
+  min-height: 500px; /* Increased from 300px */
   max-height: calc(100vh - 4rem); /* Match parent max-height */
   display: flex;
   flex-direction: column;
@@ -237,7 +245,7 @@
   padding: 1rem;
   scroll-behavior: smooth;
   overscroll-behavior: contain;
-  min-height: 100px; /* Ensure some space for messages */
+  min-height: 200px; /* Increased from 100px */
 }
 
 /* Form container */
@@ -353,6 +361,24 @@ input:focus {
   .ai-chat-widget-modal > div {
     max-height: 70vh;
   }
+
+  .ai-chat-widget-modal {
+    width: 90%;
+    max-height: 70vh;
+    margin: 0 auto;
+  }
+
+  #chat-form {
+    padding: 0.5rem;
+  }
+
+  #chat-form input {
+    flex: 1 1 100%; /* Full width on mobile */
+  }
+
+  #chat-form button[type="submit"] {
+    width: 100%; /* Full width button on mobile */
+  }
 }
 
 .ai-chat-modal-wrapper {
@@ -447,6 +473,84 @@ input:focus {
   50% {
     transform: translateY(-4px);
     opacity: 1;
+  }
+}
+
+/* Widget input styles with forced colors */
+#ai-cms-widget input,
+#ai-cms-widget textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Ensure placeholders are visible */
+#ai-cms-widget input::placeholder,
+#ai-cms-widget textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Force these styles even in dark mode */
+@media (prefers-color-scheme: dark) {
+  #ai-cms-widget input,
+  #ai-cms-widget textarea {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* Override input styles with maximum specificity */
+#ai-chat-widget-container #chat-messages,
+#ai-chat-widget-container .ai-chat-widget-modal input,
+#ai-chat-widget-container .ai-chat-widget-modal textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Message bubbles specific overrides */
+#ai-chat-widget-container #chat-messages .bg-gray-100 {
+  background-color: #f3f4f6 !important; /* Changed from #ffffff to #f3f4f6 */
+  color: #000000 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+#ai-chat-widget-container #chat-messages .bg-blue-600 {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Form specific overrides */
+#ai-chat-widget-container #chat-form {
+  background-color: #ffffff !important;
+}
+
+#ai-chat-widget-container #chat-form input {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Placeholder color override */
+#ai-chat-widget-container #chat-form input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode specific overrides */
+@media (prefers-color-scheme: dark) {
+  #ai-chat-widget-container #chat-messages,
+  #ai-chat-widget-container .ai-chat-widget-modal input,
+  #ai-chat-widget-container .ai-chat-widget-modal textarea,
+  #ai-chat-widget-container #chat-form input {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+  
+  #ai-chat-widget-container #chat-messages .bg-gray-100 {
+    background-color: #f3f4f6 !important; /* Changed from #ffffff to #f3f4f6 */
+    color: #000000 !important;
   }
 }
 
