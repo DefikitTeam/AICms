@@ -1,23 +1,23 @@
 'use client'
 
 import {
-  ReactFlow,
-  ProOptions,
-  ReactFlowProvider,
-  useNodesState,
-  useEdgesState,
-  NodeOrigin,
-  Background,
-  Node,
-  Edge,
   addEdge,
+  Background,
+  Edge,
+  Node,
+  NodeOrigin,
   OnConnect,
+  ProOptions,
+  ReactFlow,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 
-import CentralNode from './nodes/central-node';
 import AgentNode from './nodes/agent-node';
+import CentralNode from './nodes/central-node';
 
 import useForceLayout from '@/app/_hooks/use-force-layout';
 import { useCallback } from 'react';
@@ -40,8 +40,9 @@ interface Props {
   edges: Edge[];
 }
 
-const AgentGraphComponent: React.FC<Props> = ({ strength = -500, distance = 150, nodes: initialNodes, edges: initialEdges }) => {
-  const useNodesResult = useNodesState(initialNodes);
+// Separate the flow component to ensure context is available
+const Flow: React.FC<Props> = ({ strength = -500, distance = 150, nodes: initialNodes, edges: initialEdges }) => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect: OnConnect = useCallback(
@@ -57,10 +58,10 @@ const AgentGraphComponent: React.FC<Props> = ({ strength = -500, distance = 150,
 
   return (
     <ReactFlow
-      nodes={useNodesResult[0]}
+      nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
-      onNodesChange={useNodesResult[2]}
+      onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       proOptions={proOptions}
       onConnect={onConnect}
@@ -79,16 +80,14 @@ const AgentGraphComponent: React.FC<Props> = ({ strength = -500, distance = 150,
   );
 }
 
-const AgentGraph: React.FC<Props> = ({ strength = -500, distance = 150, nodes, edges }) => {
+// Wrap the flow component with the provider
+const AgentGraph: React.FC<Props> = (props) => {
   return (
-    <ReactFlowProvider>
-      <AgentGraphComponent
-        strength={strength}
-        distance={distance}
-        nodes={nodes}
-        edges={edges}
-      />
-    </ReactFlowProvider>
+    <div style={{ width: '100%', height: '100%' }}>
+      <ReactFlowProvider>
+        <Flow {...props} />
+      </ReactFlowProvider>
+    </div>
   );
 }
 
