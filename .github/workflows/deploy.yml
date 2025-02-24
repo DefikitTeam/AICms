@@ -59,9 +59,14 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
+          pnpm add -D @opennextjs/cloudflare@0.5.3
 
-      - name: Build application
-        run: pnpm run build
+      - name: Generate Cloudflare types
+        run: pnpm run cf-typegen
+
+      - name: Build and prepare for Cloudflare
+        run: |
+          pnpm exec opennextjs-cloudflare
 
       - name: Deploy to Cloudflare
         working-directory: ${{ github.workspace }}
@@ -72,4 +77,4 @@ jobs:
           echo "Current directory: $(pwd)"
           echo "Directory contents:"
           ls -la
-          pnpm run deploy 
+          pnpm exec wrangler deploy 
