@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-
 const LoginButton: React.FC = () => {
   const router = useRouter();
   const { authenticated, getAccessToken } = usePrivy();
@@ -19,8 +18,8 @@ const LoginButton: React.FC = () => {
   }, [authenticated, getAccessToken]);
 
   const { login } = useLogin({
-    onComplete: (_, __, wasAlreadyAuthenticated) => {
-      if (!wasAlreadyAuthenticated) {
+    onComplete: (params) => {
+      if (!params.wasAlreadyAuthenticated) {
         router.replace('/manageAI');
       }
     },

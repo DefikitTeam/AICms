@@ -60,12 +60,25 @@ window.AIChatWidget = {
     // Create button and dialog
     const button = document.createElement('button');
     button.className = 'ai-chat-widget-button';
+    button.style.backgroundColor = '#334155'; // slate-700
+    button.style.borderRadius = '50%'; // Make it circular
+    button.style.padding = '10px';
+    button.style.width = '50px';
+    button.style.height = '50px';
+    button.style.display = 'flex';
+    button.style.alignItems = 'center';
+    button.style.justifyContent = 'center';
     
     const dialog = document.createElement('div');
     dialog.className = 'ai-chat-widget-modal';
     dialog.style.visibility = 'hidden';
     dialog.style.opacity = '0';
     dialog.style.transform = 'scale(0)';
+    dialog.style.transformOrigin = 'bottom right';
+    dialog.style.bottom = '70px'; // Add this line to reduce space between button and dialog
+    
+    // Remove the individual margin styling since it's handled in CSS
+    container.style.margin = '0';
     
     dialog.innerHTML = `
       <div class="flex flex-col bg-white dark:bg-neutral-800 h-full">
@@ -96,11 +109,12 @@ window.AIChatWidget = {
 
     // Toggle button handler
     button.innerHTML = `
-      <div class="flex items-center gap-2">
-        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-        <span>Chat with Agent</span>
+      <div class="flex items-center">
+        <img 
+          src="${this.config.widgetUrl}/logo.png" 
+          alt="Chat with Agent"
+          class="h-10 w-10"
+        />
       </div>
     `;
 
@@ -113,27 +127,14 @@ window.AIChatWidget = {
           dialog.style.transform = 'scale(1)';
         });
         button.innerHTML = `
-          <div class="flex items-center gap-2">
-            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="flex items-center justify-center w-full h-full">
+            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-            <span>Close Chat</span>
           </div>
         `;
-
-        // Add welcome message if messages container is empty
-        const messagesContainer = dialog.querySelector('#chat-messages');
-        if (messagesContainer && !messagesContainer.hasChildNodes()) {
-          messagesContainer.innerHTML = `
-            <div class="flex justify-start">
-              <div class="max-w-[80%]">
-                <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
-                  Hello, how can I help you?
-                </div>
-              </div>
-            </div>
-          `;
-        }
+        // Update button style for close state
+        button.style.backgroundColor = '#334155'; // slate-700
       } else {
         this.closeWidget(dialog, button);
       }
@@ -282,13 +283,16 @@ window.AIChatWidget = {
     }, 200);
     
     button.innerHTML = `
-      <div class="flex items-center gap-2">
-        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-        <span>Chat with Agent</span>
+      <div class="flex items-center justify-center w-full h-full">
+        <img 
+          src="${this.config.widgetUrl}/logo.png" 
+          alt="Chat with Agent"
+          class="h-8 w-8"
+        />
       </div>
     `;
+    // Reset button style for open state
+    button.style.backgroundColor = '#334155'; // slate-700
   }
 };
 

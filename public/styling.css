@@ -1,13 +1,16 @@
 #ai-chat-widget-container {
   position: fixed;
-  z-index: 50;
+  z-index: 999999; /* Increase z-index to ensure it's above other elements */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Position variations */
 #ai-chat-widget-container[data-position="bottom-right"] {
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 2rem;  /* Increase bottom margin */
+  right: 2rem;   /* Increase right margin */
 }
 
 #ai-chat-widget-container[data-position="bottom-left"] {
@@ -38,6 +41,8 @@
   color: white;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
+  z-index: 999999;
 }
 
 .ai-chat-widget-button:hover {
@@ -93,14 +98,17 @@
 
 /* Widget specific styles */
 .ai-chat-widget-modal {
-  position: fixed;
+  position: absolute;
+  bottom: 70px; /* Reduced from previous value */
+  right: 0; /* This controls the right margin of the dialog */
+  margin-bottom: 0; /* Remove margin to reduce spacing */
   width: min(400px, 90vw); /* Use min to handle smaller screens */
   max-height: 80vh;
   opacity: 0;
   visibility: hidden;
   transform: scale(0);
   transition: all 200ms ease-out;
-  z-index: 50;
+  z-index: 999999;
   background: white;
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -109,14 +117,14 @@
 
 /* Bottom right */
 [data-position="bottom-right"] .ai-chat-widget-modal {
-  bottom: 5rem;
-  right: 1rem;
+  bottom: 70px; /* Reduced from 5rem */
+  right: 1rem; /* This also affects the right margin when positioned bottom-right */
   transform-origin: bottom right;
 }
 
 /* Bottom left */
 [data-position="bottom-left"] .ai-chat-widget-modal {
-  bottom: 5rem;
+  bottom: 70px; /* Reduced from 5rem */
   left: 1rem;
   transform-origin: bottom left;
 }

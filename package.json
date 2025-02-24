@@ -12,7 +12,9 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^1.98.4",
+    "@opennextjs/aws": "^3.4.2",
+    "@opennextjs/cloudflare": "^0.5.3",
+    "@privy-io/react-auth": "^2.4.5",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.2",
@@ -58,6 +60,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "react-textarea-autosize": "^8.5.6",
     "recharts": "^2.15.0",
+    "server-only": "^0.0.1",
     "shadcn": "^2.1.8",
     "sharp": "0.32.6",
     "solana-agent-kit": "^1.2.0",
@@ -66,10 +69,8 @@
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.22.8",
     "wagmi": "^2.14.7",
-    "zod": "^3.24.1",
-    "@opennextjs/aws": "^3.4.2",
-    "@opennextjs/cloudflare": "^0.5.3",
-    "wrangler": "^3.109.2"
+    "wrangler": "^3.109.2",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -19,7 +19,7 @@ export const useLogin = ({
 	const { wallets, createWallet } = useSolanaWallets();
 
 	const { login } = usePrivyLogin({
-		onComplete: async (user, isNewUser, _) => {
+		onComplete: async ({ user, isNewUser }) => {
 			if (isNewUser && !user.wallet) {
 				const wallet = await createWallet();
 				onComplete?.(wallet);
