@@ -18,6 +18,12 @@ importers:
 
   .:
     dependencies:
+      '@opennextjs/aws':
+        specifier: ^3.4.2
+        version: 3.4.2
+      '@opennextjs/cloudflare':
+        specifier: ^0.5.3
+        version: 0.5.3(wrangler@3.109.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@privy-io/react-auth':
         specifier: ^1.98.4
         version: 1.99.1(@solana/web3.js@1.98.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10))(@types/react@19.0.10)(aws4fetch@1.0.20)(bs58@6.0.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -159,9 +165,6 @@ importers:
       shadcn:
         specifier: ^2.1.8
         version: 2.3.0(typescript@5.7.3)
-      shadcn-ui:
-        specifier: ^0.9.4
-        version: 0.9.4(typescript@5.7.3)
       sharp:
         specifier: 0.32.6
         version: 0.32.6
@@ -183,6 +186,9 @@ importers:
       wagmi:
         specifier: ^2.14.7
         version: 2.14.11(@tanstack/query-core@5.66.4)(@tanstack/react-query@5.66.9(react@19.0.0))(@types/react@19.0.10)(aws4fetch@1.0.20)(bufferutil@4.0.9)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+      wrangler:
+        specifier: ^3.109.2
+        version: 3.109.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zod:
         specifier: ^3.24.1
         version: 3.24.2
@@ -190,12 +196,6 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.0
-      '@opennextjs/aws':
-        specifier: ^3.4.2
-        version: 3.4.2
-      '@opennextjs/cloudflare':
-        specifier: ^0.5.3
-        version: 0.5.3(wrangler@3.109.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@types/d3-force':
         specifier: ^3.0.10
         version: 3.0.10
@@ -235,9 +235,6 @@ importers:
       typescript:
         specifier: ^5
         version: 5.7.3
-      wrangler:
-        specifier: ^3.109.2
-        version: 3.109.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
 packages:
 
@@ -5116,10 +5113,6 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chalk@5.2.0:
-    resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-
   chalk@5.4.1:
     resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
@@ -8920,10 +8913,6 @@ packages:
 
   sha.js@2.4.11:
     resolution: {integrity: sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==}
-    hasBin: true
-
-  shadcn-ui@0.9.4:
-    resolution: {integrity: sha512-75nqu4+y4mlhNXGfHPoPd1r2fgqGQgSEPzPe8TV39WRinafKHuBX2xkgoQOwu+NhiRPKV5TrRSCZ5ytGrFU1oQ==}
     hasBin: true
 
   shadcn@2.3.0:
@@ -19075,8 +19064,6 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chalk@5.2.0: {}
-
   chalk@5.4.1: {}
 
   character-entities-html4@2.1.0: {}
@@ -23494,32 +23481,6 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
-
-  shadcn-ui@0.9.4(typescript@5.7.3):
-    dependencies:
-      '@antfu/ni': 0.21.12
-      '@babel/core': 7.26.9
-      '@babel/parser': 7.26.9
-      '@babel/plugin-transform-typescript': 7.26.8(@babel/core@7.26.9)
-      chalk: 5.2.0
-      commander: 10.0.1
-      cosmiconfig: 8.3.6(typescript@5.7.3)
-      diff: 5.2.0
-      execa: 7.2.0
-      fast-glob: 3.3.3
-      fs-extra: 11.3.0
-      https-proxy-agent: 6.2.1
-      lodash: 4.17.21
-      node-fetch: 3.3.2
-      ora: 6.3.1
-      prompts: 2.4.2
-      recast: 0.23.9
-      ts-morph: 18.0.0
-      tsconfig-paths: 4.2.0
-      zod: 3.24.2
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
 
   shadcn@2.3.0(typescript@5.7.3):
     dependencies:

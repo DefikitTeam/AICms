@@ -59,7 +59,6 @@
     "react-textarea-autosize": "^8.5.6",
     "recharts": "^2.15.0",
     "shadcn": "^2.1.8",
-    "shadcn-ui": "^0.9.4",
     "sharp": "0.32.6",
     "solana-agent-kit": "^1.2.0",
     "swr": "^2.3.0",
