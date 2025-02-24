@@ -34,10 +34,12 @@ interface DashboardConfig {
 
 const CodeSnippet = ({ 
   agentId, 
-  position = 'bottom-right'
+  position = 'bottom-right',
+  widgetUrl
 }: { 
   agentId: string;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  widgetUrl?: string;
 }) => {
   const code = `
     <!-- Add this to your <head> -->
@@ -50,6 +52,7 @@ const CodeSnippet = ({
         __html: \`AIChatWidget.init({
           agentId: '${agentId}',
           serverUrl: '${process.env.NEXT_PUBLIC_BACKEND_URL}',
+          widgetUrl: '${widgetUrl || process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL}',
           position: '${position}'
         });\`
       }}
@@ -325,6 +328,7 @@ function ConfigContent() {
               <CodeSnippet
                 agentId={config.agentId}
                 position={config.position}
+                widgetUrl={config.widgetUrl}
               />
             ) : (
               <div className="text-red-500 dark:text-red-400">

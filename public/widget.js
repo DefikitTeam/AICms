@@ -1,8 +1,24 @@
 window.AIChatWidget = {
   config: {},
   init: function(config) {
+    // Validate required config parameters
+    if (!config.widgetUrl) {
+      console.error('Widget URL is required');
+      return;
+    }
+
+    // Normalize the widget URL (remove trailing slash if present)
+    config.widgetUrl = config.widgetUrl.replace(/\/$/, '');
     this.config = config;
-    
+
+    // Verify the logo URL is accessible
+    const logoUrl = `${this.config.widgetUrl}/logo.png`;
+    this.verifyImageUrl(logoUrl).then(isValid => {
+      if (!isValid) {
+        console.warn(`Logo not found at ${logoUrl}, using fallback icon`);
+      }
+    });
+
     // Store auth token in localStorage for persistence
     if (config.authToken) {
       localStorage.setItem('ai-chat-widget-token', config.authToken);
@@ -28,6 +44,15 @@ window.AIChatWidget = {
     }
 
     this.renderWidget(widgetContainer);
+  },
+
+  verifyImageUrl: function(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
   },
 
   getStoredToken: function() {
@@ -114,6 +139,7 @@ window.AIChatWidget = {
           src="${this.config.widgetUrl}/logo.png" 
           alt="Chat with Agent"
           class="h-10 w-10"
+          onerror="this.onerror=null; this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\' class=\'h-6 w-6 text-white\'><path d=\'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\'></path></svg>';"
         />
       </div>
     `;
@@ -288,6 +314,7 @@ window.AIChatWidget = {
           src="${this.config.widgetUrl}/logo.png" 
           alt="Chat with Agent"
           class="h-8 w-8"
+          onerror="this.onerror=null; this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\' class=\'h-6 w-6 text-white\'><path d=\'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\'></path></svg>';"
         />
       </div>
     `;
