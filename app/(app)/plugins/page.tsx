@@ -46,7 +46,7 @@ const CodeSnippet = ({
     <link rel="stylesheet" href="${process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL}/styling.css" />
     <script src="${process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL}/widget.js"></script>
 
-    <!-- Add this before </body> -->
+    <!-- Add this to your </body> -->
     <script
       dangerouslySetInnerHTML={{
         __html: \`AIChatWidget.init({
