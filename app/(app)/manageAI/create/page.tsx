@@ -13,6 +13,7 @@ const CreateAgent = () => {
     handleSubmit,
     control,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
@@ -150,7 +151,7 @@ const CreateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} />
+              <AdvanceSetting register={register} watch={watch} />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
