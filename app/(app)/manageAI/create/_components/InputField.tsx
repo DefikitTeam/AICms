@@ -14,6 +14,26 @@ type InputFieldProps<TFieldValues extends FieldValues = FieldValues> = {
   type?: string;
 };
 
+function parseDescription(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.split(urlRegex).map((part, index) => {
+        if (part.match(urlRegex)) {
+            return (
+                <a
+                    key={index}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                    {part}
+                </a>
+            );
+        }
+        return part;
+    });
+}
+
 const InputField = ({
 	label,
 	name,
@@ -31,7 +51,11 @@ const InputField = ({
 			<label className="label flex items-center gap-1 mb-1">
 				<span className="label-text text-sm font-medium">{label}</span>
 				{description && (
-					<Tooltip content={description}>
+					<Tooltip content={
+                        <div className="max-w-[300px]">
+                            {parseDescription(description)}
+                        </div>
+                    }>
 						<CircleHelp size={16} />
 					</Tooltip>
 				)}

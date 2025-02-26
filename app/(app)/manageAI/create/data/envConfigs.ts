@@ -7,7 +7,7 @@ const envConfigs = [
 				label: 'Discord Application ID',
 				placeholder: '1326811252059672618',
 				isSecure: false,
-				description: 'The application ID of your Discord bot.',
+				description: 'The application ID of your Discord bot. More details at https://docs.discloud.com/en/suport/faq/id-bot',
 				type: 'text',
 			},
 			{
@@ -15,7 +15,7 @@ const envConfigs = [
 				label: 'Discord API Token',
 				placeholder: 'your-discord-api-token',
 				isSecure: true,
-				description: 'Bot token for Discord API.',
+				description: 'Bot token for Discord API. More details at https://discordgsm.com/guide/how-to-get-a-discord-bot-token',
 				type: 'text',
 			},
 			{
@@ -24,7 +24,7 @@ const envConfigs = [
 				placeholder: 'your-voice-channel-id',
 				isSecure: false,
 				description:
-					'The ID of the voice channel the bot should join (optional).',
+					'The ID of the voice channel the bot should join (optional). More details at https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID',
 				type: 'text',
 			},
 		],
@@ -37,7 +37,7 @@ const envConfigs = [
 				label: 'Telegram Bot Token',
 				placeholder: 'your-telegram-bot-token',
 				isSecure: true,
-				description: 'Bot token for Telegram API.',
+				description: 'Bot token for Telegram API. More details at https://core.telegram.org/bots/tutorial#obtain-your-bot-token',
 				type: 'text',
 			},
 		],

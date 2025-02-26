@@ -11,6 +11,12 @@ window.AIChatWidget = {
     config.widgetUrl = config.widgetUrl.replace(/\/$/, '');
     this.config = config;
 
+    // Generate or use provided roomId
+    this.config.roomId = config.roomId || this.generateRoomId();
+    
+    // Store roomId in localStorage for persistence
+    localStorage.setItem('ai-chat-widget-roomId', this.config.roomId);
+
     // Verify the logo URL is accessible
     const logoUrl = `${this.config.widgetUrl}/logo.png`;
     this.verifyImageUrl(logoUrl).then(isValid => {
@@ -46,6 +52,85 @@ window.AIChatWidget = {
     this.renderWidget(widgetContainer);
   },
 
+  // Save a message to localStorage history
+  saveMessageToHistory: function(message, isUser) {
+    const messageObj = {
+      text: message,
+      isUser,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Load current messages
+    const messages = this.loadMessageHistory();
+    
+    // Add new message
+    messages.push(messageObj);
+    
+    // Limit to last 50 messages to prevent localStorage overflow
+    const limitedMessages = messages.slice(-50);
+    
+    // Store back in localStorage
+    localStorage.setItem(`ai-chat-widget-messages-${this.config.roomId}`, JSON.stringify(limitedMessages));
+    
+    return limitedMessages;
+  },
+  
+  // Load message history from localStorage
+  loadMessageHistory: function() {
+    const savedMessages = localStorage.getItem(`ai-chat-widget-messages-${this.config.roomId}`);
+    return savedMessages ? JSON.parse(savedMessages) : [];
+  },
+  
+  // Render message history to chat container
+  renderMessageHistory: function(messagesContainer) {
+    const messages = this.loadMessageHistory();
+    
+    if (messages.length === 0) return;
+    
+    // Clear existing messages
+    messagesContainer.innerHTML = '';
+    
+    // Render each message
+    messages.forEach(msg => {
+      if (msg.isUser) {
+        messagesContainer.innerHTML += `
+          <div class="flex justify-end">
+            <div class="max-w-[80%]">
+              <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
+                ${msg.text}
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        messagesContainer.innerHTML += `
+          <div class="flex justify-start">
+            <div class="max-w-[80%]">
+              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
+                ${msg.text}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    });
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  },
+
+  generateRoomId: function() {
+    // Get stored roomId or generate new one based on domain
+    const storedRoomId = localStorage.getItem('ai-chat-widget-roomId');
+    if (storedRoomId) {
+      return storedRoomId;
+    }
+    
+    // Generate roomId based on domain name
+    const domain = window.location.hostname;
+    return `room-${domain}-${Date.now()}`;
+  },
+
   verifyImageUrl: function(url) {
     return new Promise((resolve) => {
       const img = new Image();
@@ -72,7 +157,8 @@ window.AIChatWidget = {
           agentId: this.config.agentId,
           text: message,
           userId: 'widget-user',
-          userName: 'Widget User'
+          userName: 'Widget User',
+          roomId: this.config.roomId
         })
       });
       // ... rest of send message logic
@@ -187,6 +273,9 @@ window.AIChatWidget = {
     const form = dialog.querySelector('#chat-form');
     const messagesContainer = dialog.querySelector('#chat-messages');
     
+    // Load and render existing chat messages
+    this.renderMessageHistory(messagesContainer);
+    
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const input = form.querySelector('input');
@@ -202,7 +291,8 @@ window.AIChatWidget = {
       submitButton.setAttribute('disabled', 'disabled');
 
       try {
-        // Add user message to UI
+        // Save user message to history and add to UI
+        this.saveMessageToHistory(message, true);
         messagesContainer.innerHTML += `
           <div class="flex justify-end">
             <div class="max-w-[80%]">
@@ -244,7 +334,8 @@ window.AIChatWidget = {
             agentId: this.config.agentId, 
             text: message,
             userId: 'widget-user',
-            userName: 'Widget User'
+            userName: 'Widget User',
+            roomId: this.config.roomId
           }),
         });
 
@@ -255,6 +346,9 @@ window.AIChatWidget = {
 
         const data = await response.json();
         const reply = Array.isArray(data) && data.length > 0 ? data[0].text : 'No reply from agent.';
+
+        // Save agent reply to history
+        this.saveMessageToHistory(reply, false);
 
         // Replace loading bubble with actual response
         const loadingBubble = document.getElementById(loadingBubbleId);
@@ -276,11 +370,16 @@ window.AIChatWidget = {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       } catch (error) {
         console.error('Error sending message:', error);
+        
+        const errorMessage = 'Failed to get response from agent. Please try again.';
+        // Save error message to history
+        this.saveMessageToHistory(errorMessage, false);
+        
         messagesContainer.innerHTML += `
           <div class="flex justify-start">
             <div class="max-w-[80%]">
               <div class="bg-red-100 text-red-600 px-4 py-2 rounded-2xl rounded-tl-sm">
-                Failed to get response from agent. Please try again.
+                ${errorMessage}
               </div>
             </div>
           </div>
