@@ -60,9 +60,11 @@ const CodeSnippet = ({
   `;
   
   return (
-    <pre className="bg-gray-100 dark:bg-neutral-800 p-4 rounded-lg">
-      <code>{code}</code>
-    </pre>
+    <div className="w-full max-w-full overflow-hidden">
+      <pre className="bg-gray-100 dark:bg-neutral-800 p-4 rounded-lg text-[0.6rem] sm:text-sm w-full max-w-full overflow-x-auto">
+        <code className="whitespace-pre-wrap break-all overflow-wrap-anywhere w-full block">{code}</code>
+      </pre>
+    </div>
   );
 };
 
@@ -208,7 +210,8 @@ function ConfigContent() {
 
   return (
     <div className="grid gap-8">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+      {/* Form container - Apply consistent padding */}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="agentUrl" className="text-black dark:text-white">Agent ID</Label>
@@ -297,12 +300,12 @@ function ConfigContent() {
         </form>
       </div>
 
-      {/* Preview and Integration Code */}
+      {/* Preview and Integration Code - Make sure to use the same padding as the form container */}
       {isConfigured && (
         <div className="space-y-8">
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">Preview</h2>
-            <div className="relative border dark:border-neutral-600 rounded-lg p-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-black dark:text-white">Preview</h2>
+            <div className="relative border dark:border-neutral-600 rounded-lg p-2 sm:p-4 text-xs sm:text-base">
               {config.displayMode === 'widget' && (
                 <p className="text-black dark:text-white">Look at the right bottom corner of the screen</p>
               )}
@@ -322,16 +325,18 @@ function ConfigContent() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">Integration Code</h2>
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-black dark:text-white w-full">Integration Code</h2>
             {authenticated ? (
-              <CodeSnippet
-                agentId={config.agentId}
-                position={config.position}
-                widgetUrl={config.widgetUrl}
-              />
+              <div className="w-full max-w-full overflow-hidden">
+                <CodeSnippet
+                  agentId={config.agentId}
+                  position={config.position}
+                  widgetUrl={config.widgetUrl}
+                />
+              </div>
             ) : (
-              <div className="text-red-500 dark:text-red-400">
+              <div className="text-red-500 dark:text-red-400 text-xs sm:text-base">
                 Please login to get your authentication token
               </div>
             )}
@@ -345,8 +350,8 @@ function ConfigContent() {
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
-      <div className="container mx-auto p-6 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8 text-black dark:text-white">
+      <div className="container mx-auto p-4 sm:p-6 max-w-4xl">
+        <h1 className="text-2xl sm:text-3xl text-center font-bold mb-8 text-black dark:text-white">
           Agent Widget Configuration
         </h1>
 

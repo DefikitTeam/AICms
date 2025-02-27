@@ -167,6 +167,23 @@ window.AIChatWidget = {
     }
   },
 
+  clearChat: function() {
+    // Remove chat history
+    localStorage.removeItem(`ai-chat-widget-messages-${this.config.roomId}`);
+    
+    // Remove roomId
+    localStorage.removeItem('ai-chat-widget-roomId');
+    
+    // Generate new roomId
+    this.config.roomId = this.generateRoomId();
+    
+    // Store new roomId in localStorage
+    localStorage.setItem('ai-chat-widget-roomId', this.config.roomId);
+    
+    // Return empty message history
+    return [];
+  },
+
   renderWidget: function(container) {
     // Create button and dialog
     const button = document.createElement('button');
@@ -184,34 +201,86 @@ window.AIChatWidget = {
     dialog.className = 'ai-chat-widget-modal';
     dialog.style.visibility = 'hidden';
     dialog.style.opacity = '0';
-    dialog.style.transform = 'scale(0)';
+    
+    // Set consistent transform state regardless of screen size
+    dialog.style.transform = 'scale(0.95)';
     dialog.style.transformOrigin = 'bottom right';
-    dialog.style.bottom = '70px'; // Add this line to reduce space between button and dialog
+    dialog.style.bottom = '70px'; // Space between button and dialog
+    dialog.style.zIndex = '99999'; // Ensure highest z-index
+    
+    // Apply consistent styles for all screen sizes (mobile-like layout)
+    dialog.style.width = 'calc(100% - 20px)'; // Add some margin on edges
+    dialog.style.maxWidth = '400px'; // Set a reasonable max-width for desktop
+    dialog.style.height = 'auto';
+    dialog.style.maxHeight = 'calc(90vh - 80px)'; // Leave space for button
+    dialog.style.borderRadius = '0.75rem';
+    dialog.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.2)';
+    dialog.style.position = 'fixed';
+    
+    // Set initial position based on container's data-position attribute
+    const initialPosition = container.getAttribute('data-position') || 'bottom-right';
+    this.adjustDialogPosition(dialog, initialPosition);
+    
+    // Handle resize events to maintain proportions only
+    window.addEventListener('resize', () => {
+      // Adjust max-width based on screen size
+      if (window.matchMedia('(max-width: 480px)').matches) {
+        dialog.style.maxWidth = '100%';
+      } else {
+        dialog.style.maxWidth = '400px';
+      }
+      
+      // Reapply position styles based on container position attribute
+      const position = container.getAttribute('data-position');
+      this.adjustDialogPosition(dialog, position);
+    });
     
     // Remove the individual margin styling since it's handled in CSS
     container.style.margin = '0';
     
     dialog.innerHTML = `
-      <div class="flex flex-col bg-white dark:bg-neutral-800 h-full">
+      <div class="flex flex-col bg-white dark:bg-neutral-800 h-full rounded-lg overflow-hidden">
         <div class="border-b p-4 flex justify-between items-center dark:border-neutral-700">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">AI Assistant</h3>
           <button class="close-button text-gray-500 hover:text-gray-700 dark:text-gray-200 dark:hover:text-gray-100">&times;</button>
         </div>
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages"></div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 -webkit-overflow-scrolling-touch" id="chat-messages"></div>
         <div class="border-t dark:border-neutral-700 dark:bg-neutral-700">
-          <form class="flex flex-wrap gap-2" id="chat-form">
-            <input 
-              name="message" 
-              class="flex-1 min-w-0 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 text-black dark:text-white dark:placeholder-gray-400" 
-              placeholder="Type a message..."
-            />
-            <button 
-              type="submit" 
-              class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 text-sm font-medium transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
-            >
-              Send
-            </button>
-          </form>
+          <div class="p-2" id="chat-form-container">
+            <!-- Replace the form with a modified version that preserves button positions -->
+            <form class="flex flex-row items-center gap-2" id="chat-form" style="display: flex !important; flex-wrap: nowrap !important;">
+              <div style="flex: 0 0 auto;">
+                <button 
+                  type="button" 
+                  id="clear-chat-button"
+                  class="rounded-md bg-gray-200 dark:bg-neutral-600 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-neutral-500 text-sm font-medium transition-colors duration-200"
+                  style="width: 36px; height: 36px; padding: 0; min-width: 36px;"
+                  title="Clear chat history"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+              <input 
+                name="message" 
+                class="flex-1 min-w-0 rounded-md border border-neutral-700 p-2 text-sm focus:outline-none dark:bg-neutral-700 dark:border-neutral-600 text-black dark:text-white dark:placeholder-gray-400" 
+                style="flex: 1 1 auto; min-width: 0;"
+                placeholder="Type a message..."
+              />
+              <div style="flex: 0 0 auto;">
+                <button 
+                  type="submit" 
+                  class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 text-sm font-medium transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+                  style="white-space: nowrap; height: 36px;"
+                >
+                  Send
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     `;
@@ -237,6 +306,11 @@ window.AIChatWidget = {
         requestAnimationFrame(() => {
           dialog.style.opacity = '1';
           dialog.style.transform = 'scale(1)';
+          
+          // Ensure dialog is properly positioned on small screens when opened
+          if (window.matchMedia('(max-width: 640px)').matches) {
+            dialog.style.transform = 'translateY(0)';
+          }
         });
         button.innerHTML = `
           <div class="flex items-center justify-center w-full h-full">
@@ -272,6 +346,22 @@ window.AIChatWidget = {
     // Handle chat form submission
     const form = dialog.querySelector('#chat-form');
     const messagesContainer = dialog.querySelector('#chat-messages');
+    
+    // Add clear chat button handler
+    const clearChatButton = dialog.querySelector('#clear-chat-button');
+    clearChatButton.addEventListener('click', () => {
+      this.clearChat();
+      messagesContainer.innerHTML = '';
+      
+      // Show a system message that the chat has been cleared
+      messagesContainer.innerHTML = `
+        <div class="flex justify-center my-4">
+          <div class="text-center bg-gray-100 dark:bg-neutral-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm">
+            Chat history cleared. You are now in a new conversation.
+          </div>
+        </div>
+      `;
+    });
     
     // Load and render existing chat messages
     this.renderMessageHistory(messagesContainer);
@@ -398,11 +488,102 @@ window.AIChatWidget = {
     container.appendChild(button);
     container.appendChild(dialog);
     document.body.appendChild(container);
+
+    // Ensure the container itself has proper styling
+    container.style.position = 'fixed';
+    container.style.zIndex = '99998'; // Just below dialog
+    
+    // Position the container based on its data-position attribute
+    const position = container.getAttribute('data-position') || 'bottom-right';
+    if (position === 'bottom-left') {
+      container.style.bottom = '20px';
+      container.style.left = '20px';
+      container.style.right = 'auto';
+      container.style.top = 'auto';
+    } else if (position === 'top-right') {
+      container.style.top = '20px';
+      container.style.right = '20px';
+      container.style.bottom = 'auto';
+      container.style.left = 'auto';
+    } else if (position === 'top-left') {
+      container.style.top = '20px';
+      container.style.left = '20px';
+      container.style.bottom = 'auto';
+      container.style.right = 'auto';
+    } else { // default: bottom-right
+      container.style.bottom = '20px';
+      container.style.right = '20px';
+      container.style.top = 'auto';
+      container.style.left = 'auto';
+    }
+    
+    // Make the button more visible and accessible on mobile
+    button.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+    button.style.zIndex = '99998';
+    
+    // Fix iOS Safari scrolling issues
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      messagesContainer.style.WebkitOverflowScrolling = 'touch';
+    }
+    
+    // Apply specific fixes for top positions on mobile
+    if (position === 'top-right' || position === 'top-left') {
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        // Fix dialog positioning for top positions on mobile
+        dialog.style.top = '70px'; // Position below the widget button
+        dialog.style.bottom = 'auto';
+        dialog.style.transformOrigin = position === 'top-right' ? 'top right' : 'top left';
+        
+        // Fix the gap below input field
+        const formContainer = dialog.querySelector('#chat-form-container');
+        if (formContainer) {
+          formContainer.style.paddingBottom = '0';
+          formContainer.style.marginBottom = '0';
+        }
+        
+        const form = dialog.querySelector('#chat-form');
+        if (form) {
+          form.style.marginBottom = '0';
+        }
+        
+        // Add a CSS class to help with targeting this specific layout
+        dialog.classList.add(`${position}-mobile`);
+      }
+    }
+  },
+
+  // Add a new helper method for positioning the dialog
+  adjustDialogPosition: function(dialog, position) {
+    // Reset all positions first
+    dialog.style.top = 'auto';
+    dialog.style.bottom = 'auto';
+    dialog.style.left = 'auto';
+    dialog.style.right = 'auto';
+    
+    if (position === 'bottom-left') {
+      dialog.style.bottom = '70px';
+      dialog.style.left = '10px';
+      dialog.style.transformOrigin = 'bottom left';
+    } else if (position === 'top-right') {
+      dialog.style.top = '70px';
+      dialog.style.right = '10px';
+      dialog.style.transformOrigin = 'top right';
+    } else if (position === 'top-left') {
+      dialog.style.top = '70px';
+      dialog.style.left = '10px';
+      dialog.style.transformOrigin = 'top left';
+    } else { // default: bottom-right
+      dialog.style.bottom = '70px';
+      dialog.style.right = '10px';
+      dialog.style.transformOrigin = 'bottom right';
+    }
   },
 
   closeWidget: function(dialog, button) {
+    // Use the same animation style for both desktop and mobile
     dialog.style.opacity = '0';
-    dialog.style.transform = 'scale(0)';
+    dialog.style.transform = 'scale(0.95)';
+    
     setTimeout(() => {
       dialog.style.visibility = 'hidden';
     }, 200);
@@ -492,4 +673,91 @@ function initializeWidget() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initializeWidget);
+document.addEventListener('DOMContentLoaded', () => {
+  initializeWidget();
+  // Add viewport adjustment check after initial load
+  setTimeout(adjustWidgetForViewport, 500);
+});
+
+// Add a check for viewport size that adjusts styling on page load
+function adjustWidgetForViewport() {
+  const container = document.getElementById('ai-chat-widget-container');
+  if (!container) return;
+  
+  const dialog = container.querySelector('.ai-chat-widget-modal');
+  if (!dialog) return;
+  
+  const position = container.getAttribute('data-position') || 'bottom-right';
+  
+  // Apply consistent mobile-like layout regardless of screen size
+  dialog.style.width = 'calc(100% - 20px)';
+  dialog.style.maxWidth = window.matchMedia('(max-width: 480px)').matches ? '100%' : '400px';
+  dialog.style.height = 'auto';
+  dialog.style.maxHeight = 'calc(90vh - 80px)';
+  dialog.style.borderRadius = '0.75rem';
+  
+  // Call the positioning helper from AIChatWidget
+  if (window.AIChatWidget && typeof window.AIChatWidget.adjustDialogPosition === 'function') {
+    window.AIChatWidget.adjustDialogPosition(dialog, position);
+  }
+  
+  // Special handling for top positions
+  if (position === 'top-right' || position === 'top-left') {
+    // Fix the chat form container and input field gap
+    const formContainer = dialog.querySelector('#chat-form-container');
+    if (formContainer) {
+      formContainer.style.paddingBottom = '0';
+      formContainer.style.marginBottom = '0';
+      formContainer.style.borderBottom = 'none';
+    }
+    
+    // Fix any padding in the form itself
+    const form = dialog.querySelector('#chat-form');
+    if (form) {
+      form.style.marginBottom = '0';
+      form.style.paddingBottom = '8px';
+    }
+  }
+  
+  // Detect iOS Safari and add additional styles
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    const messagesContainer = dialog.querySelector('#chat-messages');
+    if (messagesContainer) {
+      messagesContainer.style.WebkitOverflowScrolling = 'touch';
+    }
+  }
+
+  // Form layout fixes that apply to all screen sizes
+  const form = container.querySelector('#chat-form');
+  if (!form) return;
+  
+  form.style.display = 'flex';
+  form.style.flexDirection = 'row';
+  form.style.flexWrap = 'nowrap';
+  form.style.alignItems = 'center';
+  form.style.width = '100%';
+  
+  const formContainer = container.querySelector('#chat-form-container');
+  if (formContainer) {
+    formContainer.style.padding = '8px';
+  }
+  
+  const input = form.querySelector('input');
+  if (input) {
+    input.style.flex = '1 1 auto';
+    input.style.minWidth = '0';
+  }
+  
+  const buttonContainers = form.querySelectorAll('div');
+  buttonContainers.forEach(div => {
+    div.style.flex = '0 0 auto';
+  });
+}
+
+// Listen for orientation changes on mobile
+window.addEventListener('orientationchange', adjustWidgetForViewport);
+
+// Attach event listener for load events
+window.addEventListener('load', () => {
+  setTimeout(adjustWidgetForViewport, 100);
+});
