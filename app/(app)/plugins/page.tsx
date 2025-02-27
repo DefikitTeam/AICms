@@ -7,7 +7,13 @@ import { usePrivy } from '@privy-io/react-auth';
 import { Button } from "@/components/ui/button";
 import { Input } from "./_components/ui/input";
 import { Label } from "./_components/ui/label";
-import { Select } from "./_components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DisplayMode } from '@/lib/embed/types';
 import { useSearchParams } from 'next/navigation';
 
@@ -278,20 +284,31 @@ function ConfigContent() {
 
           {config.displayMode === 'widget' && (
             <div className="space-y-2">
-              <Label htmlFor="position" className="text-black dark:text-white">Widget Position</Label>
-              <Select<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>
-                id="position"
+              <Label htmlFor="widget-position" className="text-black dark:text-white">Widget Position</Label>
+              <Select
                 value={config.position}
-                onValueChange={(value) => setConfig(prev => ({
-                  ...prev,
-                  position: value
-                }))}
-                className="dark:bg-neutral-700 dark:text-white dark:border-neutral-600"
+                onValueChange={(value: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left') => 
+                  setConfig(prev => ({
+                    ...prev,
+                    position: value
+                  }))
+                }
               >
-                <option value="bottom-right">Bottom Right</option>
-                <option value="bottom-left">Bottom Left</option>
-                <option value="top-right">Top Right</option>
-                <option value="top-left">Top Left</option>
+                <SelectTrigger id="widget-position" className="dark:bg-neutral-700 dark:text-white dark:border-neutral-600">
+                  <SelectValue placeholder="Select position" />
+                </SelectTrigger>
+                <SelectContent
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                  position="popper"
+                  align="start"
+                  side="bottom"
+                  sideOffset={5}
+                >
+                  <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                  <SelectItem value="bottom-left">Bottom Left</SelectItem>
+                  <SelectItem value="top-right">Top Right</SelectItem>
+                  <SelectItem value="top-left">Top Left</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           )}
