@@ -23,6 +23,7 @@ const UpdateAgent = () => {
     control,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<FieldValues>();
 
@@ -287,7 +288,7 @@ const UpdateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} />
+              <AdvanceSetting register={register} watch={watch} />
             </Tabs.Content>
           </Box>
         </Tabs.Root>

@@ -7,7 +7,13 @@ import { usePrivy } from '@privy-io/react-auth';
 import { Button } from "@/components/ui/button";
 import { Input } from "./_components/ui/input";
 import { Label } from "./_components/ui/label";
-import { Select } from "./_components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DisplayMode } from '@/lib/embed/types';
 import { useSearchParams } from 'next/navigation';
 
@@ -60,9 +66,11 @@ const CodeSnippet = ({
   `;
   
   return (
-    <pre className="bg-gray-100 dark:bg-neutral-800 p-4 rounded-lg">
-      <code>{code}</code>
-    </pre>
+    <div className="w-full max-w-full overflow-hidden">
+      <pre className="bg-gray-100 dark:bg-neutral-800 p-4 rounded-lg text-[0.6rem] sm:text-sm w-full max-w-full overflow-x-auto">
+        <code className="whitespace-pre-wrap break-all overflow-wrap-anywhere w-full block">{code}</code>
+      </pre>
+    </div>
   );
 };
 
@@ -208,7 +216,8 @@ function ConfigContent() {
 
   return (
     <div className="grid gap-8">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
+      {/* Form container - Apply consistent padding */}
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="agentUrl" className="text-black dark:text-white">Agent ID</Label>
@@ -275,20 +284,31 @@ function ConfigContent() {
 
           {config.displayMode === 'widget' && (
             <div className="space-y-2">
-              <Label htmlFor="position" className="text-black dark:text-white">Widget Position</Label>
-              <Select<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>
-                id="position"
+              <Label htmlFor="widget-position" className="text-black dark:text-white">Widget Position</Label>
+              <Select
                 value={config.position}
-                onValueChange={(value) => setConfig(prev => ({
-                  ...prev,
-                  position: value
-                }))}
-                className="dark:bg-neutral-700 dark:text-white dark:border-neutral-600"
+                onValueChange={(value: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left') => 
+                  setConfig(prev => ({
+                    ...prev,
+                    position: value
+                  }))
+                }
               >
-                <option value="bottom-right">Bottom Right</option>
-                <option value="bottom-left">Bottom Left</option>
-                <option value="top-right">Top Right</option>
-                <option value="top-left">Top Left</option>
+                <SelectTrigger id="widget-position" className="dark:bg-neutral-700 dark:text-white dark:border-neutral-600">
+                  <SelectValue placeholder="Select position" />
+                </SelectTrigger>
+                <SelectContent
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                  position="popper"
+                  align="start"
+                  side="bottom"
+                  sideOffset={5}
+                >
+                  <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                  <SelectItem value="bottom-left">Bottom Left</SelectItem>
+                  <SelectItem value="top-right">Top Right</SelectItem>
+                  <SelectItem value="top-left">Top Left</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           )}
@@ -297,12 +317,12 @@ function ConfigContent() {
         </form>
       </div>
 
-      {/* Preview and Integration Code */}
+      {/* Preview and Integration Code - Make sure to use the same padding as the form container */}
       {isConfigured && (
         <div className="space-y-8">
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">Preview</h2>
-            <div className="relative border dark:border-neutral-600 rounded-lg p-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-black dark:text-white">Preview</h2>
+            <div className="relative border dark:border-neutral-600 rounded-lg p-2 sm:p-4 text-xs sm:text-base">
               {config.displayMode === 'widget' && (
                 <p className="text-black dark:text-white">Look at the right bottom corner of the screen</p>
               )}
@@ -322,16 +342,18 @@ function ConfigContent() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">Integration Code</h2>
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-black dark:text-white w-full">Integration Code</h2>
             {authenticated ? (
-              <CodeSnippet
-                agentId={config.agentId}
-                position={config.position}
-                widgetUrl={config.widgetUrl}
-              />
+              <div className="w-full max-w-full overflow-hidden">
+                <CodeSnippet
+                  agentId={config.agentId}
+                  position={config.position}
+                  widgetUrl={config.widgetUrl}
+                />
+              </div>
             ) : (
-              <div className="text-red-500 dark:text-red-400">
+              <div className="text-red-500 dark:text-red-400 text-xs sm:text-base">
                 Please login to get your authentication token
               </div>
             )}
@@ -345,8 +367,8 @@ function ConfigContent() {
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
-      <div className="container mx-auto p-6 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8 text-black dark:text-white">
+      <div className="container mx-auto p-4 sm:p-6 max-w-4xl">
+        <h1 className="text-2xl sm:text-3xl text-center font-bold mb-8 text-black dark:text-white">
           Agent Widget Configuration
         </h1>
 
