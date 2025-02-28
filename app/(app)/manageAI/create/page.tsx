@@ -1,6 +1,6 @@
 "use client";
 import { Box, Tabs } from "@radix-ui/themes";
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAgent from "../_hooks/useAgent";
@@ -9,9 +9,11 @@ import BasicInfo from "./_components/BasicInfo";
 
 const CreateAgent = () => {
   const {
+    reset,
     register,
     handleSubmit,
     control,
+    setValue,
     getValues,
     formState: { errors },
   } = useForm<FieldValues>({
@@ -35,9 +37,64 @@ const CreateAgent = () => {
   const chatArray = useFieldArray({ control, name: "chat" });
   const postArray = useFieldArray({ control, name: "post" });
   const postExamplesArray = useFieldArray({ control, name: "postExamples" });
-  const messageExamplesArray = useFieldArray({ control, name: "messageExamples" });
+  const messageExamplesArray = useFieldArray({
+    control,
+    name: "messageExamples",
+  });
   const bioArray = useFieldArray({ control, name: "bio" });
   const loreArray = useFieldArray({ control, name: "lore" });
+
+  useEffect(() => {
+    const templateData = localStorage.getItem("agentTemplate");
+    console.log(templateData);
+    if (templateData) {
+      const agent = JSON.parse(templateData);
+      console.log(agent);
+      const character = agent.templateAgent.character;
+
+      const fieldsToSet = [
+        "name",
+        "adjectives",
+        "knowledge",
+        "topics",
+        "system",
+        "clients",
+        "modelProvider",
+        "bio",
+        "lore",
+        "postExamples",
+      ];
+
+      fieldsToSet.forEach((field) => setValue(field, character[field]));
+
+      ["all", "chat", "post"].forEach((style) =>
+        setValue(style, character.style[style]),
+      );
+
+      const defaultSecrets = {
+        DISCORD_APPLICATION_ID: "",
+        DISCORD_API_TOKEN: "",
+        DISCORD_VOICE_CHANNEL_ID: "",
+        TELEGRAM_BOT_TOKEN: "",
+        // ... add other default secret fields
+      };
+
+      setValue("secrets", {
+        ...defaultSecrets,
+        ...character.settings.secrets,
+      });
+
+      setValue(
+        "messageExamples",
+        character.messageExamples.map((message: any) => ({
+          user: message[0].content.text,
+          agent: message[1].content.text,
+        })),
+      );
+
+      localStorage.removeItem("agentTemplate");
+    }
+  }, [setValue]);
 
   const fieldArrays = {
     topics: topicsArray,

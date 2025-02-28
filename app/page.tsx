@@ -16,10 +16,10 @@ const Graph = () => {
             <p className="">A modular network of interoperable DeFi agents</p>
             <LoginButton />
           </div>
-          <div className="w-full flex-1 max-w-2xl rounded-md border border-neutral-200 dark:border-neutral-700 relative">
-            <GraphComponent />
-            <BorderBeam />
-          </div>
+          {/*<div className="w-full flex-1 max-w-2xl rounded-md border border-neutral-200 dark:border-neutral-700 relative">*/}
+          {/*  /!*<GraphComponent />*!/*/}
+          {/*  /!*<BorderBeam />*!/*/}
+          {/*</div>*/}
         </div>
       </div>
     </div>
