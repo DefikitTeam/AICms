@@ -12,22 +12,49 @@ const clientSettingsMap = {
     'Discord Settings': 'discord',
     'Telegram Settings': 'telegram',
     'Twitter/X Settings': 'twitter',
-		'Twitter Action Processing Settings': 'twitter',
+    'Twitter Post Interval Settings': 'twitter',
+	'Twitter Action Processing Settings': 'twitter',
     // Add other client-setting mappings as needed
 };
 
+const providerSettingsMap = {
+    'AI Model Settings': 'openai',
+    'Eternal AI Settings': 'eternali',
+    'Grok Settings': 'grok',
+    'Groq Settings': 'groq',
+    'OpenRouter Settings': 'openrouter',
+    'Google Generative AI Settings': 'google',
+    'Ali Bailian Settings': 'ali_bailian',
+    'NanoGPT Settings': 'nanogpt',
+    'Hyperbolic AI Settings': 'hyperbolic',
+    'Anthropic Settings': 'anthropic',
+    'Ollama Settings': 'ollama',
+    'Heurist Settings': 'heurist',
+    'Venice Settings': 'venice',
+}
+
 const AdvanceSetting = ({ register, watch }: ReactHookFormProps) => {
     const selectedClients = watch('clients') || [];
+    const selectedProvider = watch('modelProvider');
 
     const shouldShowConfig = (configName: string) => {
-        // Always show configs that aren't client-specific
-        if (!clientSettingsMap[configName as keyof typeof clientSettingsMap]) {
-            return true;
+        const isClientConfig = configName in clientSettingsMap;
+        const isProviderConfig = configName in providerSettingsMap;
+        
+        // If it's a client-specific config, check if that client is selected
+        if (isClientConfig) {
+            const clientKey = configName as keyof typeof clientSettingsMap;
+            return selectedClients.includes(clientSettingsMap[clientKey]);
         }
-        // Show client-specific configs only if the client is selected
-        return selectedClients.includes(
-            clientSettingsMap[configName as keyof typeof clientSettingsMap]
-        );
+        
+        // If it's a provider-specific config, check if that provider is selected
+        if (isProviderConfig) {
+            const providerKey = configName as keyof typeof providerSettingsMap;
+            return providerSettingsMap[providerKey] === selectedProvider;
+        }
+        
+        // If it's not specific to either client or provider, always show it
+        return !isClientConfig && !isProviderConfig;
     };
 
     return (

@@ -43,29 +43,6 @@ const envConfigs = [
 		],
 	},
 	{
-		name: 'Cache Settings',
-		value: [
-			{
-				name: 'CACHE_STORE',
-				label: 'Cache Store',
-				placeholder: 'database',
-				isSecure: false,
-				description:
-					'Specifies the cache storage method. Options: redis, filesystem.',
-				type: 'text',
-			},
-			{
-				name: 'REDIS_URL',
-				label: 'Redis URL',
-				placeholder: 'redis://localhost:6379',
-				isSecure: false,
-				description:
-					'URL for Redis instance. Can be a local or cloud-hosted Redis.',
-				type: 'text',
-			},
-		],
-	},
-	{
 		name: 'AI Model Settings',
 		value: [
 			{
@@ -279,115 +256,115 @@ const envConfigs = [
 			},
 		],
 	},
-	{
-		name: 'Speech Synthesis Settings',
-		value: [
-			{
-				name: 'ELEVENLABS_XI_API_KEY',
-				label: 'ElevenLabs XI API Key',
-				placeholder: 'your-elevenlabs-xi-api-key',
-				isSecure: true,
-				description: 'API key from ElevenLabs for speech synthesis.',
-				type: 'text',
-			},
-		],
-	},
-	{
-		name: 'Direct Client Settings',
-		value: [
-			{
-				name: 'EXPRESS_MAX_PAYLOAD',
-				label: 'Express Max Payload',
-				placeholder: '100kb',
-				isSecure: false,
-				description:
-					'Maximum payload size for Express.js. Defaults to 100kb.',
-				type: 'text',
-			},
-		],
-	},
-	{
-		name: 'ElevenLabs Settings',
-		value: [
-			{
-				name: 'ELEVENLABS_MODEL_ID',
-				label: 'ElevenLabs Model ID',
-				placeholder: 'eleven_multilingual_v2',
-				isSecure: false,
-				description: 'Model ID for ElevenLabs.',
-				type: 'text',
-			},
-			{
-				name: 'ELEVENLABS_VOICE_ID',
-				label: 'ElevenLabs Voice ID',
-				placeholder: '21m00Tcm4TlvDq8ikWAM',
-				isSecure: false,
-				description: 'Voice ID for ElevenLabs.',
-				type: 'text',
-			},
-			{
-				name: 'ELEVENLABS_VOICE_STABILITY',
-				label: 'ElevenLabs Voice Stability',
-				placeholder: '0.5',
-				isSecure: false,
-				description: 'Stability parameter for the ElevenLabs voice.',
-				type: 'number',
-			},
-			{
-				name: 'ELEVENLABS_VOICE_SIMILARITY_BOOST',
-				label: 'ElevenLabs Voice Similarity Boost',
-				placeholder: '0.9',
-				isSecure: false,
-				description: 'Similarity boost parameter for the ElevenLabs voice.',
-				type: 'number',
-			},
-			{
-				name: 'ELEVENLABS_VOICE_STYLE',
-				label: 'ElevenLabs Voice Style',
-				placeholder: '0.66',
-				isSecure: false,
-				description: 'Style parameter for the ElevenLabs voice.',
-				type: 'number',
-			},
-			{
-				name: 'ELEVENLABS_VOICE_USE_SPEAKER_BOOST',
-				label: 'ElevenLabs Voice Use Speaker Boost',
-				placeholder: 'false',
-				isSecure: false,
-				description:
-					'Flag to use speaker boost in ElevenLabs voice synthesis.',
-				type: 'boolean',
-			},
-			{
-				name: 'ELEVENLABS_OPTIMIZE_STREAMING_LATENCY',
-				label: 'ElevenLabs Optimize Streaming Latency',
-				placeholder: '4',
-				isSecure: false,
-				description:
-					'Optimization parameter for streaming latency in ElevenLabs.',
-				type: 'number',
-			},
-			{
-				name: 'ELEVENLABS_OUTPUT_FORMAT',
-				label: 'ElevenLabs Output Format',
-				placeholder: 'pcm_16000',
-				isSecure: false,
-				description: 'Output format for ElevenLabs speech synthesis.',
-				type: 'text',
-			},
-		],
-	},
+	// {
+	// 	name: 'Speech Synthesis Settings',
+	// 	value: [
+	// 		{
+	// 			name: 'ELEVENLABS_XI_API_KEY',
+	// 			label: 'ElevenLabs XI API Key',
+	// 			placeholder: 'your-elevenlabs-xi-api-key',
+	// 			isSecure: true,
+	// 			description: 'API key from ElevenLabs for speech synthesis.',
+	// 			type: 'text',
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	name: 'Direct Client Settings',
+	// 	value: [
+	// 		{
+	// 			name: 'EXPRESS_MAX_PAYLOAD',
+	// 			label: 'Express Max Payload',
+	// 			placeholder: '100kb',
+	// 			isSecure: false,
+	// 			description:
+	// 				'Maximum payload size for Express.js. Defaults to 100kb.',
+	// 			type: 'text',
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	name: 'ElevenLabs Settings',
+	// 	value: [
+	// 		{
+	// 			name: 'ELEVENLABS_MODEL_ID',
+	// 			label: 'ElevenLabs Model ID',
+	// 			placeholder: 'eleven_multilingual_v2',
+	// 			isSecure: false,
+	// 			description: 'Model ID for ElevenLabs.',
+	// 			type: 'text',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_VOICE_ID',
+	// 			label: 'ElevenLabs Voice ID',
+	// 			placeholder: '21m00Tcm4TlvDq8ikWAM',
+	// 			isSecure: false,
+	// 			description: 'Voice ID for ElevenLabs.',
+	// 			type: 'text',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_VOICE_STABILITY',
+	// 			label: 'ElevenLabs Voice Stability',
+	// 			placeholder: '0.5',
+	// 			isSecure: false,
+	// 			description: 'Stability parameter for the ElevenLabs voice.',
+	// 			type: 'number',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_VOICE_SIMILARITY_BOOST',
+	// 			label: 'ElevenLabs Voice Similarity Boost',
+	// 			placeholder: '0.9',
+	// 			isSecure: false,
+	// 			description: 'Similarity boost parameter for the ElevenLabs voice.',
+	// 			type: 'number',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_VOICE_STYLE',
+	// 			label: 'ElevenLabs Voice Style',
+	// 			placeholder: '0.66',
+	// 			isSecure: false,
+	// 			description: 'Style parameter for the ElevenLabs voice.',
+	// 			type: 'number',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_VOICE_USE_SPEAKER_BOOST',
+	// 			label: 'ElevenLabs Voice Use Speaker Boost',
+	// 			placeholder: 'false',
+	// 			isSecure: false,
+	// 			description:
+	// 				'Flag to use speaker boost in ElevenLabs voice synthesis.',
+	// 			type: 'boolean',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_OPTIMIZE_STREAMING_LATENCY',
+	// 			label: 'ElevenLabs Optimize Streaming Latency',
+	// 			placeholder: '4',
+	// 			isSecure: false,
+	// 			description:
+	// 				'Optimization parameter for streaming latency in ElevenLabs.',
+	// 			type: 'number',
+	// 		},
+	// 		{
+	// 			name: 'ELEVENLABS_OUTPUT_FORMAT',
+	// 			label: 'ElevenLabs Output Format',
+	// 			placeholder: 'pcm_16000',
+	// 			isSecure: false,
+	// 			description: 'Output format for ElevenLabs speech synthesis.',
+	// 			type: 'text',
+	// 		},
+	// 	],
+	// },
 	{
 		name: 'Twitter/X Settings',
 		value: [
-			{
-				name: 'TWITTER_DRY_RUN',
-				label: 'Twitter Dry Run',
-				placeholder: 'false',
-				isSecure: false,
-				description: 'Flag to enable dry run for Twitter bot operations.',
-				type: 'boolean',
-			},
+			// {
+			// 	name: 'TWITTER_DRY_RUN',
+			// 	label: 'Twitter Dry Run',
+			// 	placeholder: 'false',
+			// 	isSecure: false,
+			// 	description: 'Flag to enable dry run for Twitter bot operations.',
+			// 	type: 'boolean',
+			// },
 			{
 				name: 'TWITTER_USERNAME',
 				label: 'Twitter Username',
@@ -414,22 +391,23 @@ const envConfigs = [
 			},
 			{
 				name: 'TWITTER_2FA_SECRET',
-				label: 'Twitter 2FA Secret',
+				label: 'Twitter 2FA Secret (Required for not faling when configure twitter agent)',
 				placeholder: 'your-twitter-2fa-secret',
 				isSecure: true,
 				description:
 					'Two-factor authentication secret for Twitter account.',
 				type: 'text',
+				required: true,
 			},
-			{
-				name: 'TWITTER_POLL_INTERVAL',
-				label: 'Twitter Poll Interval',
-				placeholder: '120',
-				isSecure: false,
-				description:
-					'Polling interval in seconds for Twitter interactions.',
-				type: 'number',
-			},
+			// {
+			// 	name: 'TWITTER_POLL_INTERVAL',
+			// 	label: 'Twitter Poll Interval',
+			// 	placeholder: '120',
+			// 	isSecure: false,
+			// 	description:
+			// 		'Polling interval in seconds for Twitter interactions.',
+			// 	type: 'number',
+			// },
 			{
 				name: 'TWITTER_SEARCH_ENABLE',
 				label: 'Twitter Search Enable',
@@ -456,30 +434,30 @@ const envConfigs = [
 				description: 'Maximum number of retry attempts for Twitter login.',
 				type: 'number',
 			},
-			{
-				name: 'X_SERVER_URL',
-				label: 'X Server URL',
-				placeholder: 'https://your-x-server.com',
-				isSecure: false,
-				description: 'URL for the X server.',
-				type: 'text',
-			},
-			{
-				name: 'XAI_API_KEY',
-				label: 'XAI API Key',
-				placeholder: 'your-xai-api-key',
-				isSecure: true,
-				description: 'API key for XAI services.',
-				type: 'text',
-			},
-			{
-				name: 'XAI_MODEL',
-				label: 'XAI Model',
-				placeholder: 'your-xai-model',
-				isSecure: false,
-				description: 'Identifier for the XAI model.',
-				type: 'text',
-			},
+			// {
+			// 	name: 'X_SERVER_URL',
+			// 	label: 'X Server URL',
+			// 	placeholder: 'https://your-x-server.com',
+			// 	isSecure: false,
+			// 	description: 'URL for the X server.',
+			// 	type: 'text',
+			// },
+			// {
+			// 	name: 'XAI_API_KEY',
+			// 	label: 'XAI API Key',
+			// 	placeholder: 'your-xai-api-key',
+			// 	isSecure: true,
+			// 	description: 'API key for XAI services.',
+			// 	type: 'text',
+			// },
+			// {
+			// 	name: 'XAI_MODEL',
+			// 	label: 'XAI Model',
+			// 	placeholder: 'your-xai-model',
+			// 	isSecure: false,
+			// 	description: 'Identifier for the XAI model.',
+			// 	type: 'text',
+			// },
 			{
 				name: 'TWITTER_RETWEET_ENABLE',
 				label: 'Twitter Retweet Enable',
@@ -539,7 +517,7 @@ const envConfigs = [
 		],
 	},
 	{
-		name: 'Post Interval Settings',
+		name: 'Twitter Post Interval Settings',
 		value: [
 			{
 				name: 'POST_INTERVAL_MIN',
