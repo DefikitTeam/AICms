@@ -176,26 +176,26 @@ const UpdateAgent = () => {
               shouldRespondOnlyToMentions: false,
               shouldOnlyJoinInAllowedGroups: false,
               allowedGroupIds: [
-                  "-1002250682364",
-                  "-1002091042838",
-                  "-1002118895236"
+                  -1002250682364,
+                  -1002091042838,
+                  -1002118895236
               ],
-              isPartOfTeam: false,
-              teamAgentIds: ["5900488737"],
-              teamLeaderId: "5900488737",
-              teamMemberInterestKeywords: [],
-              enableGroupVoiceChat: false
-          },
-          discord: {
-              shouldIgnoreBotMessages: true,
-              shouldIgnoreDirectMessages: true,
-              shouldRespondOnlyToMentions: true,
-              isPartOfTeam: false,
-              teamAgentIds: ["5900488737"],
-              teamLeaderId: "5900488737",
-              teamMemberInterestKeywords: []
-          }
-      },
+            isPartOfTeam: false,
+                teamAgentIds: [5900488737],
+                teamLeaderId: 5900488737,
+                teamMemberInterestKeywords: [] as [],
+                enableGroupVoiceChat: false
+        },
+        discord: {
+            shouldIgnoreBotMessages: true,
+            shouldIgnoreDirectMessages: true,
+            shouldRespondOnlyToMentions: true,
+            isPartOfTeam: false,
+            teamAgentIds: [5900488737],
+            teamLeaderId: 5900488737,
+            teamMemberInterestKeywords: [] as []
+        }
+    },
       name: data.name as string,
       plugins: [] as string[],
       adjectives: data.adjectives as string[],
