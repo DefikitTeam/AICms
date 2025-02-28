@@ -169,6 +169,33 @@ const UpdateAgent = () => {
     setLoadingUpdate(true);
     const message = toast.loading("Updating AI Agent...");
     const dataSubmit = {
+      clientConfig: {
+          telegram: {
+              shouldIgnoreBotMessages: true,
+              shouldIgnoreDirectMessages: false,
+              shouldRespondOnlyToMentions: false,
+              shouldOnlyJoinInAllowedGroups: false,
+              allowedGroupIds: [
+                  "-1002250682364",
+                  "-1002091042838",
+                  "-1002118895236"
+              ],
+              isPartOfTeam: false,
+              teamAgentIds: ["5900488737"],
+              teamLeaderId: "5900488737",
+              teamMemberInterestKeywords: [],
+              enableGroupVoiceChat: false
+          },
+          discord: {
+              shouldIgnoreBotMessages: true,
+              shouldIgnoreDirectMessages: true,
+              shouldRespondOnlyToMentions: true,
+              isPartOfTeam: false,
+              teamAgentIds: ["5900488737"],
+              teamLeaderId: "5900488737",
+              teamMemberInterestKeywords: []
+          }
+      },
       name: data.name as string,
       plugins: [] as string[],
       adjectives: data.adjectives as string[],

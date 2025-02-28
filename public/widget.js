@@ -97,7 +97,7 @@ window.AIChatWidget = {
           <div class="flex justify-end">
             <div class="max-w-[80%]">
               <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
-                ${msg.text}
+                ${this.escapeHTML(msg.text)}
               </div>
             </div>
           </div>
@@ -106,8 +106,8 @@ window.AIChatWidget = {
         messagesContainer.innerHTML += `
           <div class="flex justify-start">
             <div class="max-w-[80%]">
-              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
-                ${msg.text}
+              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
+                ${this.renderMarkdown(msg.text)}
               </div>
             </div>
           </div>
@@ -452,7 +452,8 @@ window.AIChatWidget = {
 
           // After dots fade, update content
           setTimeout(() => {
-            bubbleContent.innerHTML = reply;
+            bubbleContent.classList.add('markdown-content');
+            bubbleContent.innerHTML = this.renderMarkdown(reply);
             bubbleContent.style.minHeight = 'unset'; // Remove fixed height
           }, 200);
         }
@@ -550,6 +551,57 @@ window.AIChatWidget = {
         dialog.classList.add(`${position}-mobile`);
       }
     }
+
+    // Add CSS for Markdown content
+    const styleTag = document.createElement('style');
+    styleTag.textContent = `
+      .markdown-content {
+        font-size: 14px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+      }
+      .markdown-content p {
+        margin-bottom: 0.75em;
+      }
+      .markdown-content p:last-child {
+        margin-bottom: 0;
+      }
+      .markdown-content ul, .markdown-content ol {
+        margin-left: 1.5em;
+        margin-bottom: 0.75em;
+      }
+      .markdown-content li {
+        margin-bottom: 0.25em;
+      }
+      .markdown-content strong {
+        font-weight: 600;
+      }
+      .markdown-content em {
+        font-style: italic;
+      }
+      .markdown-content code {
+        background-color: rgba(0,0,0,0.05);
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+      .markdown-content pre code {
+        display: block;
+        overflow-x: auto;
+        padding: 0.5em;
+        background-color: rgba(0,0,0,0.05);
+        border-radius: 3px;
+        margin: 0.75em 0;
+      }
+      .dark .markdown-content code {
+        background-color: rgba(255,255,255,0.1);
+      }
+      .dark .markdown-content pre code {
+        background-color: rgba(255,255,255,0.1);
+      }
+    `;
+    document.head.appendChild(styleTag);
   },
 
   // Add a new helper method for positioning the dialog
@@ -600,6 +652,38 @@ window.AIChatWidget = {
     `;
     // Reset button style for open state
     button.style.backgroundColor = '#334155'; // slate-700
+  },
+
+  // Helper to escape HTML in user messages
+  escapeHTML: function(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  },
+
+  // Render markdown to HTML
+  renderMarkdown: function(text) {
+    if (!text) return '';
+    
+    // Basic Markdown parsing patterns
+    return text
+      // Code blocks with language
+      .replace(/```([a-z]*)([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+      // Inline code
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Bold
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      // Italic
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      // Lists (unordered)
+      .replace(/^\* (.*?)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>')
+      // Paragraphs (preserve line breaks)
+      .replace(/\n\n/g, '</p><p>')
+      // Line breaks
+      .replace(/\n/g, '<br>')
+      // Make sure text starts and ends with paragraph tags
+      .replace(/^(.+)$/, '<p>$1</p>');
   }
 };
 
