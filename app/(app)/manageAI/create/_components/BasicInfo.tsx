@@ -9,7 +9,7 @@ import {
 	UseFormRegister,
 } from 'react-hook-form';
 import FormFieldArray from './FormFieldArray';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
 import modelProvider from '../data/modelProvider';
 import { clientsPlatform, fieldConfigs } from '../data/utils';
 
@@ -48,6 +48,17 @@ const BasicInfo = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [clients, setClients] = useState<string[]>([]);
+  const [selectedKnowledgeType, setSelectedKnowledgeType] = useState<string>('');
+  const [knowledgeContent, setKnowledgeContent] = useState<string>('');
+  const [knowledgeCronjob, setKnowledgeCronjob] = useState<string>('*/30 * * * *');
+  const [knowledgeKeywords, setKnowledgeKeywords] = useState<string>('');
+  const [knowledgeItems, setKnowledgeItems] = useState<Array<{
+    type: string;
+    content: string;
+    cronjob: string;
+    keywords: string;
+  }>>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -79,6 +90,55 @@ const BasicInfo = ({
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+
+  const knowledgeTypes = [
+    { value: 'search', label: 'Search Platform' },
+    { value: 'link', label: 'Link' },
+    { value: 'image', label: 'Image' },
+    { value: 'video', label: 'Video' },
+    { value: 'file', label: 'File' },
+  ];
+  
+  // Add search platforms list
+  const searchPlatforms = [
+    { value: 'google', label: 'Google' },
+		{ value: 'twitter', label: 'Twitter' },
+    // { value: 'bing', label: 'Bing' },
+    // { value: 'duckduckgo', label: 'DuckDuckGo' },
+    // { value: 'yahoo', label: 'Yahoo' },
+    // { value: 'baidu', label: 'Baidu' },
+  ];
+
+  const handleKnowledgeTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedKnowledgeType(e.target.value);
+    // Reset fields when type changes
+    setKnowledgeContent('');
+  };
+
+  const handleAddKnowledge = () => {
+    if (!selectedKnowledgeType || !knowledgeContent) return;
+    
+    setKnowledgeItems([
+      ...knowledgeItems,
+      {
+        type: selectedKnowledgeType,
+        content: knowledgeContent,
+        cronjob: knowledgeCronjob,
+        keywords: knowledgeKeywords
+      }
+    ]);
+    
+    // Reset input fields after adding
+    setKnowledgeContent('');
+    setKnowledgeCronjob('*/30 * * * *');
+    setKnowledgeKeywords('');
+  };
+
+  const handleRemoveKnowledge = (index: number) => {
+    const updatedItems = [...knowledgeItems];
+    updatedItems.splice(index, 1);
+    setKnowledgeItems(updatedItems);
+  };
 
   return (
     <div className="mt-4 flex flex-col gap-4">
@@ -338,6 +398,168 @@ const BasicInfo = ({
         register={register}
         errors={errors}
       />
+
+			{/* Knowledge input */}
+      <div className="form-control flex flex-col gap-2 bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg border border-neutral-200 dark:border-neutral-700">
+        <h3 className="text-lg font-medium">Knowledge Base</h3>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          Add knowledge sources that your AI agent can use
+        </p>
+
+        <div className="flex flex-col gap-4 mt-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+            <div className="col-span-1">
+              <label className="label">
+                <span className="label-text font-medium">Knowledge Type</span>
+              </label>
+              <select
+                value={selectedKnowledgeType}
+                onChange={handleKnowledgeTypeChange}
+                className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="">Select knowledge type</option>
+                {knowledgeTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {selectedKnowledgeType && (
+            <div className="bg-neutral-100 dark:bg-neutral-700 p-4 rounded-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="col-span-3">
+                  <label className="label">
+                    <span className="label-text font-medium">
+                      {selectedKnowledgeType === 'search' 
+                        ? 'Search Platform' 
+                        : selectedKnowledgeType === 'link' 
+                          ? 'URL' 
+                          : selectedKnowledgeType === 'file' || selectedKnowledgeType === 'image' || selectedKnowledgeType === 'video'
+                            ? 'Upload File'
+                            : 'Content'}
+                    </span>
+                  </label>
+                  {selectedKnowledgeType === 'file' || selectedKnowledgeType === 'image' || selectedKnowledgeType === 'video' ? (
+                    <input
+                      type="file"
+                      onChange={(e) => setKnowledgeContent(e.target.files?.[0]?.name || '')}
+                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-neutral-800 dark:border-neutral-700"
+                    />
+                  ) : selectedKnowledgeType === 'search' ? (
+                    <select
+                      value={knowledgeContent}
+                      onChange={(e) => setKnowledgeContent(e.target.value)}
+                      className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="">Select search platform</option>
+                      {searchPlatforms.map((platform) => (
+                        <option key={platform.value} value={platform.value}>
+                          {platform.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={knowledgeContent}
+                      onChange={(e) => setKnowledgeContent(e.target.value)}
+                      placeholder={selectedKnowledgeType === 'link'
+                        ? 'https://example.com/resource'
+                        : 'Enter content'}
+                      className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
+                    />
+                  )}
+                </div>
+
+                {/* Only show cronjob field when type is search */}
+                {selectedKnowledgeType === 'search' && (
+                  <div className="col-span-1">
+                    <label className="label">
+                      <span className="label-text font-medium">Cronjob Schedule</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={knowledgeCronjob}
+                      onChange={(e) => setKnowledgeCronjob(e.target.value)}
+                      placeholder="*/30 * * * *"
+                      className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
+                    />
+                    <p className="text-xs text-neutral-500 mt-1">
+                      Cron expression for scheduling knowledge updates
+                    </p>
+                  </div>
+                )}
+
+                <div className={selectedKnowledgeType === 'search' ? "col-span-2" : "col-span-3"}>
+                  <label className="label">
+                    <span className="label-text font-medium">Keywords to Crawl</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={knowledgeKeywords}
+                    onChange={(e) => setKnowledgeKeywords(e.target.value)}
+                    placeholder="blockchain, crypto, NFT, DeFi"
+                    className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
+                  />
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Comma-separated keywords for crawling content
+                  </p>
+                </div>
+
+                <div className="col-span-3">
+                  <button
+                    type="button"
+                    onClick={handleAddKnowledge}
+                    disabled={!knowledgeContent}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                  >
+                    <Plus size={16} /> Add Knowledge Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Display list of added knowledge items */}
+          {knowledgeItems.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-md font-medium mb-2">Added Knowledge Sources</h4>
+              <div className="space-y-2">
+                {knowledgeItems.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-white dark:bg-neutral-700 rounded-md border border-neutral-200 dark:border-neutral-600">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                          {knowledgeTypes.find(t => t.value === item.type)?.label || item.type}
+                        </span>
+                        <span className="text-sm font-medium">
+                          {item.type === 'search' 
+                            ? searchPlatforms.find(p => p.value === item.content)?.label || item.content
+                            : item.content}
+                        </span>
+                      </div>
+                      <div className="text-xs text-neutral-500 mt-1">
+                        {item.type === 'search' && <>Cronjob: {item.cronjob} • </>}
+                        Keywords: {item.keywords || 'None'}
+                      </div>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => handleRemoveKnowledge(index)}
+                      className="p-1 text-neutral-500 hover:text-red-500"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
