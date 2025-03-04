@@ -1,5 +1,6 @@
 window.AIChatWidget = {
   config: {},
+  previousWelcomeMessage: null, // Track the previous welcome message
   init: function(config) {
     // Validate required config parameters
     if (!config.widgetUrl) {
@@ -7,15 +8,26 @@ window.AIChatWidget = {
       return;
     }
 
+    // Store the previous welcome message if we have one
+    if (this.config.welcomeMessage) {
+      this.previousWelcomeMessage = this.config.welcomeMessage;
+    }
+
     // Normalize the widget URL (remove trailing slash if present)
     config.widgetUrl = config.widgetUrl.replace(/\/$/, '');
     this.config = config;
 
-    // Generate or use provided roomId
-    this.config.roomId = config.roomId || this.generateRoomId();
+    // Generate or use provided roomId, now agent-specific
+    this.config.roomId = config.roomId || this.generateRoomId(config.agentId);
     
-    // Store roomId in localStorage for persistence
-    localStorage.setItem('ai-chat-widget-roomId', this.config.roomId);
+    // Store roomId in localStorage for persistence with agent-specific key
+    localStorage.setItem(`ai-chat-widget-roomId-${config.agentId}`, this.config.roomId);
+
+    // Check if this is a new conversation and set the flag
+    this.config.isNewConversation = this.isNewConversation();
+
+    // Check if welcome message has changed and update if needed
+    this.updateWelcomeMessageIfChanged();
 
     // Verify the logo URL is accessible
     const logoUrl = `${this.config.widgetUrl}/logo.png`;
@@ -52,7 +64,7 @@ window.AIChatWidget = {
     this.renderWidget(widgetContainer);
   },
 
-  // Save a message to localStorage history
+  // Save a message to localStorage history (now agent-specific)
   saveMessageToHistory: function(message, isUser) {
     const messageObj = {
       text: message,
@@ -60,7 +72,7 @@ window.AIChatWidget = {
       timestamp: new Date().toISOString()
     };
     
-    // Load current messages
+    // Load current messages from agent-specific storage
     const messages = this.loadMessageHistory();
     
     // Add new message
@@ -69,15 +81,15 @@ window.AIChatWidget = {
     // Limit to last 50 messages to prevent localStorage overflow
     const limitedMessages = messages.slice(-50);
     
-    // Store back in localStorage
-    localStorage.setItem(`ai-chat-widget-messages-${this.config.roomId}`, JSON.stringify(limitedMessages));
+    // Store back in localStorage with agent-specific key
+    localStorage.setItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`, JSON.stringify(limitedMessages));
     
     return limitedMessages;
   },
   
-  // Load message history from localStorage
+  // Load message history from localStorage (now agent-specific)
   loadMessageHistory: function() {
-    const savedMessages = localStorage.getItem(`ai-chat-widget-messages-${this.config.roomId}`);
+    const savedMessages = localStorage.getItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`);
     return savedMessages ? JSON.parse(savedMessages) : [];
   },
   
@@ -103,11 +115,13 @@ window.AIChatWidget = {
           </div>
         `;
       } else {
+        // Create a properly structured message bubble
+        const renderedHTML = this.renderMarkdown(msg.text);
         messagesContainer.innerHTML += `
           <div class="flex justify-start">
             <div class="max-w-[80%]">
               <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
-                ${this.renderMarkdown(msg.text)}
+                ${renderedHTML}
               </div>
             </div>
           </div>
@@ -115,20 +129,87 @@ window.AIChatWidget = {
       }
     });
     
+    // Process any markdown content to ensure styles are applied
+    const markdownContents = messagesContainer.querySelectorAll('.markdown-content');
+    markdownContents.forEach(content => {
+      // Ensure paragraph spacing is correct
+      const paragraphs = content.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.marginBottom = '0.75em';
+        p.style.marginTop = '0';
+      });
+      
+      // If there's a last paragraph, remove its bottom margin
+      if (paragraphs.length > 0) {
+        paragraphs[paragraphs.length - 1].style.marginBottom = '0';
+      }
+      
+      // Fix code block styling
+      const codeBlocks = content.querySelectorAll('pre code');
+      codeBlocks.forEach(block => {
+        block.style.display = 'block';
+        block.style.overflowX = 'auto';
+        block.style.padding = '0.5em';
+        block.style.backgroundColor = 'rgba(0,0,0,0.05)';
+        block.style.borderRadius = '3px';
+        block.style.fontFamily = 'monospace';
+      });
+    });
+    
     // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    setTimeout(() => {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 10);
   },
 
-  generateRoomId: function() {
-    // Get stored roomId or generate new one based on domain
-    const storedRoomId = localStorage.getItem('ai-chat-widget-roomId');
+  // Add new method to check if welcome message changed and update it
+  updateWelcomeMessageIfChanged: function() {
+    // Skip if there's no previous welcome message (first initialization)
+    if (!this.previousWelcomeMessage && !this.config.welcomeMessage) {
+      return;
+    }
+    
+    // If welcome message changed or was newly added
+    if (this.previousWelcomeMessage !== this.config.welcomeMessage) {
+      const messages = this.loadMessageHistory();
+      
+      // Only update if there are messages and the first one is from the agent
+      if (messages.length > 0 && !messages[0].isUser) {
+        // Check if the first message is likely the welcome message
+        // (First message from agent should be the welcome message)
+        
+        // Update the welcome message in history
+        messages[0].text = this.config.welcomeMessage || "Hello! How can I help you today?";
+        
+        // Store back in localStorage
+        localStorage.setItem(
+          `ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`, 
+          JSON.stringify(messages)
+        );
+        
+        // Update the UI if the dialog is currently open
+        const messagesContainer = document.querySelector('#chat-messages');
+        if (messagesContainer && 
+            window.getComputedStyle(messagesContainer.closest('.ai-chat-widget-modal')).visibility === 'visible') {
+          this.renderMessageHistory(messagesContainer);
+        }
+      }
+      
+      // Update the stored welcome message reference
+      this.previousWelcomeMessage = this.config.welcomeMessage;
+    }
+  },
+
+  generateRoomId: function(agentId) {
+    // Get stored roomId for this specific agent or generate new one
+    const storedRoomId = localStorage.getItem(`ai-chat-widget-roomId-${agentId}`);
     if (storedRoomId) {
       return storedRoomId;
     }
     
-    // Generate roomId based on domain name
+    // Generate roomId based on domain name AND agent ID
     const domain = window.location.hostname;
-    return `room-${domain}-${Date.now()}`;
+    return `room-${domain}-${agentId}-${Date.now()}`;
   },
 
   verifyImageUrl: function(url) {
@@ -168,17 +249,20 @@ window.AIChatWidget = {
   },
 
   clearChat: function() {
-    // Remove chat history
-    localStorage.removeItem(`ai-chat-widget-messages-${this.config.roomId}`);
+    // Remove chat history for this specific agent
+    localStorage.removeItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`);
     
-    // Remove roomId
-    localStorage.removeItem('ai-chat-widget-roomId');
+    // Remove roomId for this specific agent
+    localStorage.removeItem(`ai-chat-widget-roomId-${this.config.agentId}`);
     
-    // Generate new roomId
-    this.config.roomId = this.generateRoomId();
+    // Generate new roomId for this agent
+    this.config.roomId = this.generateRoomId(this.config.agentId);
     
-    // Store new roomId in localStorage
-    localStorage.setItem('ai-chat-widget-roomId', this.config.roomId);
+    // Store new roomId in localStorage with agent-specific key
+    localStorage.setItem(`ai-chat-widget-roomId-${this.config.agentId}`, this.config.roomId);
+    
+    // Set isNewConversation to true to trigger welcome message
+    this.config.isNewConversation = true;
     
     // Return empty message history
     return [];
@@ -321,6 +405,15 @@ window.AIChatWidget = {
         `;
         // Update button style for close state
         button.style.backgroundColor = '#334155'; // slate-700
+        
+        // Add welcome message if this is a new conversation
+        // (after a slight delay to ensure the container is ready)
+        setTimeout(() => {
+          const messagesContainer = dialog.querySelector('#chat-messages');
+          if (messagesContainer) {
+            this.addWelcomeMessage(messagesContainer);
+          }
+        }, 100);
       } else {
         this.closeWidget(dialog, button);
       }
@@ -351,20 +444,56 @@ window.AIChatWidget = {
     const clearChatButton = dialog.querySelector('#clear-chat-button');
     clearChatButton.addEventListener('click', () => {
       this.clearChat();
-      messagesContainer.innerHTML = '';
       
-      // Show a system message that the chat has been cleared
-      messagesContainer.innerHTML = `
-        <div class="flex justify-center my-4">
-          <div class="text-center bg-gray-100 dark:bg-neutral-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm">
-            Chat history cleared. You are now in a new conversation.
-          </div>
+      // Show the message with opacity transition
+      const clearMessage = document.createElement('div');
+      clearMessage.className = 'flex justify-center my-4 clear-message';
+      clearMessage.innerHTML = `
+        <div class="text-center bg-gray-100 dark:bg-neutral-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm">
+          Chat history cleared. You are now in a new conversation.
         </div>
       `;
+      
+      // Add transition styles
+      clearMessage.style.transition = 'opacity 0.3s ease-in-out';
+      clearMessage.style.opacity = '0';
+      
+      // Clear existing messages then add our temporary message
+      messagesContainer.innerHTML = '';
+      messagesContainer.appendChild(clearMessage);
+      
+      // Trigger fade in
+      setTimeout(() => {
+        clearMessage.style.opacity = '1';
+      }, 10);
+      
+      // Set timeout to remove the message after 2 seconds
+      setTimeout(() => {
+        // Fade out
+        clearMessage.style.opacity = '0';
+        
+        // Remove from DOM after transition completes
+        setTimeout(() => {
+          if (messagesContainer.contains(clearMessage)) {
+            messagesContainer.removeChild(clearMessage);
+          }
+          
+          // Now add the welcome message
+          this.addWelcomeMessage(messagesContainer);
+        }, 300); // Wait for fade out transition
+        
+      }, 1500); // 2 seconds display time
     });
     
     // Load and render existing chat messages
     this.renderMessageHistory(messagesContainer);
+    
+    // Add welcome message immediately if we've loaded the widget for the first time
+    // and there are no messages (but only if the dialog is visible)
+    if (this.config.isNewConversation && messagesContainer && 
+        window.getComputedStyle(dialog).visibility !== 'hidden') {
+      this.addWelcomeMessage(messagesContainer);
+    }
     
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -443,18 +572,105 @@ window.AIChatWidget = {
         // Replace loading bubble with actual response
         const loadingBubble = document.getElementById(loadingBubbleId);
         if (loadingBubble) {
-          const bubbleContent = loadingBubble.querySelector('.bg-gray-100, .dark\\:bg-neutral-700');
+          // Fade out dots with transition
+          const dots = loadingBubble.querySelector('.typing-dots');
+          if (dots) {
+            dots.style.opacity = '0';
+            dots.style.transition = 'opacity 0.2s ease-out';
+          }
           
-          // Fade out dots
-          const dots = bubbleContent.querySelector('.typing-dots');
-          dots.style.opacity = '0';
-          dots.style.transition = 'opacity 0.2s ease-out';
-
-          // After dots fade, update content
+          // After a slight delay to allow fade-out
           setTimeout(() => {
-            bubbleContent.classList.add('markdown-content');
-            bubbleContent.innerHTML = this.renderMarkdown(reply);
-            bubbleContent.style.minHeight = 'unset'; // Remove fixed height
+            try {
+              // Completely remove the loading bubble from the DOM
+              loadingBubble.remove();
+              
+              // Create a brand new bubble with the response
+              const newBubble = document.createElement('div');
+              newBubble.className = 'flex justify-start';
+              newBubble.style.marginBottom = '12px';
+              
+              // Parse the markdown response text
+              const renderedHTML = this.renderMarkdown(reply);
+              
+              // Add the content with proper structure
+              newBubble.innerHTML = `
+                <div class="max-w-[80%]">
+                  <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
+                    ${renderedHTML}
+                  </div>
+                </div>
+              `;
+              
+              // Add the new bubble to the messages container
+              messagesContainer.appendChild(newBubble);
+              
+              // Force a reflow/repaint to ensure styles are applied
+              void newBubble.offsetHeight;
+              
+              // Apply direct styling to ensure formatting is correct
+              const messageContent = newBubble.querySelector('.markdown-content');
+              if (messageContent) {
+                // Make sure paragraphs have proper spacing
+                const paragraphs = messageContent.querySelectorAll('p');
+                for (let i = 0; i < paragraphs.length; i++) {
+                  paragraphs[i].style.margin = '0 0 0.75em 0';
+                  paragraphs[i].style.padding = '0';
+                }
+                
+                // Fix the last paragraph's margin
+                if (paragraphs.length > 0) {
+                  paragraphs[paragraphs.length - 1].style.marginBottom = '0';
+                }
+                
+                // Fix code blocks
+                const codeBlocks = messageContent.querySelectorAll('pre code');
+                for (let i = 0; i < codeBlocks.length; i++) {
+                  codeBlocks[i].style.display = 'block';
+                  codeBlocks[i].style.overflowX = 'auto';
+                  codeBlocks[i].style.padding = '0.5em';
+                  codeBlocks[i].style.backgroundColor = 'rgba(0,0,0,0.05)';
+                  codeBlocks[i].style.borderRadius = '3px';
+                  codeBlocks[i].style.fontFamily = 'monospace';
+                  codeBlocks[i].style.whiteSpace = 'pre-wrap';
+                }
+                
+                // Fix inline code
+                const inlineCodes = messageContent.querySelectorAll('code:not(pre code)');
+                for (let i = 0; i < inlineCodes.length; i++) {
+                  inlineCodes[i].style.backgroundColor = 'rgba(0,0,0,0.05)';
+                  inlineCodes[i].style.padding = '2px 4px';
+                  inlineCodes[i].style.borderRadius = '3px';
+                  inlineCodes[i].style.fontFamily = 'monospace';
+                  inlineCodes[i].style.fontSize = '0.9em';
+                }
+                
+                // Fix lists
+                const lists = messageContent.querySelectorAll('ul, ol');
+                for (let i = 0; i < lists.length; i++) {
+                  lists[i].style.marginLeft = '1.5em';
+                  lists[i].style.marginBottom = '0.75em';
+                  lists[i].style.paddingLeft = '0';
+                }
+              }
+              
+              // Ensure we scroll to the new message
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              
+            } catch (error) {
+              console.error('Error rendering message:', error);
+              // Fallback to basic text if rendering fails
+              messagesContainer.innerHTML += `
+                <div class="flex justify-start" style="margin-bottom: 12px;">
+                  <div class="max-w-[80%]">
+                    <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm">
+                      ${reply.replace(/\n/g, '<br>')}
+                    </div>
+                  </div>
+                </div>
+              `;
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
           }, 200);
         }
 
@@ -559,16 +775,34 @@ window.AIChatWidget = {
         font-size: 14px;
         line-height: 1.5;
         overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
       }
       .markdown-content p {
         margin-bottom: 0.75em;
+        margin-top: 0;
       }
       .markdown-content p:last-child {
         margin-bottom: 0;
       }
+      .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+        font-weight: 600;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+      }
+      .markdown-content h1 {
+        font-size: 1.5em;
+      }
+      .markdown-content h2 {
+        font-size: 1.25em;
+      }
+      .markdown-content h3 {
+        font-size: 1.125em;
+      }
       .markdown-content ul, .markdown-content ol {
         margin-left: 1.5em;
         margin-bottom: 0.75em;
+        padding-left: 0;
       }
       .markdown-content li {
         margin-bottom: 0.25em;
@@ -586,19 +820,27 @@ window.AIChatWidget = {
         font-family: monospace;
         font-size: 0.9em;
       }
+      .markdown-content pre {
+        margin: 0.75em 0;
+      }
       .markdown-content pre code {
         display: block;
         overflow-x: auto;
         padding: 0.5em;
         background-color: rgba(0,0,0,0.05);
         border-radius: 3px;
-        margin: 0.75em 0;
       }
       .dark .markdown-content code {
         background-color: rgba(255,255,255,0.1);
       }
       .dark .markdown-content pre code {
         background-color: rgba(255,255,255,0.1);
+      }
+      .typing-dots .dot {
+        display: inline-block;
+        animation-duration: 1.4s;
+        animation-iteration-count: infinite;
+        font-weight: bold;
       }
     `;
     document.head.appendChild(styleTag);
@@ -663,27 +905,136 @@ window.AIChatWidget = {
 
   // Render markdown to HTML
   renderMarkdown: function(text) {
-    if (!text) return '';
+    if (!text) return '<p></p>';
     
-    // Basic Markdown parsing patterns
-    return text
-      // Code blocks with language
-      .replace(/```([a-z]*)([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
-      // Inline code
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      // Bold
+    // Create a helper function for HTML escaping
+    const escapeHTML = (str) => {
+      const element = document.createElement('div');
+      element.textContent = str;
+      return element.innerHTML;
+    };
+    
+    // Normalize line endings
+    text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // Pre-process code blocks to protect them from other formatting
+    const codeBlocks = [];
+    let processedText = text.replace(/```([a-z]*)\n([\s\S]*?)\n```/g, (match, lang, code) => {
+      const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+      codeBlocks.push({
+        language: lang,
+        code: escapeHTML(code.trim())
+      });
+      return placeholder;
+    });
+    
+    // Process inline code blocks
+    const inlineCodeBlocks = [];
+    processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
+      const placeholder = `__INLINE_CODE_${inlineCodeBlocks.length}__`;
+      inlineCodeBlocks.push(escapeHTML(code));
+      return placeholder;
+    });
+    
+    // Process headers
+    processedText = processedText
+      .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+    
+    // Process emphasis and strong
+    processedText = processedText
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      // Italic
-      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-      // Lists (unordered)
-      .replace(/^\* (.*?)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>')
-      // Paragraphs (preserve line breaks)
-      .replace(/\n\n/g, '</p><p>')
-      // Line breaks
-      .replace(/\n/g, '<br>')
-      // Make sure text starts and ends with paragraph tags
-      .replace(/^(.+)$/, '<p>$1</p>');
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    
+    // Process unordered lists
+    const listItems = [];
+    processedText = processedText.replace(/^\s*[-*] (.*?)$/gm, (match, item) => {
+      const placeholder = `__LIST_ITEM_${listItems.length}__`;
+      listItems.push(item);
+      return placeholder;
+    });
+    
+    // Split text into paragraphs
+    const paragraphs = processedText.split(/\n\n+/);
+    let html = '';
+    
+    paragraphs.forEach(para => {
+      // Skip empty paragraphs
+      if (!para.trim()) return;
+      
+      // Check if it's a header, a list item placeholder, or a code block placeholder
+      if (para.match(/^<h[1-3]>/)) {
+        html += para;
+      } else if (para.match(/__LIST_ITEM_\d+__/)) {
+        // Convert list item placeholders to <li> elements
+        const listContent = para.replace(/__LIST_ITEM_(\d+)__/g, (match, index) => {
+          return `<li>${listItems[parseInt(index)]}</li>`;
+        });
+        html += `<ul>${listContent}</ul>`;
+      } else if (para.match(/__CODE_BLOCK_\d+__/)) {
+        // It's a code block placeholder
+        html += para;
+      } else {
+        // It's a regular paragraph - replace \n with <br>
+        html += `<p>${para.replace(/\n/g, '<br>')}</p>`;
+      }
+    });
+    
+    // Restore code blocks
+    html = html.replace(/__CODE_BLOCK_(\d+)__/g, (match, index) => {
+      const block = codeBlocks[parseInt(index)];
+      return `<pre><code class="language-${block.language}">${block.code}</code></pre>`;
+    });
+    
+    // Restore inline code blocks
+    html = html.replace(/__INLINE_CODE_(\d+)__/g, (match, index) => {
+      return `<code>${inlineCodeBlocks[parseInt(index)]}</code>`;
+    });
+    
+    return html;
+  },
+
+  // Check if this is a new conversation (no message history)
+  isNewConversation: function() {
+    const messages = this.loadMessageHistory();
+    return messages.length === 0;
+  },
+  
+  // Add a welcome message for new conversations
+  addWelcomeMessage: function(messagesContainer) {
+    if (!this.config.isNewConversation) return;
+    
+    // Default welcome message
+    const welcomeMessage = this.config.welcomeMessage || "Hello! How can I help you today?";
+    
+    // Save welcome message to history
+    this.saveMessageToHistory(welcomeMessage, false);
+    
+    // If the messages container is provided, display the message
+    if (messagesContainer) {
+      const renderedHTML = this.renderMarkdown(welcomeMessage);
+      messagesContainer.innerHTML += `
+        <div class="flex justify-start">
+          <div class="max-w-[80%]">
+            <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
+              ${renderedHTML}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Ensure we scroll to show the welcome message
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 100);
+    }
+    
+    // Mark that we've shown the welcome message
+    this.config.isNewConversation = false;
+    
+    // Store this welcome message as our reference
+    this.previousWelcomeMessage = welcomeMessage;
   }
 };
 
@@ -844,4 +1195,112 @@ window.addEventListener('orientationchange', adjustWidgetForViewport);
 // Attach event listener for load events
 window.addEventListener('load', () => {
   setTimeout(adjustWidgetForViewport, 100);
+});
+
+// Add improved global CSS early in the initialization
+window.addEventListener('DOMContentLoaded', function() {
+  // Inject critical CSS early to ensure it's loaded before any messages
+  const styleTag = document.createElement('style');
+  styleTag.textContent = `
+    /* Force consistent styling for markdown content */
+    .markdown-content {
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      overflow-wrap: break-word !important;
+      word-wrap: break-word !important;
+      word-break: break-word !important;
+      color: inherit !important;
+    }
+    
+    /* Force proper paragraph spacing */
+    .markdown-content p {
+      margin: 0 0 0.75em 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* Fix last paragraph margin */
+    .markdown-content p:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    /* Header styling */
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+      font-weight: 600 !important;
+      margin: 0.5em 0 !important;
+    }
+    
+    /* Fix list margins and padding */
+    .markdown-content ul, .markdown-content ol {
+      margin: 0 0 0.75em 1.5em !important;
+      padding-left: 0 !important;
+    }
+    
+    .markdown-content li {
+      margin-bottom: 0.25em !important;
+    }
+    
+    .markdown-content li:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    /* Code styling */
+    .markdown-content code {
+      background-color: rgba(0,0,0,0.05) !important;
+      padding: 2px 4px !important;
+      border-radius: 3px !important;
+      font-family: monospace !important;
+      font-size: 0.9em !important;
+      white-space: pre-wrap !important;
+    }
+    
+    .markdown-content pre {
+      margin: 0.75em 0 !important;
+      background-color: transparent !important;
+      padding: 0 !important;
+    }
+    
+    .markdown-content pre code {
+      display: block !important;
+      overflow-x: auto !important;
+      padding: 0.5em !important;
+      background-color: rgba(0,0,0,0.05) !important;
+      border-radius: 3px !important;
+    }
+    
+    .dark .markdown-content code {
+      background-color: rgba(255,255,255,0.1) !important;
+    }
+    
+    .dark .markdown-content pre code {
+      background-color: rgba(255,255,255,0.1) !important;
+    }
+    
+    /* Animation styling */
+    .typing-dots .dot {
+      display: inline-block !important;
+      animation-duration: 1.4s !important;
+      animation-iteration-count: infinite !important;
+      font-weight: bold !important;
+    }
+    
+    /* Fix message bubble spacing */
+    .ai-chat-widget-modal .flex-start,
+    .ai-chat-widget-modal .justify-start,
+    .ai-chat-widget-modal .justify-end {
+      margin-bottom: 0.75em !important;
+    }
+
+    /* Fix chat container spacing */  
+    #chat-messages > div {
+      margin-bottom: 12px !important;
+    }
+    
+    /* Force correct line breaks */
+    .markdown-content br {
+      content: "" !important;
+      display: block !important;
+      margin: 0.25em 0 !important;
+    }
+  `;
+  document.head.appendChild(styleTag);
 });

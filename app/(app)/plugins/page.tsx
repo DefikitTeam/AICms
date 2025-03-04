@@ -36,16 +36,19 @@ interface DashboardConfig {
   triggerSelector?: string;
   targetId?: string;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  welcomeMessage?: string;
 }
 
 const CodeSnippet = ({ 
   agentId, 
   position = 'bottom-right',
-  widgetUrl
+  widgetUrl,
+  welcomeMessage
 }: { 
   agentId: string;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   widgetUrl?: string;
+  welcomeMessage?: string;
 }) => {
   const code = `
     <!-- Add this to your <head> -->
@@ -59,7 +62,8 @@ const CodeSnippet = ({
           agentId: '${agentId}',
           serverUrl: '${process.env.NEXT_PUBLIC_BACKEND_URL}',
           widgetUrl: '${widgetUrl || process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL}',
-          position: '${position}'
+          position: '${position}',
+          welcomeMessage: '${welcomeMessage || ""}'
         });\`
       }}
     />
@@ -230,6 +234,21 @@ function ConfigContent() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label className="text-black dark:text-white">Welcome Message</Label>
+            <Input
+              id="welcomeMessage"
+              placeholder='The message to display when the chat is opened with a new conversation'
+              value={config.welcomeMessage}
+              onChange={(e) => setConfig(prev => ({
+                ...prev,
+                welcomeMessage: e.target.value
+              }))}
+              className="bg-gray-50 dark:bg-neutral-700 dark:text-white dark:border-neutral-600"
+              required
+            />
+          </div>
+
           {/* <div className="space-y-2">
             <Label htmlFor="displayMode" className="text-black dark:text-white">Display Mode</Label>
             <Select<DisplayMode>
@@ -350,6 +369,7 @@ function ConfigContent() {
                   agentId={config.agentId}
                   position={config.position}
                   widgetUrl={config.widgetUrl}
+                  welcomeMessage={config.welcomeMessage}
                 />
               </div>
             ) : (
