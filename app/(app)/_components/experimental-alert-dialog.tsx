@@ -26,7 +26,7 @@ const ExperimentalAlertDialog: React.FC = () => {
             </AlertDialogHeader>
             <AlertDialogContent className='flex flex-col items-center justify-center text-center z-[100]'>
                 <Logo className='w-16 h-16'/>
-                <h1 className='text-2xl font-bold'>The Hive is Experimental</h1>
+                <h1 className='text-2xl font-bold'>Our System is Experimental</h1>
                 <p className='text-sm text-gray-500'>We&apos;ve decided to build in public to gather as much feedback as possible.</p>
                 <p className='text-sm text-gray-500'>Please confirm you understand and want to continue.</p>
                 <Button
