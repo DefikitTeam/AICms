@@ -1,31 +1,31 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { useLogin, usePrivy } from '@privy-io/react-auth';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 const LoginButton: React.FC = () => {
   const router = useRouter();
-  const { authenticated, getAccessToken } = usePrivy();
+  const { address } = useAccount();
   const [, setToken] = useState<string | null>(null);
+  const { openConnectModal } = useConnectModal();
 
   useEffect(() => {
-    if (authenticated) {
-      getAccessToken().then(setToken);
+    if (address) {
+      console.log('User address:', address);
     }
-  }, [authenticated, getAccessToken]);
+  }, [address]);
 
-  const { login } = useLogin({
-    onComplete: (params) => {
-      if (!params.wasAlreadyAuthenticated) {
-        router.replace('/manageAI');
-      }
-    },
-  });
+  const login = () => {
+    if (openConnectModal) {
+      openConnectModal();
+    }
+  };
 
-  if (authenticated)
+  if (address)
     return (
       <Link href="/manageAI">
         <Button variant={'brand'}>Get Started</Button>
@@ -36,7 +36,6 @@ const LoginButton: React.FC = () => {
     <Button
       variant={'brand'}
       onClick={() => login()}
-      disabled={authenticated}
     >
       Login
     </Button>

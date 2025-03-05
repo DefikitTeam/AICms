@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 
 import { DM_Sans, DM_Mono } from "next/font/google";
@@ -6,6 +7,8 @@ import "./globals.css";
 import Providers from "./_contexts";
 import { Toaster } from "react-hot-toast";
 import NotLoggedInAlert from "./(app)/_components/not-logged-in-alert";
+// import GlobalConnectWalletProvider from "./_components/connect-wallet/config";
+import GlobalProvider from "./global-provider";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -33,7 +36,12 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${dmMono.variable} antialiased bg-white dark:bg-neutral-900`}
       >
-        <Providers>{children}</Providers>
+        {/* <Providers>{children}</Providers> */}
+        <Providers>
+        <GlobalProvider>
+          {children}
+        </GlobalProvider>
+        </Providers>
         <NotLoggedInAlert />
         <Toaster />
       </body>
