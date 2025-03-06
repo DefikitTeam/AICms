@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 
 import { ChevronsUpDown, Coins, LogIn, LogOut, Wallet } from 'lucide-react';
 
@@ -19,6 +20,14 @@ import {
     DropdownMenuItem,
     useSidebar,
     Skeleton,
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogAction,
+    AlertDialogCancel,
 } from '@/components/ui';
 
 import { truncateAddress } from '@/lib/wallet';
@@ -27,8 +36,21 @@ import Balances from './balances';
 const AuthButton: React.FC = () => {
 
     const { user, ready, login, logout, fundWallet } = useLogin();
-
+    const router = useRouter();
     const { isMobile } = useSidebar();
+    const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
+
+    // Function to handle logout request - shows confirmation dialog
+    const handleLogoutRequest = () => {
+        setShowLogoutConfirm(true);
+    };
+
+    // Function to handle logout and redirect after confirmation
+    const handleConfirmedLogout = () => {
+        logout();
+        router.push('/');
+        setShowLogoutConfirm(false);
+    };
 
     if (!ready) return <Skeleton className="w-full h-8" />;
 
@@ -50,6 +72,22 @@ const AuthButton: React.FC = () => {
     )
 
     return (
+        <>
+        <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle className="text-brand-600">Log out confirmation</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Are you sure you want to log out of your account?
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel className="border-brand-600 text-brand-600 hover:bg-brand-50">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleConfirmedLogout} className="bg-brand-600 hover:bg-brand-700 text-white">Log out</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
         <SidebarMenu>
             <SidebarMenuItem>
                 <DropdownMenu>
@@ -89,7 +127,7 @@ const AuthButton: React.FC = () => {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => logout()}>
+                        <DropdownMenuItem onClick={handleLogoutRequest}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>
@@ -97,6 +135,7 @@ const AuthButton: React.FC = () => {
                 </DropdownMenu>
             </SidebarMenuItem>
         </SidebarMenu>
+        </>
     )
 }
 

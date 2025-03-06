@@ -513,7 +513,15 @@ const envConfigs = [
 				isSecure: false,
 				description: 'List of keywords to find and follow relevant users.',
 				type: 'text',
-			}
+			},
+			{
+				name: 'TWITTER_COOKIES',
+				label: 'Twitter Cookies',
+				placeholder: 'your-twitter-cookies',
+				isSecure: true,
+				description: 'Cookies for the Twitter account.',
+				type: 'text',
+			},
 		],
 	},
 	{
