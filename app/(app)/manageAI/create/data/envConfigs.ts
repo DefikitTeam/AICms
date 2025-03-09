@@ -408,32 +408,32 @@ const envConfigs = [
 			// 		'Polling interval in seconds for Twitter interactions.',
 			// 	type: 'number',
 			// },
-			{
-				name: 'TWITTER_SEARCH_ENABLE',
-				label: 'Twitter Search Enable',
-				placeholder: 'FALSE',
-				isSecure: false,
-				description:
-					'Flag to enable timeline search on Twitter. WARNING: Increases chance of getting banned.',
-				type: 'boolean',
-			},
-			{
-				name: 'TWITTER_TARGET_USERS',
-				label: 'Twitter Target Users',
-				placeholder: 'user1,user2,user3',
-				isSecure: false,
-				description:
-					'Comma-separated list of Twitter usernames to interact with.',
-				type: 'text',
-			},
-			{
-				name: 'TWITTER_RETRY_LIMIT',
-				label: 'Twitter Retry Limit',
-				placeholder: '5',
-				isSecure: false,
-				description: 'Maximum number of retry attempts for Twitter login.',
-				type: 'number',
-			},
+			// {
+			// 	name: 'TWITTER_SEARCH_ENABLE',
+			// 	label: 'Twitter Search Enable',
+			// 	placeholder: 'FALSE',
+			// 	isSecure: false,
+			// 	description:
+			// 		'Flag to enable timeline search on Twitter. WARNING: Increases chance of getting banned.',
+			// 	type: 'boolean',
+			// },
+			// {
+			// 	name: 'TWITTER_TARGET_USERS',
+			// 	label: 'Twitter Target Users',
+			// 	placeholder: 'user1,user2,user3',
+			// 	isSecure: false,
+			// 	description:
+			// 		'Comma-separated list of Twitter usernames to interact with.',
+			// 	type: 'text',
+			// },
+			// {
+			// 	name: 'TWITTER_RETRY_LIMIT',
+			// 	label: 'Twitter Retry Limit',
+			// 	placeholder: '5',
+			// 	isSecure: false,
+			// 	description: 'Maximum number of retry attempts for Twitter login.',
+			// 	type: 'number',
+			// },
 			// {
 			// 	name: 'X_SERVER_URL',
 			// 	label: 'X Server URL',

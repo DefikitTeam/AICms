@@ -1,11 +1,12 @@
 import React from 'react';
 import InputField from './InputField';
-import { FieldValues, UseFormRegister, UseFormWatch } from 'react-hook-form';
+import { Control, FieldValues, UseFormRegister, UseFormWatch } from 'react-hook-form';
 import envConfigs from '../data/envConfigs';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
     register: UseFormRegister<TFieldValues>;
     watch: UseFormWatch<TFieldValues>;
+    control: Control<any>;
 };
 
 const clientSettingsMap = {
@@ -33,7 +34,7 @@ const providerSettingsMap = {
     // 'Venice Settings': 'venice',
 }
 
-const AdvanceSetting = ({ register, watch }: ReactHookFormProps) => {
+const AdvanceSetting = ({ register, watch, control }: ReactHookFormProps) => {
     const selectedClients = watch('clients') || [];
     const selectedProvider = watch('modelProvider');
 
@@ -74,6 +75,7 @@ const AdvanceSetting = ({ register, watch }: ReactHookFormProps) => {
                                         name={`secrets.${field.name}`}
                                         placeholder={field.placeholder}
                                         register={register}
+                                        control={control}
                                         description={field.description}
                                         type={field.type}
                                         isSecure={field.isSecure}

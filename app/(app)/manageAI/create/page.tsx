@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import useAgent from "../_hooks/useAgent";
 import AdvanceSetting from "./_components/AdvanceSetting";
 import BasicInfo from "./_components/BasicInfo";
+import SocialMediaConfigForm from "./_components/GroupSetting";
 
 const CreateAgent = () => {
   const {
@@ -47,7 +48,6 @@ const CreateAgent = () => {
 
   useEffect(() => {
     const templateData = localStorage.getItem("agentTemplate");
-    console.log(templateData);
     if (templateData) {
       const agent = JSON.parse(templateData);
       console.log(agent);
@@ -236,7 +236,8 @@ const CreateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} watch={watch} />
+              <AdvanceSetting register={register} watch={watch} control={control} />
+              <SocialMediaConfigForm register={register} watch={watch} control={control} />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
