@@ -48,6 +48,8 @@ const AuthButton: React.FC = () => {
     // Function to handle logout and redirect after confirmation
     const handleConfirmedLogout = () => {
         disconnect();
+        localStorage.removeItem('jwt_access_token');
+        localStorage.removeItem('jwt_expiration_time');
         router.push('/');
         setShowLogoutConfirm(false);
     };

@@ -42,7 +42,7 @@ export default function RootLayout({
           {children}
         </GlobalProvider>
         </Providers>
-        <NotLoggedInAlert />
+        {/* <NotLoggedInAlert /> */}
         <Toaster />
       </body>
     </html>

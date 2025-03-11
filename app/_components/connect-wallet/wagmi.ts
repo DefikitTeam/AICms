@@ -4,7 +4,6 @@ import {
   baseSepolia,
   berachain,
   berachainTestnetbArtio,
-  Chain,
   monadTestnet,
   polygonAmoy
 } from 'viem/chains';

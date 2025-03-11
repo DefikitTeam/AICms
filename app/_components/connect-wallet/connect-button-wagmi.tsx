@@ -1,8 +1,9 @@
 /* eslint-disable */
 
+import { ILoginRequest } from "@/lib/embed/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
-import { useAccount, useConfig, useDisconnect, useSignMessage } from "wagmi";
+import { useAccount,  useDisconnect, useSignMessage } from "wagmi";
 
 const ConnectButtonWagmi = () => {
     const { address, isConnected, isConnecting } = useAccount();
@@ -21,8 +22,7 @@ const ConnectButtonWagmi = () => {
         context
     } = useSignMessage();
 
-    // const { chainConfig, defaultChain, environment, supportedChains } =
-    //     useConfig();
+    
 
     // const { authState, loginAction } = useAuthLogin();
     const { disconnect } = useDisconnect();
@@ -34,20 +34,12 @@ const ConnectButtonWagmi = () => {
     };
 
     // useEffect(() => {
-    //     // if(!show || !address || hasAttemptedSignature) return;
-
-    //     // const isMetaMaskBrowser = /MetaMask/i.test(navigator.userAgent);
-    //     // if (isMetaMaskBrowser) {
-    //     //     console.log('chay vao metamask');
-    //     //     return;
-    //     // }
+      
 
     //     const handleSignMessage = async () => {
     //         if (!authState.userWallet) {
     //             const message = address as `0x${string}`;
-    //             const refCode = localStorage
-    //                 .getItem(REFCODE_INFO_STORAGE_KEY)
-    //                 ?.replace(/"/g, '');
+                
 
     //             try {
     //                 setHasAttemptedSignature(true);
@@ -55,21 +47,25 @@ const ConnectButtonWagmi = () => {
     //                     message: message
     //                 });
 
-    //                 const refIdFromStorage = await servicePool.getReferId();
+    //                 // const refIdFromStorage = await servicePool.getReferId();
     //                 const loginWalletData: ILoginRequest = {
     //                     wallet: {
-    //                         chainId: chainConfig?.chainId!,
+    //                         // chainId: chainConfig?.chainId!,
     //                         address: address as `0x${string}`,
     //                         message: message,
     //                         signature: signature,
 
-    //                         refId: refIdFromStorage
-    //                             ? refIdFromStorage.refId
-    //                             : ''
+    //                         // refId: refIdFromStorage
+    //                         //     ? refIdFromStorage.refId
+    //                         //     : ''
     //                     },
-    //                     referralCode: refCode ? refCode : ''
+    //                     // referralCode: refCode ? refCode : ''
     //                 };
+
+
     //                 loginAction(loginWalletData);
+
+
     //             } catch (error) {
     //                 console.error('User rejected the signature:', error);
     //                 disconnect();
@@ -78,25 +74,19 @@ const ConnectButtonWagmi = () => {
     //         }
     //     };
 
-    //     // Add a slight delay for mobile devices to ensure wallet is ready
-    //     // if (isMobile) {
-    //     //     setTimeout(() => {
-    //     //         handleSignMessage();
-    //     //     }, 1000);
-    //     // } else {
-    //     // }
+       
     //     handleSignMessage();
     //     if (error) {
     //         console.error('Error signing message:', error);
     //     }
     // }, [address]);
 
-    useEffect(() => {
-        if (!isConnected) {
-            reset();
-            // setShow(false);
-        }
-    }, [isConnected, reset]);
+    // useEffect(() => {
+    //     if (!isConnected) {
+    //         reset();
+    //         // setShow(false);
+    //     }
+    // }, [isConnected, reset]);
 
 
     // const showChainSelector =
