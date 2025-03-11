@@ -1,16 +1,41 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button, Spinner } from "@radix-ui/themes";
-import CardAgent, { CardAgentType } from "./_components/CardAgent";
+import CardAgent from "./_components/CardAgent";
 import Link from "next/link";
 import useAgent from "./_hooks/useAgent";
 import NotLoggedInAlert from "../_components/not-logged-in-alert";
 
-interface AgentResponse extends CardAgentType {
-  isRunning: boolean;
-  lore: string[];
+interface AgentResponse {
+  id: string;
+  name: string;
   username: string;
-  email: string;
+  status: string;
+  type: string;
+  isRunning: boolean;
+  character?: {
+    name: string;
+    plugins: any[];
+    adjectives: string[];
+    people: string[];
+    topics: string[];
+    style: {
+      all: string[];
+      chat: string[];
+      post: string[];
+    };
+    system: string;
+    knowledge: string[];
+    clients: string[];
+    modelProvider: string;
+    bio: string[];
+    lore: string[];
+    postExamples: string[];
+  };
+  email: string | null;
+  runtime?: {
+    clients: string[];
+  };
 }
 
 const ManageAI = () => {
@@ -22,11 +47,13 @@ const ManageAI = () => {
     const fetchAgents = async () => {
       setLoading(true);
       const data = await getAgents();
-      setAgents(data.agents);
+      setAgents(data);
       setLoading(false);
     };
     fetchAgents();
   }, []);
+
+  console.log(agents);
 
   if (loading) {
     return (
@@ -35,6 +62,21 @@ const ManageAI = () => {
       </div>
     );
   }
+
+  // Helper function to get and merge clients from different sources
+  const getClientsFromAgent = (agent: AgentResponse): string[] => {
+    const characterClients = agent.character?.clients || [];
+    const runtimeClients = agent.runtime?.clients || [];
+    
+    // Merge both sources and remove duplicates
+    return [...new Set([...characterClients, ...runtimeClients])];
+  };
+
+  // Helper function to extract first bio item as string
+  const getBioFromAgent = (agent: AgentResponse): string => {
+    const bioArray = agent.character?.bio || [];
+    return bioArray.length > 0 ? bioArray[0] : '';
+  };
 
   return (
     <>
@@ -77,9 +119,9 @@ const ManageAI = () => {
               id={agent.id}
               key={index}
               name={agent.name}
-              clients={agent.clients}
-              bio={agent.bio}
-              modelProvider={agent.modelProvider}
+              clients={getClientsFromAgent(agent)}
+              bio={getBioFromAgent(agent)}
+              modelProvider={agent.character?.modelProvider || ''}
               status={agent.isRunning}
             />
           ))}
