@@ -3,8 +3,8 @@ name: Deploy to Cloudflare
 on:
   push:
     branches:
-      - main  # or your default branch
-  workflow_dispatch:  # allows manual trigger
+      - main # or your default branch
+  workflow_dispatch: # allows manual trigger
 
 jobs:
   deploy:
@@ -24,6 +24,7 @@ jobs:
       COSMOS_ENDPOINT: ${{ secrets.COSMOS_ENDPOINT }}
       COSMOS_KEY: ${{ secrets.COSMOS_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
       NEXTJS_ENV: development
       DISABLE_NODE_FETCH_NATIVE_WARN: 1
 
@@ -34,12 +35,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1'  # Matching your solana-agent-kit requirement
+          node-version: "20.11.1" # Matching your solana-agent-kit requirement
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 9.15.5  # Matching your package.json
+          version: 9.15.5 # Matching your package.json
           run_install: false
 
       - name: Get pnpm store directory
