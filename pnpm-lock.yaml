@@ -138,9 +138,6 @@ importers:
       pnpm:
         specifier: ^9.15.5
         version: 9.15.5
-      rainbowkit:
-        specifier: ^0.0.1
-        version: 0.0.1
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -186,14 +183,11 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3)))
-      tanstack:
-        specifier: ^1.0.0
-        version: 1.0.0
       viem:
-        specifier: ^2.23.4
+        specifier: ^2.22.8
         version: 2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       wagmi:
-        specifier: ^2.5.13
+        specifier: ^2.14.7
         version: 2.14.11(@tanstack/query-core@5.66.4)(@tanstack/react-query@5.66.9(react@19.0.0))(@types/react@19.0.10)(aws4fetch@1.0.20)(bufferutil@4.0.9)(encoding@0.1.13)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
       wrangler:
         specifier: ^3.109.2
@@ -8449,9 +8443,6 @@ packages:
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
-  rainbowkit@0.0.1:
-    resolution: {integrity: sha512-tz9jC7mXGH8v7TrgjqfNzbIfIUBFk17R3BcDWrtMIzmnEi0dOF74R7aMtw/1nu5Yaa8vdVxZhMxpC1Eu+08//Q==}
-
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -9276,9 +9267,6 @@ packages:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
     hasBin: true
-
-  tanstack@1.0.0:
-    resolution: {integrity: sha512-BUpDmwGlWHk2F183Uu1+k85biSLrpSh/zA9ephJwmZ9ze+XDEw3JOyN9vhcbFqrQFrf5yuWImt+0Kn4fUNgzTg==}
 
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -22705,8 +22693,6 @@ snapshots:
 
   radix3@1.1.2: {}
 
-  rainbowkit@0.0.1: {}
-
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -23900,8 +23886,6 @@ snapshots:
       sucrase: 3.35.0
     transitivePeerDependencies:
       - ts-node
-
-  tanstack@1.0.0: {}
 
   tapable@2.2.1: {}
 

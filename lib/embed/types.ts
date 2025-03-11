@@ -30,10 +30,3 @@ export interface ChatWidgetProps {
   position?: string;
 }
 
-export interface ILoginRequest {
-  wallet: {
-    address: string;
-    message: string;
-    signature: string;
-  }
-}

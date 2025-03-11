@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 export type CardAgentType = {
 	id: string;
-	clients?: string[];
+	clients: string[];
 	name: string;
 	bio: string;
 	status: boolean;
@@ -15,7 +15,7 @@ export type CardAgentType = {
 
 const CardAgent = ({
 	id,
-	clients = [],
+	clients,
 	name,
 	bio,
 	status,
@@ -55,7 +55,7 @@ const CardAgent = ({
 				</Text>
 				<Box className="mt-4 border border-neutral-200 dark:border-neutral-700 p-4 rounded-lg">
 					<ul className="flex flex-col gap-4">
-						{!clients?.includes('twitter') && (
+						{!clients.includes('twitter') && (
 							<li className="flex justify-between">
 								<div className="flex items-center gap-2">
 									<img
@@ -79,7 +79,7 @@ const CardAgent = ({
 								</Link>
 							</li>
 						)}
-						{!clients?.includes('discord') && (
+						{!clients.includes('discord') && (
 							<li className="flex justify-between">
 								<div className="flex items-center gap-2">
 									<img
@@ -145,7 +145,7 @@ const CardAgent = ({
 								</TooltipProvider>
 							)}
 						</li>
-						{!clients?.includes('telegram') && (
+						{!clients.includes('telegram') && (
 							<li className="flex justify-between">
 								<div className="flex items-center gap-2">
 									<img
