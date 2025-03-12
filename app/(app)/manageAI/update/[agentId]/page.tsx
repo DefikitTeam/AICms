@@ -311,6 +311,7 @@ const UpdateAgent = () => {
                 register={register}
                 errors={errors}
                 fieldArrays={fieldArrays}
+                setValue={setValue}
               />
             </Tabs.Content>
 

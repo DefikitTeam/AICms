@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import TextAreaField from './TextAreaField';
 import MessageExample from './MessageExample';
 import {
@@ -7,24 +7,37 @@ import {
 	useFieldArray,
 	UseFormGetValues,
 	UseFormRegister,
+  UseFormSetValue,
 } from 'react-hook-form';
 import FormFieldArray from './FormFieldArray';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import modelProvider from '../data/modelProvider';
 import { clientsPlatform, fieldConfigs } from '../data/utils';
+import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
+import { toast } from 'react-hot-toast';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
 	register: UseFormRegister<TFieldValues>;
 	errors: FieldErrors<TFieldValues>;
 	fieldArrays: Record<string, ReturnType<typeof useFieldArray>>;
 	getValues: UseFormGetValues<TFieldValues>;
+  setValue: UseFormSetValue<TFieldValues>;
 };
+
+interface Template {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  isExportData: boolean;
+}
 
 const BasicInfo = ({
 	register,
 	errors,
 	fieldArrays,
 	getValues,
+  setValue,
 }: ReactHookFormProps) => {
 	// const fileInputRef = useRef<HTMLInputElement>(null);
 	// const [avatar, setAvatar] = useState<string | null>(null);
@@ -49,8 +62,53 @@ const BasicInfo = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [clients, setClients] = useState<string[]>([]);
 
+  // Template dropdown state
+  const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [templatesCache, setTemplatesCache] = useState<{data: Template[] | null, timestamp: number | null}>({
+    data: null,
+    timestamp: null
+  });
+  const templatesDropdownRef = useRef<HTMLDivElement>(null);
+  const { getListTemplate, getTemplateAgent, importTemplate } = useTemplateAgent();
+	const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+
+  const fetchTemplates = async () => {
+    try {
+      // Check if we have cached data that's less than 5 minutes old
+      const now = Date.now();
+      if (templatesCache.data && templatesCache.timestamp && 
+          now - templatesCache.timestamp < 5 * 60 * 1000) {
+        setTemplates(templatesCache.data);
+        return;
+      }
+
+      setLoading(true);
+      const data = await getListTemplate();
+      if (data?.templateAgents) {
+        setTemplates(data.templateAgents);
+        setTemplatesCache({
+          data: data.templateAgents,
+          timestamp: now
+        });
+      }
+      setLoading(false);
+    } catch (error) {
+      toast.error("Failed to fetch templates");
+      setLoading(false);
+    }
+  };
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const toggleTemplatesDropdown = () => {
+    if (!templatesDropdownOpen) {
+      fetchTemplates();
+    }
+    setTemplatesDropdownOpen(!templatesDropdownOpen);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -59,6 +117,13 @@ const BasicInfo = ({
       !dropdownRef.current.contains(event.target as Node)
     ) {
       setDropdownOpen(false);
+    }
+
+    if (
+      templatesDropdownRef.current &&
+      !templatesDropdownRef.current.contains(event.target as Node)
+    ) {
+      setTemplatesDropdownOpen(false);
     }
   };
 
@@ -75,60 +140,94 @@ const BasicInfo = ({
 	useEffect(() => {
 		setClients(getValues('clients') as string[]);
 		document.addEventListener('mousedown', handleClickOutside);
+    
+    // Pre-fetch templates when component mounts
+    fetchTemplates();
+    
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
 
+  // Loading skeleton component
+  const LoadingSkeleton = useMemo(() => (
+    <>
+      {[1, 2, 3].map((item) => (
+        <div key={item} className="animate-pulse flex p-2 rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-2">
+          <div className="flex-1">
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
+            <div className="h-3 bg-gray-200 dark:bg-gray-500 rounded w-1/2"></div>
+          </div>
+          <div className="w-16 h-4 bg-gray-200 dark:bg-gray-500 rounded self-center"></div>
+        </div>
+      ))}
+    </>
+  ), []);
+
   return (
     <div className="mt-4 flex flex-col gap-4">
-      {/* <div className="col-span-1 flex items-center gap-4">*/}
-      {/*  {avatar ? (*/}
-      {/*    <div className="group relative w-fit">*/}
-      {/*      <img*/}
-      {/*        src={avatar}*/}
-      {/*        alt="Avatar"*/}
-      {/*        className="relative size-32 rounded-full cursor-pointer"*/}
-      {/*      />*/}
-      {/*      <div className="group-hover:flex hidden gap-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-200 dark:bg-neutral-700 rounded-sm p-1">*/}
-      {/*        <Button*/}
-      {/*          onClick={(e) => {*/}
-      {/*            e.preventDefault();*/}
-      {/*            fileInputRef.current?.click();*/}
-      {/*          }}*/}
-      {/*          color="gray"*/}
-      {/*          size="1"*/}
-      {/*        >*/}
-      {/*          <Pencil size={14} />*/}
-      {/*        </Button>*/}
-      {/*        <Button onClick={handleDeleteImage} color="gray" size="1">*/}
-      {/*          <Trash2 size={14} />*/}
-      {/*        </Button>*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  ) : (*/}
-      {/*    <div*/}
-      {/*      onClick={() => fileInputRef.current?.click()}*/}
-      {/*      className="size-32 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center"*/}
-      {/*    >*/}
-      {/*      <Camera color="#646464" size={20} />*/}
-      {/*    </div>*/}
-      {/*  )}*/}
-      {/*  <input*/}
-      {/*    ref={fileInputRef}*/}
-      {/*    type="file"*/}
-      {/*    accept="image/*"*/}
-      {/*    className="hidden"*/}
-      {/*    onChange={handleImageChange}*/}
-      {/*  />*/}
-      {/*  <div>*/}
-      {/*    <p>AI Agent</p>*/}
-      {/*    <p className="text-neutral-500">Profile Picture</p>*/}
-      {/*  </div>*/}
-      {/*</div> */}
+      {/* Template Selector */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text font-medium">Choose a template</span>
+        </label>
+        <div
+          ref={templatesDropdownRef}
+          role="button"
+          aria-expanded={templatesDropdownOpen}
+          className="relative"
+        >
+          <input
+            type="text"
+            disabled={true}
+						value={selectedTemplate ? selectedTemplate.name : ""}
+            placeholder="Select a template to pre-populate fields"
+            className="input block w-full focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
+          />
+          <div
+            onClick={toggleTemplatesDropdown}
+            className="w-full h-full absolute top-0 flex justify-end items-center p-2"
+          >
+            {templatesDropdownOpen ? <ChevronUp /> : <ChevronDown />}
+          </div>
+          <div
+            className={`absolute top-full left-0 w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-2 mt-1 z-10 ${templatesDropdownOpen ? 'block' : 'hidden'}`}
+          >
+            {loading ? (
+              <div className="p-2">{LoadingSkeleton}</div>
+            ) : templates.length > 0 ? (
+              <ul className="flex flex-col gap-1 max-h-60 overflow-y-auto">
+                {templates.map((template) => (
+                  <li
+                    key={template.id}
+                    onClick={() => {
+                      setSelectedTemplate(template);
+                      importTemplate(template.id);
+                      setTemplatesDropdownOpen(false);
+                    }}
+                    className="flex items-center justify-between bg-neutral-100 dark:bg-neutral-700 border border-neutral-100 dark:border-neutral-600 p-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 cursor-pointer"
+                  >
+                    <div>
+                      <p className="font-medium">{template.name}</p>
+                      {template.description && (
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">{template.description}</p>
+                      )}
+                    </div>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                      {new Date(template.createdAt).toLocaleDateString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="p-2 text-center">No templates available</div>
+            )}
+          </div>
+        </div>
+      </div>
 
-			{/* Basic Information */}
-			<div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">
+      {/* Basic Information */}
+      <div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">
 				<div className="col-span-1">
 					<label className="label">
 						<span className="label-text font-medium">AI Agent Name</span>
@@ -331,7 +430,7 @@ const BasicInfo = ({
       <TextAreaField
         label="Post Example"
         name="postExamples"
-        placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here’s a beginner-friendly guide. #DeFi #Blockchain #Crypto"
+        placeholder="Understanding the basics of decentralized finance (DeFi) is crucial for anyone exploring the future of finance. Here's a beginner-friendly guide. #DeFi #Blockchain #Crypto"
         fields={fieldArrays.postExamples.fields}
         append={fieldArrays.postExamples.append}
         remove={fieldArrays.postExamples.remove}

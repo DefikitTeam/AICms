@@ -231,6 +231,7 @@ const CreateAgent = () => {
                 errors={errors}
                 fieldArrays={fieldArrays}
                 getValues={getValues}
+                setValue={setValue}
               />
             </Tabs.Content>
 
