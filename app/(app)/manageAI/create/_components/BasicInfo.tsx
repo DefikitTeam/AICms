@@ -10,7 +10,7 @@ import {
   UseFormSetValue,
 } from 'react-hook-form';
 import FormFieldArray from './FormFieldArray';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 import modelProvider from '../data/modelProvider';
 import { clientsPlatform, fieldConfigs } from '../data/utils';
 import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
@@ -314,16 +314,24 @@ const BasicInfo = ({
 					</div>
 				</div>
 				<div className="col-span-1">
-					<label className="label">
+					<label className="label flex items-center gap-1">
 						<span className="label-text font-medium">
 							Model provider to use
 						</span>
+						<div className="relative group">
+							<Info size={16} className=" cursor-pointer" />
+							<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 w-64 bg-black dark:bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 shadow-lg">
+								Currently, our system only supports Google Model. Other model providers will be available in the future.
+								<div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black dark:border-t-neutral-900"></div>
+							</div>
+						</div>
 					</label>
 					<select
 						{...register('modelProvider', {
 							required: 'This field is required',
 						})}
 						className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						disabled={true}
 					>
 						{modelProvider.map((provider) => (
 							<option key={provider.value} value={provider.value}>

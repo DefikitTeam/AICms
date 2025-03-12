@@ -18,19 +18,19 @@ const clientSettingsMap = {
 };
 
 const providerSettingsMap = {
-    'AI Model Settings': 'openai',
-    'Eternal AI Settings': 'eternali',
-    'Grok Settings': 'grok',
-    'Groq Settings': 'groq',
-    'OpenRouter Settings': 'openrouter',
+    // 'AI Model Settings': 'openai',
+    // 'Eternal AI Settings': 'eternali',
+    // 'Grok Settings': 'grok',
+    // 'Groq Settings': 'groq',
+    // 'OpenRouter Settings': 'openrouter',
     'Google Generative AI Settings': 'google',
-    'Ali Bailian Settings': 'ali_bailian',
-    'NanoGPT Settings': 'nanogpt',
-    'Hyperbolic AI Settings': 'hyperbolic',
-    'Anthropic Settings': 'anthropic',
-    'Ollama Settings': 'ollama',
-    'Heurist Settings': 'heurist',
-    'Venice Settings': 'venice',
+    // 'Ali Bailian Settings': 'ali_bailian',
+    // 'NanoGPT Settings': 'nanogpt',
+    // 'Hyperbolic AI Settings': 'hyperbolic',
+    // 'Anthropic Settings': 'anthropic',
+    // 'Ollama Settings': 'ollama',
+    // 'Heurist Settings': 'heurist',
+    // 'Venice Settings': 'venice',
 }
 
 const AdvanceSetting = ({ register, watch }: ReactHookFormProps) => {
