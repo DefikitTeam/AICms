@@ -15,6 +15,8 @@ import modelProvider from '../data/modelProvider';
 import { clientsPlatform, fieldConfigs } from '../data/utils';
 import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
 import { toast } from 'react-hot-toast';
+import { usePrivy } from '@privy-io/react-auth';
+import axios from 'axios';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
 	register: UseFormRegister<TFieldValues>;
@@ -63,9 +65,11 @@ const BasicInfo = ({
   const [clients, setClients] = useState<string[]>([]);
 
   // Template dropdown state
+  const { getAccessToken } = usePrivy();
   const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [templatesCache, setTemplatesCache] = useState<{data: Template[] | null, timestamp: number | null}>({
     data: null,
     timestamp: null
@@ -164,6 +168,40 @@ const BasicInfo = ({
     </>
   ), []);
 
+	const getAgentTopic = async (topic: string) => {
+		const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+    if (!topic || topic.trim() === '') {
+      toast.error("Please enter a topic first");
+      return;
+    }
+    
+    setGenerating(true);
+		try {
+			const accessToken = await getAccessToken();
+			const response = await axios.post(
+				`${BACKEND_URL}/agents/create-template-ai`,
+				{
+					topic: topic,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				},
+			);
+			
+			localStorage.setItem("agentTopic", JSON.stringify(response.data.template));
+      window.location.href = "/manageAI/create";
+      toast.success("Agent Topic loaded successfully");
+		} catch (error) {
+			console.error(error);
+			toast.error("Failed to generate agent information");
+		} finally {
+      setGenerating(false);
+    }
+	}
+
   return (
     <div className="mt-4 flex flex-col gap-4">
       {/* Template Selector */}
@@ -225,6 +263,33 @@ const BasicInfo = ({
           </div>
         </div>
       </div>
+
+			<div className="form-control flex flex-col gap-1">
+				<label className="label">
+					<span className="label-text font-medium">Agent Topic</span>
+				</label>
+				<div className="flex gap-2">
+					<textarea
+						{...register('agentTopic')}
+						rows={3}
+						placeholder="Or enter the subject you want to have basic information automatically populated (you can still adjust the information after it's filled in)"
+						className="input block w-full focus:outline-none focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg focus:ring-brand-600 focus:border-brand-600 placeholder:text-xs"
+					/>
+					<button 
+						type="button"
+						onClick={() => getAgentTopic(getValues('agentTopic'))}
+						className="px-4 h-fit self-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors duration-200 disabled:bg-blue-400"
+						disabled={generating}
+					>
+						{generating ? 'Generating...' : 'Generate'}
+					</button>
+				</div>
+				{errors.agentTopic && (
+					<span className="text-red-500 text-xs">
+						{errors.agentTopic?.message?.toString()}
+					</span>
+				)}
+			</div>
 
       {/* Basic Information */}
       <div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">

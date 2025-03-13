@@ -97,6 +97,60 @@ const CreateAgent = () => {
     }
   }, [setValue]);
 
+  useEffect(() => {
+    const topicData = localStorage.getItem("agentTopic");
+    console.log(topicData);
+    if (topicData) {
+      const agent = JSON.parse(topicData);
+      console.log(agent);
+      const character = agent;
+
+      const fieldsToSet = [
+        "name",
+        "adjectives",
+        "knowledge",
+        "topics",
+        "system",
+        "clients",
+        "modelProvider",
+        "bio",
+        "lore",
+        "postExamples",
+      ];
+
+      fieldsToSet.forEach((field) => setValue(field, character[field]));
+
+      ["all", "chat", "post"].forEach((style) =>
+        setValue(style, character.style[style]),
+      );
+
+      const defaultSecrets = {
+        DISCORD_APPLICATION_ID: "",
+        DISCORD_API_TOKEN: "",
+        DISCORD_VOICE_CHANNEL_ID: "",
+        TELEGRAM_BOT_TOKEN: "",
+        // ... add other default secret fields
+      };
+
+      // setValue("secrets", {
+      //   ...defaultSecrets,
+      //   ...character.settings.secrets,
+      // });
+
+      setValue(
+        "messageExamples",
+        character.messageExamples.map((message: any) => ({
+          user: message[0].content.text,
+          agent: message[1].content.text,
+        })),
+      );
+
+      localStorage.removeItem("agentTopic");
+    }
+  }, [setValue]);
+
+
+
   const fieldArrays = {
     topics: topicsArray,
     knowledge: knowledgeArray,
