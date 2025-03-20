@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import useAgent from "../../_hooks/useAgent";
 import useTemplateAgent from "../../_hooks/useTemplateAgent";
 import AdvanceSetting from "../../create/_components/AdvanceSetting";
+import SocialMediaConfigForm from "../../create/_components/GroupSetting";
 import BasicInfo from "../../create/_components/BasicInfo";
 
 const UpdateAgent = () => {
@@ -316,7 +317,8 @@ const UpdateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} watch={watch} />
+              <AdvanceSetting register={register} watch={watch} control={control} />
+              <SocialMediaConfigForm register={register} watch={watch} control={control} />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
