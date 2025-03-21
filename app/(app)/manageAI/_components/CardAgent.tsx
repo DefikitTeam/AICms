@@ -191,6 +191,28 @@ const CardAgent = ({
 								</Button>
 							</Link>
 						</li>
+						<li className="flex justify-between">
+							<div className="flex items-center gap-2">
+								<img
+									src="/icons/feed-data.svg"
+									className="size-8 rounded-full bg-neutral-100 dark:bg-neutral-800 p-1"
+									alt=""
+								/>
+								<Text size="2" weight="medium">
+									Feed Data
+								</Text>
+							</div>
+							<Link role="button" href={`/manageAI/feed/${id}?name=${encodeURIComponent(name)}`}>
+								<Button
+									style={{ width: '80px' }}
+									color="gray"
+									variant="solid"
+									highContrast
+								>
+									Feed
+								</Button>
+							</Link>
+						</li>
 						{/* <li className="flex justify-between">
               <div className="flex items-center gap-2">
                 <img
