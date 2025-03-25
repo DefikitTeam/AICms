@@ -80,10 +80,7 @@ const CreateAgent = () => {
         // ... add other default secret fields
       };
 
-      setValue("secrets", {
-        ...defaultSecrets,
-        ...character.settings.secrets,
-      });
+      setValue("secrets", defaultSecrets);
 
       setValue(
         "messageExamples",
