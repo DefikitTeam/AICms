@@ -86,6 +86,13 @@ const socialMediaConfig: SocialMediaConfig = {
                     configGuide: 'Enable retweeting, quoting, or replying to tweets from specified users. Set random time intervals between actions to avoid rate limits and customize sharing behavior.',
                     settings: [
                         {
+                            name: 'TWITTER_TARGET_USERS',
+                            label: 'Twitter Target Users',
+                            placeholder: 'username1, username2, ...',
+                            type: 'text',
+                            description: 'List of Twitter usernames to search for relevant tweets.'
+                        },
+                        {
                             name: 'TWITTER_RETWEET_ENABLE',
                             label: 'Twitter Retweet Enable',
                             placeholder: 'TRUE / FALSE',
