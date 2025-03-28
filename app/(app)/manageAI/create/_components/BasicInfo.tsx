@@ -1,20 +1,20 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import TextAreaField from './TextAreaField';
-import MessageExample from './MessageExample';
+import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
+import { ChevronDown, ChevronUp, Info } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-	FieldErrors,
-	FieldValues,
-	useFieldArray,
-	UseFormGetValues,
-	UseFormRegister,
+  FieldErrors,
+  FieldValues,
+  useFieldArray,
+  UseFormGetValues,
+  UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
-import FormFieldArray from './FormFieldArray';
-import { ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import modelProvider from '../data/modelProvider';
 import { clientsPlatform, fieldConfigs } from '../data/utils';
-import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
-import { toast } from 'react-hot-toast';
+import FormFieldArray from './FormFieldArray';
+import MessageExample from './MessageExample';
+import TextAreaField from './TextAreaField';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
 	register: UseFormRegister<TFieldValues>;
