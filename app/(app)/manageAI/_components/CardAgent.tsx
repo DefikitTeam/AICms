@@ -1,8 +1,8 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, Badge, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
 import { Bot } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type CardAgentType = {
 	id: string;
@@ -128,7 +128,7 @@ const CardAgent = ({
 							) : (
 								<TooltipProvider delayDuration={0}>
 									<Tooltip>
-										<TooltipTrigger asChild>
+										<TooltipTrigger>
 											<Button
 												style={{ width: '80px' }}
 												color="gray"

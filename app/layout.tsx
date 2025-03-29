@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { DM_Sans, DM_Mono } from "next/font/google";
+import { DM_Mono, DM_Sans } from "next/font/google";
 
-import "./globals.css";
-import Providers from "./_contexts";
 import { Toaster } from "react-hot-toast";
 import NotLoggedInAlert from "./(app)/_components/not-logged-in-alert";
+import Providers from "./_contexts";
+import "./globals.css";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -33,9 +33,11 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${dmMono.variable} antialiased bg-white dark:bg-neutral-900`}
       >
-        <Providers>{children}</Providers>
-        <NotLoggedInAlert />
-        <Toaster />
+        <Providers>
+          <NotLoggedInAlert />
+          <Toaster />
+          {children}
+        </Providers>
       </body>
     </html>
   );
