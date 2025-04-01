@@ -1,8 +1,8 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, Badge, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
-import { Bot } from 'lucide-react';
+import { BookOpen, Bot } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export type CardAgentType = {
 	id: string;
@@ -11,6 +11,9 @@ export type CardAgentType = {
 	bio: string;
 	status: boolean;
 	modelProvider: string;
+	modules?: {
+		education?: boolean;
+	};
 };
 
 const CardAgent = ({
@@ -20,7 +23,22 @@ const CardAgent = ({
 	bio,
 	status,
 	modelProvider,
+	modules = {},
 }: CardAgentType) => {
+	// State to control whether to show education module
+	const [showEducationModule, setShowEducationModule] = useState(false);
+	
+	// Read from localStorage on component mount
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const savedStatus = localStorage.getItem('educationModuleEnabled');
+			console.log(`Reading education module status from localStorage for ${name}:`, savedStatus);
+			
+			// Only show if explicitly set to 'true'
+			setShowEducationModule(savedStatus === 'true');
+		}
+	}, [name]);
+
 	return (
 		<Box maxWidth="100%">
 			<Card className="shadow-lg">
@@ -169,6 +187,31 @@ const CardAgent = ({
 								</Link>
 							</li>
 						)}
+						
+						{/* Education Module - only shown if enabled in localStorage */}
+						{showEducationModule && (
+							<li className="flex justify-between">
+								<div className="flex items-center gap-2">
+									<Box className="size-8 rounded-full bg-blue-400 flex items-center justify-center">
+										<BookOpen size={16} color="currentColor" />
+									</Box>
+									<Text size="2" weight="medium">
+										Education Module
+									</Text>
+								</div>
+								<Link role="button" href={`/education?agentId=${id}`}>
+									<Button
+										style={{ width: '80px' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Access
+									</Button>
+								</Link>
+							</li>
+						)}
+						
 						<li className="flex justify-between">
 							<div className="flex items-center gap-2">
 								<img
