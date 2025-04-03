@@ -14,6 +14,11 @@
       "id": "a2b0b178cfe340f0a43fed69a984be9d"
     }
   ],
+  "observability": {
+    "logs": {
+      "enabled": true
+    }
+  },
   "env": {
     "production": {
       "name": "ai-cms",
