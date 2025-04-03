@@ -2,11 +2,7 @@
 // src/app/dashboard/page.tsx
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
 import { Button } from "@/components/ui/button";
-import { Input } from "./_components/ui/input";
-import { Label } from "./_components/ui/label";
 import {
   Select,
   SelectContent,
@@ -15,7 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DisplayMode } from '@/lib/embed/types';
+import { usePrivy } from '@privy-io/react-auth';
 import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { Input } from "./_components/ui/input";
+import { Label } from "./_components/ui/label";
 
 // Helper function to extract agent ID from CMS URL
 function extractAgentId(url: string): string {
@@ -83,7 +83,7 @@ function ConfigContent() {
   const searchParams = useSearchParams();
   const [config, setConfig] = useState<DashboardConfig>({
     agentId: searchParams.get('agentId') || '',
-    serverUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 'https://aiapi-internal.defikit.net',
+    serverUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 'https://aiapi-staging.defikit.net',
     widgetUrl: process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL || 'http://localhost:3000',
     theme: 'light',
     displayMode: 'widget',

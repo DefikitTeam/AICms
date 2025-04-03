@@ -8,8 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "preview": "opennextjs-cloudflare && wrangler dev",
-    "deploy": "opennextjs-cloudflare && wrangler deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "deploy:staging": "pnpm exec opennextjs-cloudflare && pnpm exec wrangler deploy --env staging",
+    "deploy:prod": "pnpm exec opennextjs-cloudflare && pnpm exec wrangler deploy --env production",
+    "deploy": "pnpm deploy:prod"
   },
   "dependencies": {
     "@defikitdotnet/public-agent-module": "^0.1.30",
