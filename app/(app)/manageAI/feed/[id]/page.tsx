@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
-import { Box, Button, Card, Flex, Text, Badge, Dialog } from '@radix-ui/themes';
-import { Upload, Info, ChevronLeft, ChevronRight, X, RefreshCw } from 'lucide-react';
-// import { usePrivy } from '@privy-io/react-auth';
-import { useSearchParams } from 'next/navigation';
+import { usePrivy } from '@privy-io/react-auth';
+import { Badge, Box, Button, Card, Dialog, Flex, Text } from '@radix-ui/themes';
+import { ChevronLeft, ChevronRight, Info, RefreshCw, Upload, X } from 'lucide-react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 interface FeedHistory {
@@ -31,7 +31,7 @@ interface Pagination {
   hasPrev: boolean;
 }
 
-export default function FeedDataPage({ params }: { params: { id: string } }) {
+export default function FeedDataPage() {
   const [documentData, setDocumentData] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [history, setHistory] = useState<FeedHistory[]>([]);
@@ -41,20 +41,22 @@ export default function FeedDataPage({ params }: { params: { id: string } }) {
   const [currentPage, setCurrentPage] = useState(1);
   const searchParams = useSearchParams();
   const agentName = searchParams.get('name') || '';
-  // const { getAccessToken } = usePrivy();
+  const params = useParams();
+  const id = params.id as string;
+  const { getAccessToken } = usePrivy();
 
   const fetchHistory = async (page = 1) => {
     setHistoryLoading(true);
     try {
-      // const accessToken = await getAccessToken();
+      const accessToken = await getAccessToken();
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/feed/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          agentId: params.id,
+          agentId: id,
           limit: 10,
           ...(page > 1 ? { page } : {}),
         }),
@@ -72,8 +74,8 @@ export default function FeedDataPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    // fetchHistory(currentPage);
-  }, [params.id, currentPage]);
+    fetchHistory(currentPage);
+  }, [id, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -136,7 +138,7 @@ export default function FeedDataPage({ params }: { params: { id: string } }) {
       
       // Create a FormData object for both document data and file upload
       const formData = new FormData();
-      formData.append('agentId', params.id);
+      formData.append('agentId', id);
       
       // Handle document data (URL or keyword)
       if (documentData) {
