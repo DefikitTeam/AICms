@@ -2,24 +2,24 @@
 
 import * as React from "react"
 
-import { Slot } from "@radix-ui/react-slot"
 import * as SheetPrimitive from "@radix-ui/react-dialog"
+import { Slot } from "@radix-ui/react-slot"
 
 import { VariantProps, cva } from "class-variance-authority"
 
 import { PanelLeft } from "lucide-react"
 
-import { 
-  Button, 
-  Input, 
-  Separator, 
-  Skeleton, 
-  Sheet, 
-  SheetContent, 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
+import {
+  Button,
+  Input,
+  Separator,
+  Sheet,
+  SheetContent,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
 } from "@/components/ui"
 
 import { useIsMobile } from "@/hooks"
@@ -804,5 +804,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
+  useSidebar
 }
+
