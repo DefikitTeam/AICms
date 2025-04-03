@@ -9,6 +9,8 @@ import useTemplateAgent from "../../_hooks/useTemplateAgent";
 import AdvanceSetting from "../../create/_components/AdvanceSetting";
 import SocialMediaConfigForm from "../../create/_components/GroupSetting";
 import BasicInfo from "../../create/_components/BasicInfo";
+import { usePrivy } from "@privy-io/react-auth";
+import { PublishAgentButton } from "@defikitdotnet/public-agent-module/frontend";
 
 const UpdateAgent = () => {
   const [agent, setAgent] = React.useState<any>(null);
@@ -17,6 +19,17 @@ const UpdateAgent = () => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
   const { exportTemplateAgent } = useTemplateAgent();
+  const { getAccessToken } = usePrivy();
+  const [token, setToken] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const accessToken = await getAccessToken();
+      setToken(accessToken);
+    };
+
+    fetchToken();
+  }, []);
 
   const {
     register,
@@ -51,7 +64,7 @@ const UpdateAgent = () => {
       fieldsToSet.forEach((field) => setValue(field, character[field]));
 
       ["all", "chat", "post"].forEach((style) =>
-        setValue(style, character.style[style]),
+        setValue(style, character.style[style])
       );
 
       for (const [key, value] of Object.entries(character.settings.secrets)) {
@@ -63,7 +76,7 @@ const UpdateAgent = () => {
         character.messageExamples.map((message: any) => ({
           user: message[0].content.text,
           agent: message[1].content.text,
-        })),
+        }))
       );
     } catch (error) {
       console.error("Failed to fetch agent details", error);
@@ -79,7 +92,7 @@ const UpdateAgent = () => {
       const message = toast.loading(
         agent?.isExportData
           ? "Removing from templates..."
-          : "Adding to templates...",
+          : "Adding to templates..."
       );
 
       const dataExportTemplateAgent = {
@@ -92,11 +105,11 @@ const UpdateAgent = () => {
 
       toast.success(
         !agent?.isExportData ? "Export to templates" : "Unexpected templates",
-        { id: message },
+        { id: message }
       );
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Failed to update template status",
+        error.response?.data?.message || "Failed to update template status"
       );
     } finally {
       setLoadingUpdate(false);
@@ -161,7 +174,7 @@ const UpdateAgent = () => {
         !data?.secrets?.DISCORD_API_TOKEN
       ) {
         toast.error(
-          "Please fill in the Discord Application ID and Discord API Token",
+          "Please fill in the Discord Application ID and Discord API Token"
         );
         return;
       }
@@ -171,32 +184,28 @@ const UpdateAgent = () => {
     const message = toast.loading("Updating AI Agent...");
     const dataSubmit = {
       clientConfig: {
-          telegram: {
-              shouldIgnoreBotMessages: true,
-              shouldIgnoreDirectMessages: false,
-              shouldRespondOnlyToMentions: false,
-              shouldOnlyJoinInAllowedGroups: false,
-              allowedGroupIds: [
-                  -1002250682364,
-                  -1002091042838,
-                  -1002118895236
-              ],
-            isPartOfTeam: false,
-                teamAgentIds: [5900488737],
-                teamLeaderId: 5900488737,
-                teamMemberInterestKeywords: [] as [],
-                enableGroupVoiceChat: false
+        telegram: {
+          shouldIgnoreBotMessages: true,
+          shouldIgnoreDirectMessages: false,
+          shouldRespondOnlyToMentions: false,
+          shouldOnlyJoinInAllowedGroups: false,
+          allowedGroupIds: [-1002250682364, -1002091042838, -1002118895236],
+          isPartOfTeam: false,
+          teamAgentIds: [5900488737],
+          teamLeaderId: 5900488737,
+          teamMemberInterestKeywords: [] as [],
+          enableGroupVoiceChat: false,
         },
         discord: {
-            shouldIgnoreBotMessages: true,
-            shouldIgnoreDirectMessages: true,
-            shouldRespondOnlyToMentions: true,
-            isPartOfTeam: false,
-            teamAgentIds: [5900488737],
-            teamLeaderId: 5900488737,
-            teamMemberInterestKeywords: [] as []
-        }
-    },
+          shouldIgnoreBotMessages: true,
+          shouldIgnoreDirectMessages: true,
+          shouldRespondOnlyToMentions: true,
+          isPartOfTeam: false,
+          teamAgentIds: [5900488737],
+          teamLeaderId: 5900488737,
+          teamMemberInterestKeywords: [] as [],
+        },
+      },
       name: data.name as string,
       plugins: [] as string[],
       adjectives: data.adjectives as string[],
@@ -302,7 +311,12 @@ const UpdateAgent = () => {
                 {loadingUpdate && <Spinner size="1" />}
                 {agent?.isRunning ? "Running" : "Stopped"}
               </button>
-            </div>{" "}
+              <PublishAgentButton
+                agentId={agentId as string}
+                accessToken={token as string}
+                disabled={!agent?.isRunning}
+              />
+            </div>
           </div>
 
           <Box pt="3">
@@ -317,8 +331,16 @@ const UpdateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} watch={watch} control={control} />
-              <SocialMediaConfigForm register={register} watch={watch} control={control} />
+              <AdvanceSetting
+                register={register}
+                watch={watch}
+                control={control}
+              />
+              <SocialMediaConfigForm
+                register={register}
+                watch={watch}
+                control={control}
+              />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
