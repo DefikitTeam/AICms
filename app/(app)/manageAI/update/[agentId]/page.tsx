@@ -1,4 +1,6 @@
 "use client";
+import { PublishAgentButton } from "@defikitdotnet/public-agent-module/frontend";
+import { usePrivy } from "@privy-io/react-auth";
 import { Box, Spinner, Tabs } from "@radix-ui/themes";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
@@ -7,10 +9,9 @@ import toast from "react-hot-toast";
 import useAgent from "../../_hooks/useAgent";
 import useTemplateAgent from "../../_hooks/useTemplateAgent";
 import AdvanceSetting from "../../create/_components/AdvanceSetting";
-import SocialMediaConfigForm from "../../create/_components/GroupSetting";
 import BasicInfo from "../../create/_components/BasicInfo";
-import { usePrivy } from "@privy-io/react-auth";
-import { PublishAgentButton } from "@defikitdotnet/public-agent-module/frontend";
+import SocialMediaConfigForm from "../../create/_components/GroupSetting";
+import ModulesSettings from "../../create/_components/ModulesSettings";
 
 const UpdateAgent = () => {
   const [agent, setAgent] = React.useState<any>(null);
@@ -39,7 +40,13 @@ const UpdateAgent = () => {
     getValues,
     watch,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm<FieldValues>({
+    defaultValues: {
+      modules: {
+        education: false,
+      }
+    }
+  });
 
   const fetchAgent = useCallback(async () => {
     try {
@@ -47,6 +54,8 @@ const UpdateAgent = () => {
       const response = await getDetailAgent(agentId as string);
       const { character } = response;
       setAgent(response);
+      console.log("Fetched agent data:", response);
+      console.log("Character modules:", character.modules);
 
       const fieldsToSet = [
         "name",
@@ -69,6 +78,13 @@ const UpdateAgent = () => {
 
       for (const [key, value] of Object.entries(character.settings.secrets)) {
         setValue(`secrets.${key}`, value);
+      }
+
+      if (character.modules) {
+        console.log("Setting modules to:", character.modules);
+        setValue("modules", character.modules);
+      } else {
+        console.log("No modules found, using default");
       }
 
       setValue(
@@ -120,6 +136,26 @@ const UpdateAgent = () => {
     fetchAgent();
   }, [fetchAgent]);
 
+  useEffect(() => {
+    // Check localStorage for education module status on component mount
+    if (typeof window !== 'undefined') {
+      const savedStatus = localStorage.getItem('educationModuleEnabled');
+      console.log("Retrieved education module status from localStorage:", savedStatus);
+      
+      if (savedStatus !== null) {
+        setValue('modules.education', savedStatus === 'true');
+      }
+    }
+  }, [setValue]);
+  
+  // Save to localStorage when updating
+  const handleModuleChange = (value: boolean) => {
+    console.log("Module value changed:", value);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
+    }
+  };
+
   const { updateAgent, toggleAgent } = useAgent();
 
   const topicsArray = useFieldArray({ control, name: "topics" });
@@ -168,6 +204,9 @@ const UpdateAgent = () => {
   };
 
   const onSubmit = async (data: FieldValues) => {
+    console.log("Form data before updating:", data);
+    console.log("Modules data:", data.modules);
+    
     if (data.clients.includes("discord")) {
       if (
         !data?.secrets?.DISCORD_APPLICATION_ID ||
@@ -182,6 +221,11 @@ const UpdateAgent = () => {
 
     setLoadingUpdate(true);
     const message = toast.loading("Updating AI Agent...");
+    
+    // Extract modules data for use at both levels
+    const modulesData = data.modules as { education: boolean };
+    console.log("Extracted modules data for submission:", modulesData);
+    
     const dataSubmit = {
       clientConfig: {
         telegram: {
@@ -223,6 +267,8 @@ const UpdateAgent = () => {
       bio: data.bio as string[],
       lore: data.lore as string[],
       postExamples: data.postExamples as string[],
+      // Include modules at root level for future compatibility
+      modules: modulesData,
       settings: {
         secrets: {
           ...(data.secrets as Record<string, string>),
@@ -251,13 +297,17 @@ const UpdateAgent = () => {
         },
       ]),
     };
+    
     try {
+      console.log("Submitting data with modules:", dataSubmit.modules);
       const response = await updateAgent(agentId as string, dataSubmit);
       toast.dismiss(message);
       if (response.success) {
         toast.success("AI Agent updated successfully");
       }
-      fetchAgent();
+      
+      // Force refresh agent data to update the UI
+      await fetchAgent();
     } catch (error: any) {
       if (error.response.data.message) {
         toast.error(error.response.data.message, {
@@ -289,6 +339,7 @@ const UpdateAgent = () => {
             <Tabs.List>
               <Tabs.Trigger value="basic">Basic info</Tabs.Trigger>
               <Tabs.Trigger value="advance">Advance setting</Tabs.Trigger>
+              <Tabs.Trigger value="modules">Modules</Tabs.Trigger>
             </Tabs.List>
             <div className="absolute flex gap-2 top-0 right-0">
               <button
@@ -340,6 +391,16 @@ const UpdateAgent = () => {
                 register={register}
                 watch={watch}
                 control={control}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value="modules">
+              <ModulesSettings 
+                register={register} 
+                watch={watch} 
+                control={control} 
+                onModuleChange={handleModuleChange}
+                setValue={setValue}
               />
             </Tabs.Content>
           </Box>

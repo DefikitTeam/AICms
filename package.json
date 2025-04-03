@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@defikitdotnet/public-agent-module": "^0.1.30",
+    "@defikitdotnet/education-module-ai": "0.1.16",
     "@opennextjs/aws": "^3.4.2",
     "@opennextjs/cloudflare": "^0.5.3",
     "@privy-io/react-auth": "^2.4.5",
