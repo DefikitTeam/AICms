@@ -11,6 +11,9 @@ interface AgentResponse extends CardAgentType {
   lore: string[];
   username: string;
   email: string;
+  modules?: {
+    education?: boolean;
+  };
 }
 
 const ManageAI = () => {
@@ -22,10 +25,23 @@ const ManageAI = () => {
     const fetchAgents = async () => {
       setLoading(true);
       const data = await getAgents();
+      console.log("API Response - Agents data:", data.agents);
+      
+      // Use data directly from API, modules will be controlled by localStorage
       setAgents(data.agents);
       setLoading(false);
     };
+    
+    // Initial fetch when component mounts
     fetchAgents();
+    
+    // Removed the automatic refresh interval that was causing constant reloading
+    // If you want a less frequent refresh, you can uncomment and adjust the time below
+    // const refreshInterval = setInterval(fetchAgents, 30000); // Every 30 seconds instead of 5
+    
+    // return () => {
+    //   if (refreshInterval) clearInterval(refreshInterval);
+    // };
   }, []);
 
   if (loading) {
@@ -81,6 +97,7 @@ const ManageAI = () => {
               bio={agent.bio}
               modelProvider={agent.modelProvider}
               status={agent.isRunning}
+              modules={agent.modules}
             />
           ))}
         </div>
