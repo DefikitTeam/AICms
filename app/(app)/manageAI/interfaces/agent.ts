@@ -26,6 +26,9 @@ export interface CreateAgentData {
 			};
 		};
 		modelProvider: string;
+		modules: {
+			education: boolean;
+		};
 		settings: {
 			secrets: {
 				[key: string]: string | boolean | number;
@@ -52,6 +55,9 @@ export interface CreateAgentData {
 			chat: string[];
 			post: string[];
 		};
+	};
+	modules: {
+		education: boolean;
 	};
 }
 
@@ -82,6 +88,9 @@ export interface UpdateAgentData {
 		};
 	};
 	modelProvider: string;
+	modules: {
+		education: boolean;
+	};
 	settings: {
 		secrets: {
 			[key: string]: string | boolean | number;
