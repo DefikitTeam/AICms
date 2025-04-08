@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:staging": "opennextjs-cloudflare build && wrangler deploy --env staging",
+    "deploy:prod": "opennextjs-cloudflare build && wrangler deploy --env production",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
@@ -47,7 +48,7 @@
     "decimal.js": "^10.4.3",
     "lucide-react": "^0.469.0",
     "motion": "^11.15.0",
-    "next": "^15.2.3",
+    "next": "15.1.2",
     "node-gyp": "^11.1.0",
     "pnpm": "^9.15.5",
     "preact": "^10.26.4",
@@ -99,5 +100,17 @@
     "@radix-ui/react-use-layout-effect": "1.0.1",
     "@radix-ui/react-compose-refs": "1.0.1",
     "@radix-ui/react-slot": "1.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "bigint-buffer",
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "sharp",
+      "utf-8-validate",
+      "workerd"
+    ]
   }
 }
