@@ -12,7 +12,7 @@ import {
 import FormFieldArray from './FormFieldArray';
 import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 import modelProvider from '../data/modelProvider';
-import { clientsPlatform, fieldConfigs } from '../data/utils';
+import { fieldConfigs } from '../data/utils';
 import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
 import { toast } from 'react-hot-toast';
 
@@ -39,29 +39,6 @@ const BasicInfo = ({
 	getValues,
   setValue,
 }: ReactHookFormProps) => {
-	// const fileInputRef = useRef<HTMLInputElement>(null);
-	// const [avatar, setAvatar] = useState<string | null>(null);
-
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  // 	const file = e.target.files?.[0];
-  // 	if (file) {
-  // 		const reader = new FileReader();
-  // 		reader.onloadend = () => {
-  // 			setAvatar(reader.result as string);
-  // 		};
-  // 		reader.readAsDataURL(file);
-  // 	}
-  // };
-
-  // const handleDeleteImage = (e: React.MouseEvent<HTMLButtonElement>) => {
-  // 	e.preventDefault();
-  // 	setAvatar(null);
-  // };
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [clients, setClients] = useState<string[]>([]);
-
   // Template dropdown state
   const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -100,10 +77,6 @@ const BasicInfo = ({
     }
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
   const toggleTemplatesDropdown = () => {
     if (!templatesDropdownOpen) {
       fetchTemplates();
@@ -113,13 +86,6 @@ const BasicInfo = ({
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownOpen(false);
-    }
-
-    if (
       templatesDropdownRef.current &&
       !templatesDropdownRef.current.contains(event.target as Node)
     ) {
@@ -127,18 +93,7 @@ const BasicInfo = ({
     }
   };
 
-	const handleClientsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		const clientsValue = (getValues('clients') as string[]) || [];
-		if (clientsValue.includes(value)) {
-			setClients(clientsValue.filter((client) => client !== value));
-		} else {
-			setClients([...clientsValue, value]);
-		}
-	};
-
 	useEffect(() => {
-		setClients(getValues('clients') as string[]);
 		document.addEventListener('mousedown', handleClickOutside);
     
     // Pre-fetch templates when component mounts
@@ -227,7 +182,7 @@ const BasicInfo = ({
       </div>
 
       {/* Basic Information */}
-      <div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">
+      <div className="form-control grid grid-cols-1 lg:grid-cols-2 gap-2">
 				<div className="col-span-1">
 					<label className="label">
 						<span className="label-text font-medium">AI Agent Name</span>
@@ -247,71 +202,6 @@ const BasicInfo = ({
 							</span>
 						)}
 					</p>
-				</div>
-				<div className="col-span-1">
-					<label className="label">
-						<span className="label-text font-medium">Clients</span>
-					</label>
-
-					<div
-						ref={dropdownRef}
-						role="button"
-						aria-expanded="false"
-						className="relative"
-					>
-						<input
-							type="text"
-							disabled={true}
-							value={
-								(clients || getValues('clients') || []).length < 4
-									? (clients || []).join(', ')
-									: `${(clients || []).slice(0, 3).join(', ')}, ...`
-							}
-							className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
-						/>
-						{errors.clients && (
-							<p>
-								<span className="text-red-500 text-xs">
-									{errors.clients?.message?.toString()}
-								</span>
-							</p>
-						)}
-						<div
-							onClick={toggleDropdown}
-							className="w-full h-full absolute top-0 flex justify-end items-center p-2"
-						>
-							{dropdownOpen ? <ChevronUp /> : <ChevronDown />}
-						</div>
-						<div
-							className={`absolute top-full left-0 w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-2 mt-1 ${dropdownOpen ? 'block' : 'hidden'}`}
-						>
-							<ul className="flex flex-col gap-1">
-								{clientsPlatform.map((client) => (
-									<li
-										key={client.value}
-										className="flex items-center bg-neutral-100 border border-neutral-100 p-2 rounded-lg"
-									>
-										<input
-											{...register('clients', {
-												required: 'This field is required',
-											})}
-											id={client.value}
-											type="checkbox"
-											onChange={(e) => handleClientsChange(e)}
-											value={client.value}
-											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-										/>
-										<label
-											htmlFor={client.value}
-											className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 w-full"
-										>
-											{client.name}
-										</label>
-									</li>
-								))}
-							</ul>
-						</div>
-					</div>
 				</div>
 				<div className="col-span-1">
 					<label className="label flex items-center gap-1">
