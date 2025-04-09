@@ -27,6 +27,7 @@ const SavedContentPageContent = () => {
 
         <div className="content-area">
           <SavedContentComponent
+            agentId={agentId}
             apiBaseUrl={process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}
           />
         </div>

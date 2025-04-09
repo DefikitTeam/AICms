@@ -67,11 +67,12 @@ const UpdateAgent = () => {
         setValue(`secrets.${key}`, value);
       }
 
+      // First set module values from server data
       if (character.modules) {
-        console.log("Setting modules to:", character.modules);
+        console.log("Setting modules from server data:", character.modules);
         setValue("modules", character.modules);
       } else {
-        console.log("No modules found, using default");
+        console.log("No modules found in server data, using default");
       }
 
       setValue(
@@ -124,25 +125,21 @@ const UpdateAgent = () => {
   }, [fetchAgent]);
 
   useEffect(() => {
-    // Check localStorage for education module status on component mount
-    if (typeof window !== 'undefined') {
-      const savedStatus = localStorage.getItem('educationModuleEnabled');
-      console.log("Retrieved education module status from localStorage:", savedStatus);
+    // After fetching agent data, check localStorage for agent-specific module settings
+    // This will override server settings if present
+    if (typeof window !== 'undefined' && agentId) {
+      const savedStatus = localStorage.getItem(`educationModuleEnabled_${agentId}`);
+      console.log(`Retrieved education module status for agent ${agentId} from localStorage:`, savedStatus);
       
       if (savedStatus !== null) {
+        console.log(`Overriding server module settings with localStorage value: ${savedStatus}`);
         setValue('modules.education', savedStatus === 'true');
+      } else {
+        console.log('No localStorage module settings found, keeping server values');
       }
     }
-  }, [setValue]);
+  }, [setValue, agentId, loading]);
   
-  // Save to localStorage when updating
-  const handleModuleChange = (value: boolean) => {
-    console.log("Module value changed:", value);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
-    }
-  };
-
   const { updateAgent, toggleAgent } = useAgent();
 
   const topicsArray = useFieldArray({ control, name: "topics" });
@@ -212,6 +209,12 @@ const UpdateAgent = () => {
     // Extract modules data for use at both levels
     const modulesData = data.modules as { education: boolean };
     console.log("Extracted modules data for submission:", modulesData);
+    
+    // Save module settings to localStorage with agent-specific key
+    if (typeof window !== 'undefined' && agentId) {
+      localStorage.setItem(`educationModuleEnabled_${agentId}`, modulesData.education ? 'true' : 'false');
+      console.log(`Saved education module status for agent ${agentId} to localStorage:`, modulesData.education);
+    }
     
     const dataSubmit = {
       clientConfig: {
@@ -377,8 +380,8 @@ const UpdateAgent = () => {
                 register={register} 
                 watch={watch} 
                 control={control} 
-                onModuleChange={handleModuleChange}
                 setValue={setValue}
+                agentId={agentId as string}
               />
             </Tabs.Content>
           </Box>

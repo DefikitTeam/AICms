@@ -19,10 +19,10 @@ const QuestionsPageContent = () => {
       </Head>
 
       <main>
-        <h1 className="title">Quiz Generator</h1>
+        <h1 className="title">Ask Educational Questions</h1>
         
         <p className="description">
-          Generate a quiz on any topic to test your knowledge
+          Ask educational questions to the AI agent
         </p>
 
         <div className="content-area">
