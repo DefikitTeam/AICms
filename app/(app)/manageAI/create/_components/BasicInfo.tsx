@@ -8,14 +8,13 @@ import {
   UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
-} from "react-hook-form";
-import { toast } from "react-hot-toast";
-import modelProvider from "../data/modelProvider";
-import { clientsPlatform, fieldConfigs } from "../data/utils";
-import FormFieldArray from "./FormFieldArray";
-import MessageExample from "./MessageExample";
-import TextAreaField from "./TextAreaField";
-import { useSearchParams } from "next/navigation";
+} from 'react-hook-form';
+import FormFieldArray from './FormFieldArray';
+import { ChevronDown, ChevronUp, Info } from 'lucide-react';
+import modelProvider from '../data/modelProvider';
+import { fieldConfigs } from '../data/utils';
+import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
+import { toast } from 'react-hot-toast';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
   register: UseFormRegister<TFieldValues>;
@@ -40,31 +39,6 @@ const BasicInfo = ({
   getValues,
   setValue,
 }: ReactHookFormProps) => {
-  const searchParams = useSearchParams();
-
-  // const fileInputRef = useRef<HTMLInputElement>(null);
-  // const [avatar, setAvatar] = useState<string | null>(null);
-
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  // 	const file = e.target.files?.[0];
-  // 	if (file) {
-  // 		const reader = new FileReader();
-  // 		reader.onloadend = () => {
-  // 			setAvatar(reader.result as string);
-  // 		};
-  // 		reader.readAsDataURL(file);
-  // 	}
-  // };
-
-  // const handleDeleteImage = (e: React.MouseEvent<HTMLButtonElement>) => {
-  // 	e.preventDefault();
-  // 	setAvatar(null);
-  // };
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [clients, setClients] = useState<string[]>([]);
-
   // Template dropdown state
   const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -112,10 +86,6 @@ const BasicInfo = ({
     }
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
   const toggleTemplatesDropdown = () => {
     if (!templatesDropdownOpen) {
       fetchTemplates();
@@ -125,34 +95,15 @@ const BasicInfo = ({
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownOpen(false);
-    }
-
-    if (
       templatesDropdownRef.current &&
       !templatesDropdownRef.current.contains(event.target as Node)
     ) {
       setTemplatesDropdownOpen(false);
     }
   };
-
-  const handleClientsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const clientsValue = (getValues("clients") as string[]) || [];
-    if (clientsValue.includes(value)) {
-      setClients(clientsValue.filter((client) => client !== value));
-    } else {
-      setClients([...clientsValue, value]);
-    }
-  };
-
-  useEffect(() => {
-    setClients(getValues("clients") as string[]);
-    document.addEventListener("mousedown", handleClickOutside);
-
+	useEffect(() => {
+		document.addEventListener('mousedown', handleClickOutside);
+   
     // Pre-fetch templates when component mounts
     fetchTemplates();
 
@@ -256,128 +207,62 @@ const BasicInfo = ({
       </div>
 
       {/* Basic Information */}
-      <div className="form-control grid grid-cols-1 lg:grid-cols-3 gap-2">
-        <div className="col-span-1">
-          <label className="label">
-            <span className="label-text font-medium">AI Agent Name</span>
-          </label>
-          <input
-            {...register("name", {
-              required: "This field is required",
-            })}
-            type="text"
-            placeholder="Agent Name"
-            className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
-          />
-          <p>
-            {errors.name && (
-              <span className="text-red-500 text-xs">
-                {errors.name?.message?.toString()}
-              </span>
-            )}
-          </p>
-        </div>
-        <div className="col-span-1">
-          <label className="label">
-            <span className="label-text font-medium">Clients</span>
-          </label>
-
-          <div
-            ref={dropdownRef}
-            role="button"
-            aria-expanded="false"
-            className="relative"
-          >
-            <input
-              type="text"
-              disabled={true}
-              value={
-                (clients || getValues("clients") || []).length < 4
-                  ? (clients || []).join(", ")
-                  : `${(clients || []).slice(0, 3).join(", ")}, ...`
-              }
-              className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
-            />
-            {errors.clients && (
-              <p>
-                <span className="text-red-500 text-xs">
-                  {errors.clients?.message?.toString()}
-                </span>
-              </p>
-            )}
-            <div
-              onClick={toggleDropdown}
-              className="w-full h-full absolute top-0 flex justify-end items-center p-2"
-            >
-              {dropdownOpen ? <ChevronUp /> : <ChevronDown />}
-            </div>
-            <div
-              className={`absolute top-full left-0 w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-2 mt-1 ${dropdownOpen ? "block" : "hidden"}`}
-            >
-              <ul className="flex flex-col gap-1">
-                {clientsPlatform.map((client) => (
-                  <li
-                    key={client.value}
-                    className="flex items-center bg-neutral-100 border border-neutral-100 p-2 rounded-lg"
-                  >
-                    <input
-                      {...register("clients", {
-                        required: "This field is required",
-                      })}
-                      id={client.value}
-                      type="checkbox"
-                      onChange={(e) => handleClientsChange(e)}
-                      value={client.value}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label
-                      htmlFor={client.value}
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 w-full"
-                    >
-                      {client.name}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-1">
-          <label className="label flex items-center gap-1">
-            <span className="label-text font-medium">
-              Model provider to use
-            </span>
-            <div className="relative group">
-              <Info size={16} className=" cursor-pointer" />
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 w-64 bg-black dark:bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 shadow-lg">
-                Currently, our system only supports Google Model. Other model
-                providers will be available in the future.
-                <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black dark:border-t-neutral-900"></div>
-              </div>
-            </div>
-          </label>
-          <select
-            {...register("modelProvider", {
-              required: "This field is required",
-            })}
-            className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            disabled={true}
-          >
-            {modelProvider.map((provider) => (
-              <option key={provider.value} value={provider.value}>
-                {provider.name}
-              </option>
-            ))}
-          </select>
-          <p>
-            {errors.modelProvider && (
-              <span className="text-red-500 text-xs">
-                {errors.modelProvider?.message?.toString()}
-              </span>
-            )}
-          </p>
-        </div>
-      </div>
+      <div className="form-control grid grid-cols-1 lg:grid-cols-2 gap-2">
+				<div className="col-span-1">
+					<label className="label">
+						<span className="label-text font-medium">AI Agent Name</span>
+					</label>
+					<input
+						{...register('name', {
+							required: 'This field is required',
+						})}
+						type="text"
+						placeholder="Agent Name"
+						className="input block w-full mt-1 focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
+					/>
+					<p>
+						{errors.name && (
+							<span className="text-red-500 text-xs">
+								{errors.name?.message?.toString()}
+							</span>
+						)}
+					</p>
+				</div>
+				<div className="col-span-1">
+					<label className="label flex items-center gap-1">
+						<span className="label-text font-medium">
+							Model provider to use
+						</span>
+						<div className="relative group">
+							<Info size={16} className=" cursor-pointer" />
+							<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 w-64 bg-black dark:bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 shadow-lg">
+								Currently, our system only supports Google Model. Other model providers will be available in the future.
+								<div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black dark:border-t-neutral-900"></div>
+							</div>
+						</div>
+					</label>
+					<select
+						{...register('modelProvider', {
+							required: 'This field is required',
+						})}
+						className="mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						disabled={true}
+					>
+						{modelProvider.map((provider) => (
+							<option key={provider.value} value={provider.value}>
+								{provider.name}
+							</option>
+						))}
+					</select>
+					<p>
+						{errors.modelProvider && (
+							<span className="text-red-500 text-xs">
+								{errors.modelProvider?.message?.toString()}
+							</span>
+						)}
+					</p>
+				</div>
+			</div>
 
       {/* Bio,Lore, System */}
       <div className="form-control flex flex-col gap-1">
