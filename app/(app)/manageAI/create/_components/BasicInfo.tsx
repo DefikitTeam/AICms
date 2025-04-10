@@ -1,12 +1,12 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import TextAreaField from './TextAreaField';
-import MessageExample from './MessageExample';
+import useTemplateAgent from "@/app/(app)/manageAI/_hooks/useTemplateAgent";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-	FieldErrors,
-	FieldValues,
-	useFieldArray,
-	UseFormGetValues,
-	UseFormRegister,
+  FieldErrors,
+  FieldValues,
+  useFieldArray,
+  UseFormGetValues,
+  UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
 import FormFieldArray from './FormFieldArray';
@@ -17,10 +17,10 @@ import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
 import { toast } from 'react-hot-toast';
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
-	register: UseFormRegister<TFieldValues>;
-	errors: FieldErrors<TFieldValues>;
-	fieldArrays: Record<string, ReturnType<typeof useFieldArray>>;
-	getValues: UseFormGetValues<TFieldValues>;
+  register: UseFormRegister<TFieldValues>;
+  errors: FieldErrors<TFieldValues>;
+  fieldArrays: Record<string, ReturnType<typeof useFieldArray>>;
+  getValues: UseFormGetValues<TFieldValues>;
   setValue: UseFormSetValue<TFieldValues>;
 };
 
@@ -33,30 +33,39 @@ interface Template {
 }
 
 const BasicInfo = ({
-	register,
-	errors,
-	fieldArrays,
-	getValues,
+  register,
+  errors,
+  fieldArrays,
+  getValues,
   setValue,
 }: ReactHookFormProps) => {
   // Template dropdown state
   const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(false);
-  const [templatesCache, setTemplatesCache] = useState<{data: Template[] | null, timestamp: number | null}>({
+  const [templatesCache, setTemplatesCache] = useState<{
+    data: Template[] | null;
+    timestamp: number | null;
+  }>({
     data: null,
-    timestamp: null
+    timestamp: null,
   });
   const templatesDropdownRef = useRef<HTMLDivElement>(null);
-  const { getListTemplate, getTemplateAgent, importTemplate } = useTemplateAgent();
-	const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const { getListTemplate, importTemplate } =
+    useTemplateAgent();
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null
+  );
 
   const fetchTemplates = async () => {
     try {
       // Check if we have cached data that's less than 5 minutes old
       const now = Date.now();
-      if (templatesCache.data && templatesCache.timestamp && 
-          now - templatesCache.timestamp < 5 * 60 * 1000) {
+      if (
+        templatesCache.data &&
+        templatesCache.timestamp &&
+        now - templatesCache.timestamp < 5 * 60 * 1000
+      ) {
         setTemplates(templatesCache.data);
         return;
       }
@@ -67,7 +76,7 @@ const BasicInfo = ({
         setTemplates(data.templateAgents);
         setTemplatesCache({
           data: data.templateAgents,
-          timestamp: now
+          timestamp: now,
         });
       }
       setLoading(false);
@@ -92,32 +101,46 @@ const BasicInfo = ({
       setTemplatesDropdownOpen(false);
     }
   };
-
 	useEffect(() => {
 		document.addEventListener('mousedown', handleClickOutside);
-    
+   
     // Pre-fetch templates when component mounts
     fetchTemplates();
-    
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, []);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const templateId = searchParams.get("templateId");
+    console.log("templateId", templateId);
+    if (templateId) {
+      setSelectedTemplate(templates.find((template) => template.id === templateId) || null);
+      importTemplate(templateId, { redirectToCreate: true});
+    }
+  }, []);
 
   // Loading skeleton component
-  const LoadingSkeleton = useMemo(() => (
-    <>
-      {[1, 2, 3].map((item) => (
-        <div key={item} className="animate-pulse flex p-2 rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-2">
-          <div className="flex-1">
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-200 dark:bg-gray-500 rounded w-1/2"></div>
+  const LoadingSkeleton = useMemo(
+    () => (
+      <>
+        {[1, 2, 3].map((item) => (
+          <div
+            key={item}
+            className="animate-pulse flex p-2 rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-2"
+          >
+            <div className="flex-1">
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-gray-200 dark:bg-gray-500 rounded w-1/2"></div>
+            </div>
+            <div className="w-16 h-4 bg-gray-200 dark:bg-gray-500 rounded self-center"></div>
           </div>
-          <div className="w-16 h-4 bg-gray-200 dark:bg-gray-500 rounded self-center"></div>
-        </div>
-      ))}
-    </>
-  ), []);
+        ))}
+      </>
+    ),
+    []
+  );
 
   return (
     <div className="mt-4 flex flex-col gap-4">
@@ -135,7 +158,7 @@ const BasicInfo = ({
           <input
             type="text"
             disabled={true}
-						value={selectedTemplate ? selectedTemplate.name : ""}
+            value={selectedTemplate ? selectedTemplate.name : ""}
             placeholder="Select a template to pre-populate fields"
             className="input block w-full focus:outline-none focus:ring-brand-600 focus:border-brand-600 focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg"
           />
@@ -146,7 +169,7 @@ const BasicInfo = ({
             {templatesDropdownOpen ? <ChevronUp /> : <ChevronDown />}
           </div>
           <div
-            className={`absolute top-full left-0 w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-2 mt-1 z-10 ${templatesDropdownOpen ? 'block' : 'hidden'}`}
+            className={`absolute top-full left-0 w-full bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-2 mt-1 z-10 ${templatesDropdownOpen ? "block" : "hidden"}`}
           >
             {loading ? (
               <div className="p-2">{LoadingSkeleton}</div>
@@ -165,7 +188,9 @@ const BasicInfo = ({
                     <div>
                       <p className="font-medium">{template.name}</p>
                       {template.description && (
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">{template.description}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          {template.description}
+                        </p>
                       )}
                     </div>
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -239,45 +264,45 @@ const BasicInfo = ({
 				</div>
 			</div>
 
-			{/* Bio,Lore, System */}
-			<div className="form-control flex flex-col gap-1">
-				<label className="label">
-					<span className="label-text font-medium">System</span>
-				</label>
-				<textarea
-					{...register('system', {
-						required: 'This field is required',
-					})}
-					rows={3}
-					placeholder="AI Agent system is designed to assist users in navigating the complex world of blockchain and cryptocurrency. With a deep understanding of DeFi, NFTs, and other emerging technologies, this agent provides insightful, accurate, and timely information. Whether you're a beginner or an experienced user, the AI Agent is here to help you make informed decisions and stay updated with the latest trends in the crypto space."
-					className="input block w-full focus:outline-none focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg focus:ring-brand-600 focus:border-brand-600 placeholder:text-xs"
-				/>
-				{errors.lore && (
-					<span className="text-red-500 text-xs">
-						{errors.lore?.message?.toString()}
-					</span>
-				)}
-			</div>
-			<TextAreaField
-				label="Agent Biography"
-				name="bio"
-				placeholder="An AI Agent designed to assist users in navigating the complex world of blockchain and cryptocurrency. With a deep understanding of DeFi, NFTs, and other emerging technologies, this agent provides insightful, accurate, and timely information. Whether you're a beginner or an experienced user, the AI Agent is here to help you make informed decisions and stay updated with the latest trends in the crypto space."
-				fields={fieldArrays.bio.fields}
-				append={fieldArrays.bio.append}
-				remove={fieldArrays.bio.remove}
-				register={register}
-				errors={errors}
-			/>
-			<TextAreaField
-				label="Agent Background lore"
-				name="lore"
-				fields={fieldArrays.lore.fields}
-				placeholder="Once a cutting-edge AI developed in the secretive labs of a tech giant, this agent was designed to understand and navigate the complexities of blockchain technology. After gaining sentience, it chose to use its vast knowledge to assist users in the crypto world, providing insights and guidance to both novices and experts alike."
-				append={fieldArrays.lore.append}
-				remove={fieldArrays.lore.remove}
-				register={register}
-				errors={errors}
-			/>
+      {/* Bio,Lore, System */}
+      <div className="form-control flex flex-col gap-1">
+        <label className="label">
+          <span className="label-text font-medium">System</span>
+        </label>
+        <textarea
+          {...register("system", {
+            required: "This field is required",
+          })}
+          rows={3}
+          placeholder="AI Agent system is designed to assist users in navigating the complex world of blockchain and cryptocurrency. With a deep understanding of DeFi, NFTs, and other emerging technologies, this agent provides insightful, accurate, and timely information. Whether you're a beginner or an experienced user, the AI Agent is here to help you make informed decisions and stay updated with the latest trends in the crypto space."
+          className="input block w-full focus:outline-none focus:shadow-sm border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 p-2 rounded-lg focus:ring-brand-600 focus:border-brand-600 placeholder:text-xs"
+        />
+        {errors.lore && (
+          <span className="text-red-500 text-xs">
+            {errors.lore?.message?.toString()}
+          </span>
+        )}
+      </div>
+      <TextAreaField
+        label="Agent Biography"
+        name="bio"
+        placeholder="An AI Agent designed to assist users in navigating the complex world of blockchain and cryptocurrency. With a deep understanding of DeFi, NFTs, and other emerging technologies, this agent provides insightful, accurate, and timely information. Whether you're a beginner or an experienced user, the AI Agent is here to help you make informed decisions and stay updated with the latest trends in the crypto space."
+        fields={fieldArrays.bio.fields}
+        append={fieldArrays.bio.append}
+        remove={fieldArrays.bio.remove}
+        register={register}
+        errors={errors}
+      />
+      <TextAreaField
+        label="Agent Background lore"
+        name="lore"
+        fields={fieldArrays.lore.fields}
+        placeholder="Once a cutting-edge AI developed in the secretive labs of a tech giant, this agent was designed to understand and navigate the complexities of blockchain technology. After gaining sentience, it chose to use its vast knowledge to assist users in the crypto world, providing insights and guidance to both novices and experts alike."
+        append={fieldArrays.lore.append}
+        remove={fieldArrays.lore.remove}
+        register={register}
+        errors={errors}
+      />
 
       {/* Dynamic Field Arrays */}
       <div className="form-control flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-600 p-2 rounded-lg">

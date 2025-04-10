@@ -3,18 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "preview": "opennextjs-cloudflare && wrangler dev",
-    "deploy": "opennextjs-cloudflare && wrangler deploy",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:staging": "opennextjs-cloudflare build && wrangler deploy --env staging",
+    "deploy:prod": "opennextjs-cloudflare build && wrangler deploy --env production",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@defikitdotnet/education-module-ai": "0.1.18",
+    "@defikitdotnet/public-agent-module": "^0.1.30",
     "@opennextjs/aws": "^3.4.2",
-    "@opennextjs/cloudflare": "^0.5.3",
+    "@opennextjs/cloudflare": "^0.6.6",
     "@privy-io/react-auth": "^2.4.5",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-avatar": "^1.1.2",
@@ -39,21 +41,17 @@
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "bs58": "^6.0.0",
-    "chart": "^0.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cookies-next": "^5.0.2",
     "cors": "^2.8.5",
-    "d3-force": "^3.0.0",
     "decimal.js": "^10.4.3",
-    "dlx": "^0.2.1",
-    "jsdom": "^25.0.1",
-    "leva": "^0.9.35",
     "lucide-react": "^0.469.0",
     "motion": "^11.15.0",
     "next": "15.1.2",
     "node-gyp": "^11.1.0",
     "pnpm": "^9.15.5",
+    "preact": "^10.26.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
@@ -61,17 +59,14 @@
     "react-markdown": "^9.1.0",
     "react-syntax-highlighter": "^15.6.1",
     "react-textarea-autosize": "^8.5.6",
-    "recharts": "^2.15.0",
     "server-only": "^0.0.1",
     "shadcn": "^2.1.8",
     "sharp": "0.32.6",
-    "solana-agent-kit": "^1.2.0",
     "swr": "^2.3.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.22.8",
     "wagmi": "^2.14.7",
-    "wrangler": "^3.109.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -88,15 +83,13 @@
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.7.0"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "solana-agent-kit": {
-      "node": ">=20.11.1"
-    }
+    "react-dom": "^19.0.0"
   },
   "resolutions": {
     "@radix-ui/react-tooltip": "1.1.6",
@@ -107,5 +100,17 @@
     "@radix-ui/react-use-layout-effect": "1.0.1",
     "@radix-ui/react-compose-refs": "1.0.1",
     "@radix-ui/react-slot": "1.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "bigint-buffer",
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "sharp",
+      "utf-8-validate",
+      "workerd"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 import { Box, Tabs } from "@radix-ui/themes";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { FieldValues, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAgent from "../_hooks/useAgent";
@@ -8,6 +8,14 @@ import AdvanceSetting from "./_components/AdvanceSetting";
 import BasicInfo from "./_components/BasicInfo";
 import SocialMediaConfigForm from "./_components/GroupSetting";
 import ModulesSettings from "./_components/ModulesSettings";
+
+const CreateAgentPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateAgent />
+    </Suspense>
+  );
+};
 
 const CreateAgent = () => {
   const {
@@ -286,4 +294,4 @@ const CreateAgent = () => {
   );
 };
 
-export default CreateAgent;
+export default CreateAgentPage;
