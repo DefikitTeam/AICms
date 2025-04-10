@@ -10,11 +10,11 @@ import {
   UseFormSetValue,
 } from 'react-hook-form';
 import FormFieldArray from './FormFieldArray';
-import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 import modelProvider from '../data/modelProvider';
 import { fieldConfigs } from '../data/utils';
-import useTemplateAgent from '@/app/(app)/manageAI/_hooks/useTemplateAgent';
 import { toast } from 'react-hot-toast';
+import TextAreaField from "./TextAreaField";
+import MessageExample from "./MessageExample";
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
   register: UseFormRegister<TFieldValues>;
@@ -110,15 +110,6 @@ const BasicInfo = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-
-  useEffect(() => {
-    const templateId = searchParams.get("templateId");
-    console.log("templateId", templateId);
-    if (templateId) {
-      setSelectedTemplate(templates.find((template) => template.id === templateId) || null);
-      importTemplate(templateId, { redirectToCreate: true});
-    }
   }, []);
 
   // Loading skeleton component
