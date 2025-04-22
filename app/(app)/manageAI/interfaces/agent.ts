@@ -28,6 +28,7 @@ export interface CreateAgentData {
 		modelProvider: string;
 		modules: {
 			education: boolean;
+			combat?: boolean;
 		};
 		settings: {
 			secrets: {
@@ -58,6 +59,7 @@ export interface CreateAgentData {
 	};
 	modules: {
 		education: boolean;
+		combat?: boolean;
 	};
 }
 
@@ -90,6 +92,7 @@ export interface UpdateAgentData {
 	modelProvider: string;
 	modules: {
 		education: boolean;
+		combat?: boolean;
 	};
 	settings: {
 		secrets: {
@@ -120,16 +123,16 @@ export interface UpdateAgentData {
 }
 
 export type messageExamples = [
-  {
-    user: string;
-    content: {
-      text: string;
-    };
-  },
-  {
-    user: string;
-    content: {
-      text: string;
-    };
-  },
+	{
+		user: string;
+		content: {
+			text: string;
+		};
+	},
+	{
+		user: string;
+		content: {
+			text: string;
+		};
+	},
 ];

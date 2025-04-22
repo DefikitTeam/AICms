@@ -67,7 +67,8 @@
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.22.8",
     "wagmi": "^2.14.7",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "x-ai-combat": "file:C:/Users/admin/Documents/agent-framework/examples/x-ai-combat/x-ai-combat-1.0.26.tgz"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
