@@ -13,5 +13,39 @@
       "binding": "ai_cms",
       "id": "a2b0b178cfe340f0a43fed69a984be9d"
     }
-  ]
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true
+    }
+  },
+  "env": {
+    "production": {
+      "name": "ai-cms",
+      "kv_namespaces": [
+        {
+          "binding": "ai_cms",
+          "id": "a2b0b178cfe340f0a43fed69a984be9d"
+        }
+      ]
+    },
+    "internal": {
+      "name": "ai-cms-internal",
+      "kv_namespaces": [
+        {
+          "binding": "ai_cms_internal",
+          "id": "a2b0b178cfe340f0a43fed69a984be9d"
+        }
+      ]
+    },
+    "staging": {
+      "name": "ai-cms-staging",
+      "kv_namespaces": [
+        {
+          "binding": "ai_cms",
+          "id": "a2b0b178cfe340f0a43fed69a984be9d"
+        }
+      ]
+    }
+  }
 }

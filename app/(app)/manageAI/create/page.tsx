@@ -1,12 +1,21 @@
 "use client";
 import { Box, Tabs } from "@radix-ui/themes";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { FieldValues, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAgent from "../_hooks/useAgent";
 import AdvanceSetting from "./_components/AdvanceSetting";
 import BasicInfo from "./_components/BasicInfo";
 import SocialMediaConfigForm from "./_components/GroupSetting";
+import ModulesSettings from "./_components/ModulesSettings";
+
+const CreateAgentPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateAgent />
+    </Suspense>
+  );
+};
 
 const CreateAgent = () => {
   const {
@@ -26,6 +35,9 @@ const CreateAgent = () => {
           agent: "",
         },
       ],
+      modules: {
+        education: false,
+      },
     },
   });
 
@@ -108,6 +120,9 @@ const CreateAgent = () => {
   };
 
   const onSubmit = async (data: FieldValues) => {
+    console.log("Form data before submission:", data);
+    console.log("Modules data:", data.modules);
+    
     if (data.clients.includes("discord")) {
       if (
         !data?.secrets?.DISCORD_APPLICATION_ID ||
@@ -121,6 +136,11 @@ const CreateAgent = () => {
     }
     const message = toast.loading("Creating AI Agent...");
     setLoading(true);
+    
+    // Extract modules data for use at both levels
+    const modulesData = data.modules as { education: boolean };
+    console.log("Extracted modules data for submission:", modulesData);
+    
     const dataSubmit = {
       config: {
         clientConfig: {
@@ -167,6 +187,8 @@ const CreateAgent = () => {
         bio: data.bio as string[],
         lore: data.lore as string[],
         postExamples: data.postExamples as string[],
+        // Include modules within config
+        modules: modulesData,
         settings: {
           secrets: {
             ...(data.secrets as Record<string, string>),
@@ -195,8 +217,11 @@ const CreateAgent = () => {
           },
         ]),
       },
+      // Also include at root level for future compatibility
+      modules: modulesData,
     };
     try {
+      console.log("Submitting data with modules:", dataSubmit.modules);
       const response = await createAgent(dataSubmit);
       toast.dismiss(message);
       if (response.success) {
@@ -212,6 +237,13 @@ const CreateAgent = () => {
     }
   };
 
+  const handleModuleChange = (value: boolean) => {
+    console.log("Module value changed in create page:", value);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
+    }
+  };
+
   return (
     <div className="flex flex-col overflow-hidden">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -219,6 +251,7 @@ const CreateAgent = () => {
           <Tabs.List>
             <Tabs.Trigger value="basic">Basic info</Tabs.Trigger>
             <Tabs.Trigger value="advance">Advance setting</Tabs.Trigger>
+            <Tabs.Trigger value="modules">Modules</Tabs.Trigger>
           </Tabs.List>
 
           <Box pt="3">
@@ -236,6 +269,16 @@ const CreateAgent = () => {
               <AdvanceSetting register={register} watch={watch} control={control} />
               <SocialMediaConfigForm register={register} watch={watch} control={control} />
             </Tabs.Content>
+
+            <Tabs.Content value="modules">
+              <ModulesSettings 
+                register={register} 
+                watch={watch} 
+                control={control} 
+                onModuleChange={handleModuleChange}
+                setValue={setValue}
+              />
+            </Tabs.Content>
           </Box>
         </Tabs.Root>
         <div className="flex justify-end mt-4">
@@ -252,4 +295,4 @@ const CreateAgent = () => {
   );
 };
 
-export default CreateAgent;
+export default CreateAgentPage;

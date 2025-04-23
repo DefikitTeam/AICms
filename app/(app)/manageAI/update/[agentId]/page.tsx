@@ -1,4 +1,6 @@
 "use client";
+import { PublishAgentButton } from "@defikitdotnet/public-agent-module/frontend";
+import { usePrivy } from "@privy-io/react-auth";
 import { Box, Spinner, Tabs } from "@radix-ui/themes";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
@@ -7,8 +9,9 @@ import toast from "react-hot-toast";
 import useAgent from "../../_hooks/useAgent";
 import useTemplateAgent from "../../_hooks/useTemplateAgent";
 import AdvanceSetting from "../../create/_components/AdvanceSetting";
-import SocialMediaConfigForm from "../../create/_components/GroupSetting";
 import BasicInfo from "../../create/_components/BasicInfo";
+import SocialMediaConfigForm from "../../create/_components/GroupSetting";
+import ModulesSettings from "../../create/_components/ModulesSettings";
 
 const UpdateAgent = () => {
   const [agent, setAgent] = React.useState<any>(null);
@@ -17,6 +20,17 @@ const UpdateAgent = () => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
   const { exportTemplateAgent } = useTemplateAgent();
+  const { getAccessToken } = usePrivy();
+  const [token, setToken] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const accessToken = await getAccessToken();
+      setToken(accessToken);
+    };
+
+    fetchToken();
+  }, []);
 
   const {
     register,
@@ -26,7 +40,13 @@ const UpdateAgent = () => {
     getValues,
     watch,
     formState: { errors },
-  } = useForm<FieldValues>();
+  } = useForm<FieldValues>({
+    defaultValues: {
+      modules: {
+        education: false,
+      }
+    }
+  });
 
   const fetchAgent = useCallback(async () => {
     try {
@@ -34,6 +54,8 @@ const UpdateAgent = () => {
       const response = await getDetailAgent(agentId as string);
       const { character } = response;
       setAgent(response);
+      console.log("Fetched agent data:", response);
+      console.log("Character modules:", character.modules);
 
       const fieldsToSet = [
         "name",
@@ -51,11 +73,18 @@ const UpdateAgent = () => {
       fieldsToSet.forEach((field) => setValue(field, character[field]));
 
       ["all", "chat", "post"].forEach((style) =>
-        setValue(style, character.style[style]),
+        setValue(style, character.style[style])
       );
 
       for (const [key, value] of Object.entries(character.settings.secrets)) {
         setValue(`secrets.${key}`, value);
+      }
+
+      if (character.modules) {
+        console.log("Setting modules to:", character.modules);
+        setValue("modules", character.modules);
+      } else {
+        console.log("No modules found, using default");
       }
 
       setValue(
@@ -63,7 +92,7 @@ const UpdateAgent = () => {
         character.messageExamples.map((message: any) => ({
           user: message[0].content.text,
           agent: message[1].content.text,
-        })),
+        }))
       );
     } catch (error) {
       console.error("Failed to fetch agent details", error);
@@ -79,7 +108,7 @@ const UpdateAgent = () => {
       const message = toast.loading(
         agent?.isExportData
           ? "Removing from templates..."
-          : "Adding to templates...",
+          : "Adding to templates..."
       );
 
       const dataExportTemplateAgent = {
@@ -92,11 +121,11 @@ const UpdateAgent = () => {
 
       toast.success(
         !agent?.isExportData ? "Export to templates" : "Unexpected templates",
-        { id: message },
+        { id: message }
       );
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Failed to update template status",
+        error.response?.data?.message || "Failed to update template status"
       );
     } finally {
       setLoadingUpdate(false);
@@ -106,6 +135,26 @@ const UpdateAgent = () => {
   useEffect(() => {
     fetchAgent();
   }, [fetchAgent]);
+
+  useEffect(() => {
+    // Check localStorage for education module status on component mount
+    if (typeof window !== 'undefined') {
+      const savedStatus = localStorage.getItem('educationModuleEnabled');
+      console.log("Retrieved education module status from localStorage:", savedStatus);
+      
+      if (savedStatus !== null) {
+        setValue('modules.education', savedStatus === 'true');
+      }
+    }
+  }, [setValue]);
+  
+  // Save to localStorage when updating
+  const handleModuleChange = (value: boolean) => {
+    console.log("Module value changed:", value);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
+    }
+  };
 
   const { updateAgent, toggleAgent } = useAgent();
 
@@ -155,13 +204,16 @@ const UpdateAgent = () => {
   };
 
   const onSubmit = async (data: FieldValues) => {
+    console.log("Form data before updating:", data);
+    console.log("Modules data:", data.modules);
+    
     if (data.clients.includes("discord")) {
       if (
         !data?.secrets?.DISCORD_APPLICATION_ID ||
         !data?.secrets?.DISCORD_API_TOKEN
       ) {
         toast.error(
-          "Please fill in the Discord Application ID and Discord API Token",
+          "Please fill in the Discord Application ID and Discord API Token"
         );
         return;
       }
@@ -169,34 +221,35 @@ const UpdateAgent = () => {
 
     setLoadingUpdate(true);
     const message = toast.loading("Updating AI Agent...");
+    
+    // Extract modules data for use at both levels
+    const modulesData = data.modules as { education: boolean };
+    console.log("Extracted modules data for submission:", modulesData);
+    
     const dataSubmit = {
       clientConfig: {
-          telegram: {
-              shouldIgnoreBotMessages: true,
-              shouldIgnoreDirectMessages: false,
-              shouldRespondOnlyToMentions: false,
-              shouldOnlyJoinInAllowedGroups: false,
-              allowedGroupIds: [
-                  -1002250682364,
-                  -1002091042838,
-                  -1002118895236
-              ],
-            isPartOfTeam: false,
-                teamAgentIds: [5900488737],
-                teamLeaderId: 5900488737,
-                teamMemberInterestKeywords: [] as [],
-                enableGroupVoiceChat: false
+        telegram: {
+          shouldIgnoreBotMessages: true,
+          shouldIgnoreDirectMessages: false,
+          shouldRespondOnlyToMentions: false,
+          shouldOnlyJoinInAllowedGroups: false,
+          allowedGroupIds: [-1002250682364, -1002091042838, -1002118895236],
+          isPartOfTeam: false,
+          teamAgentIds: [5900488737],
+          teamLeaderId: 5900488737,
+          teamMemberInterestKeywords: [] as [],
+          enableGroupVoiceChat: false,
         },
         discord: {
-            shouldIgnoreBotMessages: true,
-            shouldIgnoreDirectMessages: true,
-            shouldRespondOnlyToMentions: true,
-            isPartOfTeam: false,
-            teamAgentIds: [5900488737],
-            teamLeaderId: 5900488737,
-            teamMemberInterestKeywords: [] as []
-        }
-    },
+          shouldIgnoreBotMessages: true,
+          shouldIgnoreDirectMessages: true,
+          shouldRespondOnlyToMentions: true,
+          isPartOfTeam: false,
+          teamAgentIds: [5900488737],
+          teamLeaderId: 5900488737,
+          teamMemberInterestKeywords: [] as [],
+        },
+      },
       name: data.name as string,
       plugins: [] as string[],
       adjectives: data.adjectives as string[],
@@ -214,6 +267,8 @@ const UpdateAgent = () => {
       bio: data.bio as string[],
       lore: data.lore as string[],
       postExamples: data.postExamples as string[],
+      // Include modules at root level for future compatibility
+      modules: modulesData,
       settings: {
         secrets: {
           ...(data.secrets as Record<string, string>),
@@ -242,13 +297,17 @@ const UpdateAgent = () => {
         },
       ]),
     };
+    
     try {
+      console.log("Submitting data with modules:", dataSubmit.modules);
       const response = await updateAgent(agentId as string, dataSubmit);
       toast.dismiss(message);
       if (response.success) {
         toast.success("AI Agent updated successfully");
       }
-      fetchAgent();
+      
+      // Force refresh agent data to update the UI
+      await fetchAgent();
     } catch (error: any) {
       if (error.response.data.message) {
         toast.error(error.response.data.message, {
@@ -280,6 +339,7 @@ const UpdateAgent = () => {
             <Tabs.List>
               <Tabs.Trigger value="basic">Basic info</Tabs.Trigger>
               <Tabs.Trigger value="advance">Advance setting</Tabs.Trigger>
+              <Tabs.Trigger value="modules">Modules</Tabs.Trigger>
             </Tabs.List>
             <div className="absolute flex gap-2 top-0 right-0">
               <button
@@ -302,7 +362,12 @@ const UpdateAgent = () => {
                 {loadingUpdate && <Spinner size="1" />}
                 {agent?.isRunning ? "Running" : "Stopped"}
               </button>
-            </div>{" "}
+              <PublishAgentButton
+                agentId={agentId as string}
+                accessToken={token as string}
+                disabled={!agent?.isRunning}
+              />
+            </div>
           </div>
 
           <Box pt="3">
@@ -317,8 +382,26 @@ const UpdateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="advance">
-              <AdvanceSetting register={register} watch={watch} control={control} />
-              <SocialMediaConfigForm register={register} watch={watch} control={control} />
+              <AdvanceSetting
+                register={register}
+                watch={watch}
+                control={control}
+              />
+              <SocialMediaConfigForm
+                register={register}
+                watch={watch}
+                control={control}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value="modules">
+              <ModulesSettings 
+                register={register} 
+                watch={watch} 
+                control={control} 
+                onModuleChange={handleModuleChange}
+                setValue={setValue}
+              />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
