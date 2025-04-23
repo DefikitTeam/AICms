@@ -15,6 +15,7 @@
   "dependencies": {
     "@defikitdotnet/education-module-ai": "0.1.16",
     "@defikitdotnet/public-agent-module": "^0.1.40",
+    "@defikitdotnet/x-ai-combat": "1.0.1",
     "@opennextjs/aws": "^3.4.2",
     "@opennextjs/cloudflare": "^0.6.6",
     "@privy-io/react-auth": "^2.4.5",
@@ -67,8 +68,7 @@
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.22.8",
     "wagmi": "^2.14.7",
-    "zod": "^3.24.1",
-    "x-ai-combat": "file:C:/Users/admin/Documents/agent-framework/examples/x-ai-combat/x-ai-combat-1.0.26.tgz"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

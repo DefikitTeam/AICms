@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-
+import { usePathname } from 'next/navigation';
 import { usePrivy } from '@privy-io/react-auth';
 
 import {
@@ -15,14 +15,18 @@ import {
 
 import LoginButton from '@/app/_components/login-button';
 import { useExperimentalConfirmed } from '../_hooks';
+import { isPublicRoute } from '@/app/config/public-routes';
 
 const NotLoggedInAlert: React.FC = () => {
 	const { ready, user } = usePrivy();
-
+	const pathname = usePathname();
 	const { confirmed } = useExperimentalConfirmed();
 
+	// Check if current route is public
+	const isPublic = isPublicRoute(pathname);
+
 	return (
-		<AlertDialog open={ready && !user && confirmed}>
+		<AlertDialog open={ready && !user && confirmed && !isPublic}>
 			<AlertDialogHeader className="hidden">
 				<AlertDialogTitle>You are not logged in</AlertDialogTitle>
 				<AlertDialogDescription>
