@@ -30,14 +30,14 @@ const CardAgent = ({
 	
 	// Read from localStorage on component mount
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			const savedStatus = localStorage.getItem('educationModuleEnabled');
-			console.log(`Reading education module status from localStorage for ${name}:`, savedStatus);
+		if (typeof window !== 'undefined' && id) {
+			const savedStatus = localStorage.getItem(`educationModuleEnabled_${id}`);
+			console.log(`Reading education module status from localStorage for agent ${id} (${name}):`, savedStatus);
 			
 			// Only show if explicitly set to 'true'
 			setShowEducationModule(savedStatus === 'true');
 		}
-	}, [name]);
+	}, [id, name]);
 
 	return (
 		<Box maxWidth="100%">
@@ -75,7 +75,7 @@ const CardAgent = ({
 					<ul className="flex flex-col gap-4">
 						{!clients.includes('twitter') && (
 							<li className="flex justify-between">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-3">
 									<img
 										src="./logos/x.png"
 										className="size-8 bg-black rounded-full"
@@ -99,7 +99,7 @@ const CardAgent = ({
 						)}
 						{!clients.includes('discord') && (
 							<li className="flex justify-between">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-3">
 									<img
 										src="./logos/discord.png"
 										className="size-8 rounded-full"
@@ -122,7 +122,7 @@ const CardAgent = ({
 							</li>
 						)}
 						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-3">
 								<img
 									src="/logo-light.png"
 									className="size-8 rounded-full"
@@ -165,7 +165,7 @@ const CardAgent = ({
 						</li>
 						{!clients.includes('telegram') && (
 							<li className="flex justify-between">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-3">
 									<img
 										src="./logos/telegram.png"
 										className="size-8 rounded-full"
@@ -191,7 +191,7 @@ const CardAgent = ({
 						{/* Education Module - only shown if enabled in localStorage */}
 						{showEducationModule && (
 							<li className="flex justify-between">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-3">
 									<Box className="size-8 rounded-full bg-blue-400 flex items-center justify-center">
 										<BookOpen size={16} color="currentColor" />
 									</Box>
@@ -213,7 +213,7 @@ const CardAgent = ({
 						)}
 						
 						<li className="flex justify-between">
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-3">
 								<img
 									src="https://eternalai.org/images/abilities/edit-personality.svg"
 									className="size-8 rounded-full"

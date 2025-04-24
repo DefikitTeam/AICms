@@ -14,26 +14,27 @@ const SavedContentPageContent = () => {
   return (
     <div className="container">
       <Head>
-        <title>Quiz Generator | Education Module</title>
-        <meta name="description" content="AI-powered quiz generator" />
+        <title>Saved Content | Education Module</title>
+        <meta name="description" content="AI-powered saved content" />
       </Head>
 
       <main>
-        <h1 className="title">Quiz Generator</h1>
+        <h1 className="title">Saved Content</h1>
         
         <p className="description">
-          Generate a quiz on any topic to test your knowledge
+          View your saved contents
         </p>
 
         <div className="content-area">
           <SavedContentComponent
+            agentId={agentId}
             apiBaseUrl={process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}
           />
         </div>
 
-        {/* <div className="back-link">
-          <Link href={} className="back-link-text">← Back to Education</Link>
-        </div> */}
+        <div className="back-link">
+          <Link href={`/education?agentId=${agentId}`} className="back-link-text">← Back to Education</Link>
+        </div>
       </main>
 
       <style jsx>{`

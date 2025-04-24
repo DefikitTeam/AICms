@@ -226,6 +226,13 @@ const CreateAgent = () => {
       toast.dismiss(message);
       if (response.success) {
         toast.success("AI Agent created successfully");
+        
+        // Save module settings to localStorage with the new agent ID
+        if (typeof window !== 'undefined' && response.data?.agentId) {
+          const newAgentId = response.data.agentId;
+          localStorage.setItem(`educationModuleEnabled_${newAgentId}`, modulesData.education ? 'true' : 'false');
+          console.log(`Saved education module status for new agent ${newAgentId} to localStorage:`, modulesData.education);
+        }
       }
     } catch (error: any) {
       toast.error("Failed to create AI Agent", {
@@ -234,13 +241,6 @@ const CreateAgent = () => {
       console.error(error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleModuleChange = (value: boolean) => {
-    console.log("Module value changed in create page:", value);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
     }
   };
 
@@ -275,7 +275,6 @@ const CreateAgent = () => {
                 register={register} 
                 watch={watch} 
                 control={control} 
-                onModuleChange={handleModuleChange}
                 setValue={setValue}
               />
             </Tabs.Content>
