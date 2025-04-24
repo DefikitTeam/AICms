@@ -114,15 +114,6 @@ const BasicInfo = ({
     };
   }, []);
 
-  useEffect(() => {
-    const templateId = searchParams.get("templateId");
-    console.log("templateId", templateId);
-    if (templateId) {
-      setSelectedTemplate(templates.find((template) => template.id === templateId) || null);
-      importTemplate(templateId, { redirectToCreate: true});
-    }
-  }, []);
-
   // Loading skeleton component
   const LoadingSkeleton = useMemo(
     () => (

@@ -74,17 +74,6 @@ const EducationContent = () => {
           An AI-powered educational platform
         </p>
 
-        <div className="api-status">
-          API Status: {' '}
-          {apiStatus === 'loading' ? (
-            <span className="loading">Checking...</span>
-          ) : apiStatus === 'online' ? (
-            <span className="online">Online</span>
-          ) : (
-            <span className="offline">Offline - Make sure to run the backend with 'pnpm run backend'</span>
-          )}
-        </div>
-
         <div className="grid">
           <div className="card">
             <h2>Educational Content</h2>
@@ -95,24 +84,16 @@ const EducationContent = () => {
               ))}
             </ul>
           </div>
-
-          <div className="card">
-            <h2>Learning Sessions</h2>
-            <p>Start an interactive learning session with our AI tutor!</p>
-            <button className="button" disabled={apiStatus !== 'online'}>
-              Start Session
-            </button>
-          </div>
           
           <div className="card">
             <h2>AI Quiz Generator</h2>
             <p>Test your knowledge with AI-generated quizzes on any topic of your choice.</p>
             {apiStatus === 'online' ? (
-              <Link href={appendQueryParams("/education/quiz")} className="button">
+              <Link href={appendQueryParams("/education/quiz")} className="button text-[#FFB000]">
                 Generate Quiz
               </Link>
             ) : (
-              <button className="button" disabled>Generate Quiz</button>
+              <button className="button text-[#FFB000]" disabled>Generate Quiz</button>
             )}
           </div>
           
@@ -120,11 +101,11 @@ const EducationContent = () => {
             <h2>Ask Educational Questions</h2>
             <p>Get answers to your educational questions with detailed explanations from our AI tutor.</p>
             {apiStatus === 'online' ? (
-              <Link href={appendQueryParams(`${window.location.pathname}/questions`)} className="button">
+              <Link href={appendQueryParams(`${window.location.pathname}/questions`)} className="button text-[#FFB000]">
                 Ask Questions
               </Link>
             ) : (
-              <button className="button" disabled>Ask Questions</button>
+              <button className="button text-[#FFB000]" disabled>Ask Questions</button>
             )}
           </div>
           
@@ -132,11 +113,11 @@ const EducationContent = () => {
             <h2>AI Learning Path Generator</h2>
             <p>Get a personalized learning path for any topic, complete with resources and step-by-step guidance.</p>
             {apiStatus === 'online' ? (
-              <Link href={appendQueryParams(`${window.location.pathname}/learning-path`)} className="button">
+              <Link href={appendQueryParams(`${window.location.pathname}/learning-path`)} className="button text-[#FFB000]">
                 Generate Learning Path
               </Link>
             ) : (
-              <button className="button" disabled>Generate Learning Path</button>
+              <button className="button text-[#FFB000]" disabled>Generate Learning Path</button>
             )}
           </div>
           
@@ -144,11 +125,11 @@ const EducationContent = () => {
             <h2>Saved Content</h2>
             <p>View and manage all your saved quizzes, answers, and learning paths in one place.</p>
             {apiStatus === 'online' ? (
-              <Link href={appendQueryParams(`${window.location.pathname}/saved-content`)} className="button">
+              <Link href={appendQueryParams(`${window.location.pathname}/saved-content`)} className="button text-[#FFB000]">
                 View Saved Content
               </Link>
             ) : (
-              <button className="button" disabled>View Saved Content</button>
+              <button className="button text-[#FFB000]" disabled>View Saved Content</button>
             )}
           </div>
         </div>

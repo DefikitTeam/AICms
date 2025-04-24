@@ -14,15 +14,15 @@ const LearningPathPageContent = () => {
   return (
     <div className="container">
       <Head>
-        <title>Quiz Generator | Education Module</title>
-        <meta name="description" content="AI-powered quiz generator" />
+        <title>Learning Path | Education Module</title>
+        <meta name="description" content="AI-powered learning path" />
       </Head>
 
       <main>
-        <h1 className="title">Quiz Generator</h1>
+        <h1 className="title">Learning Path</h1>
         
         <p className="description">
-          Generate a quiz on any topic to test your knowledge
+          Generate a learning path on any topic to test your knowledge
         </p>
 
         <div className="content-area">
