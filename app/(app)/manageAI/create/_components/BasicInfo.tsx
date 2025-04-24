@@ -1,5 +1,6 @@
 import useTemplateAgent from "@/app/(app)/manageAI/_hooks/useTemplateAgent";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FieldErrors,
@@ -9,12 +10,12 @@ import {
   UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
-import FormFieldArray from './FormFieldArray';
+import { toast } from 'react-hot-toast';
 import modelProvider from '../data/modelProvider';
 import { fieldConfigs } from '../data/utils';
-import { toast } from 'react-hot-toast';
+import FormFieldArray from './FormFieldArray';
+import MessageExample from './MessageExample';
 import TextAreaField from "./TextAreaField";
-import MessageExample from "./MessageExample";
 
 type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
   register: UseFormRegister<TFieldValues>;
@@ -40,6 +41,7 @@ const BasicInfo = ({
   setValue,
 }: ReactHookFormProps) => {
   // Template dropdown state
+  const searchParams = useSearchParams();
   const [templatesDropdownOpen, setTemplatesDropdownOpen] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(false);

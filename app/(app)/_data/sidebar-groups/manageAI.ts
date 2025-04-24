@@ -9,7 +9,7 @@ export const manageAIGroup: SidebarGroup = {
 			href: '/manageAI',
 		},
 		{
-			icon: 'Bot',
+			icon: 'BotMessageSquare',
 			label: 'Public Agent',
 			href: '/publicAgents',
 		},

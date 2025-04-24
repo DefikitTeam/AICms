@@ -10,11 +10,12 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:staging": "opennextjs-cloudflare build && wrangler deploy --env staging",
     "deploy:prod": "opennextjs-cloudflare build && wrangler deploy --env production",
+    "deploy:internal": "opennextjs-cloudflare build && wrangler deploy --env internal",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@defikitdotnet/education-module-ai": "0.1.18",
-    "@defikitdotnet/public-agent-module": "^0.1.30",
+    "@defikitdotnet/education-module-ai": "0.1.16",
+    "@defikitdotnet/public-agent-module": "^0.1.40",
     "@opennextjs/aws": "^3.4.2",
     "@opennextjs/cloudflare": "^0.6.6",
     "@privy-io/react-auth": "^2.4.5",
