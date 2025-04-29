@@ -69,7 +69,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
-          pnpm add -D @opennextjs/cloudflare@0.5.3
 
       - name: Generate Cloudflare types
         run: pnpm run cf-typegen
