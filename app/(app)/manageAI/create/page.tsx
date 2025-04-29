@@ -37,6 +37,7 @@ const CreateAgent = () => {
       ],
       modules: {
         education: false,
+        combat: false,
       },
     },
   });
@@ -122,7 +123,7 @@ const CreateAgent = () => {
   const onSubmit = async (data: FieldValues) => {
     console.log("Form data before submission:", data);
     console.log("Modules data:", data.modules);
-    
+
     if (data.clients.includes("discord")) {
       if (
         !data?.secrets?.DISCORD_APPLICATION_ID ||
@@ -136,31 +137,31 @@ const CreateAgent = () => {
     }
     const message = toast.loading("Creating AI Agent...");
     setLoading(true);
-    
+
     // Extract modules data for use at both levels
     const modulesData = data.modules as { education: boolean };
     console.log("Extracted modules data for submission:", modulesData);
-    
+
     const dataSubmit = {
       config: {
         clientConfig: {
           telegram: {
-              shouldIgnoreBotMessages: true,
-              shouldIgnoreDirectMessages: false,
-              shouldRespondOnlyToMentions: false,
-              shouldOnlyJoinInAllowedGroups: false,
-              allowedGroupIds: [
-                  -1002250682364,
-                  -1002091042838,
-                  -1002118895236
-              ],
+            shouldIgnoreBotMessages: true,
+            shouldIgnoreDirectMessages: false,
+            shouldRespondOnlyToMentions: false,
+            shouldOnlyJoinInAllowedGroups: false,
+            allowedGroupIds: [
+              -1002250682364,
+              -1002091042838,
+              -1002118895236
+            ],
             isPartOfTeam: false,
-                teamAgentIds: [5900488737],
-                teamLeaderId: 5900488737,
-                teamMemberInterestKeywords: [] as [],
-                enableGroupVoiceChat: false
-        },
-        discord: {
+            teamAgentIds: [5900488737],
+            teamLeaderId: 5900488737,
+            teamMemberInterestKeywords: [] as [],
+            enableGroupVoiceChat: false
+          },
+          discord: {
             shouldIgnoreBotMessages: true,
             shouldIgnoreDirectMessages: true,
             shouldRespondOnlyToMentions: true,
@@ -168,8 +169,8 @@ const CreateAgent = () => {
             teamAgentIds: [5900488737],
             teamLeaderId: 5900488737,
             teamMemberInterestKeywords: [] as []
-        }
-    },
+          }
+        },
         name: data.name as string,
         plugins: [] as string[],
         adjectives: data.adjectives as string[],
@@ -239,9 +240,8 @@ const CreateAgent = () => {
 
   const handleModuleChange = (value: boolean) => {
     console.log("Module value changed in create page:", value);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
-    }
+    // Note: The specific module being changed is now handled within the ModulesSettings component
+    // No further actions needed here since the component manages localStorage
   };
 
   return (
@@ -271,10 +271,10 @@ const CreateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="modules">
-              <ModulesSettings 
-                register={register} 
-                watch={watch} 
-                control={control} 
+              <ModulesSettings
+                register={register}
+                watch={watch}
+                control={control}
                 onModuleChange={handleModuleChange}
                 setValue={setValue}
               />

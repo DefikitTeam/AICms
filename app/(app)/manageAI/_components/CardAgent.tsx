@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, Badge, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
-import { BookOpen, Bot } from 'lucide-react';
+import { BookOpen, Bot, Shield } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -13,6 +13,7 @@ export type CardAgentType = {
 	modelProvider: string;
 	modules?: {
 		education?: boolean;
+		combat?: boolean;
 	};
 };
 
@@ -25,17 +26,22 @@ const CardAgent = ({
 	modelProvider,
 	modules = {},
 }: CardAgentType) => {
-	// State to control whether to show education module
+	// State to control module visibility
 	const [showEducationModule, setShowEducationModule] = useState(false);
-	
-	// Read from localStorage on component mount
+	const [showCombatModule, setShowCombatModule] = useState(false);
+
+	// Read module statuses from localStorage on component mount
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
-			const savedStatus = localStorage.getItem('educationModuleEnabled');
-			console.log(`Reading education module status from localStorage for ${name}:`, savedStatus);
-			
+			const savedEducationStatus = localStorage.getItem('educationModuleEnabled');
+			const savedCombatStatus = localStorage.getItem('combatModuleEnabled');
+
+			console.log(`Reading education module status from localStorage for ${name}:`, savedEducationStatus);
+			console.log(`Reading combat module status from localStorage for ${name}:`, savedCombatStatus);
+
 			// Only show if explicitly set to 'true'
-			setShowEducationModule(savedStatus === 'true');
+			setShowEducationModule(savedEducationStatus === 'true');
+			setShowCombatModule(savedCombatStatus === 'true');
 		}
 	}, [name]);
 
@@ -187,7 +193,7 @@ const CardAgent = ({
 								</Link>
 							</li>
 						)}
-						
+
 						{/* Education Module - only shown if enabled in localStorage */}
 						{showEducationModule && (
 							<li className="flex justify-between">
@@ -211,7 +217,31 @@ const CardAgent = ({
 								</Link>
 							</li>
 						)}
-						
+
+						{/* X AI Combat Module - only shown if enabled in localStorage */}
+						{showCombatModule && (
+							<li className="flex justify-between">
+								<div className="flex items-center gap-2">
+									<Box className="size-8 rounded-full bg-red-400 flex items-center justify-center">
+										<Shield size={16} color="currentColor" />
+									</Box>
+									<Text size="2" weight="medium">
+										X AI Combat Module
+									</Text>
+								</div>
+								<Link role="button" href={`/xaicombat?agentId=${id}`}>
+									<Button
+										style={{ width: '80px' }}
+										color="gray"
+										variant="solid"
+										highContrast
+									>
+										Access
+									</Button>
+								</Link>
+							</li>
+						)}
+
 						<li className="flex justify-between">
 							<div className="flex items-center gap-2">
 								<img

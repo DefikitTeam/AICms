@@ -44,6 +44,7 @@ const UpdateAgent = () => {
     defaultValues: {
       modules: {
         education: false,
+        combat: false,
       }
     }
   });
@@ -139,21 +140,22 @@ const UpdateAgent = () => {
   useEffect(() => {
     // Check localStorage for education module status on component mount
     if (typeof window !== 'undefined') {
-      const savedStatus = localStorage.getItem('educationModuleEnabled');
-      console.log("Retrieved education module status from localStorage:", savedStatus);
-      
-      if (savedStatus !== null) {
-        setValue('modules.education', savedStatus === 'true');
+      const savedEducationStatus = localStorage.getItem('educationModuleEnabled');
+      const savedCombatStatus = localStorage.getItem('combatModuleEnabled');
+
+      if (savedEducationStatus !== null) {
+        setValue('modules.education', savedEducationStatus === 'true');
+      }
+
+      if (savedCombatStatus !== null) {
+        setValue('modules.combat', savedCombatStatus === 'true');
       }
     }
   }, [setValue]);
-  
+
   // Save to localStorage when updating
   const handleModuleChange = (value: boolean) => {
     console.log("Module value changed:", value);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('educationModuleEnabled', value ? 'true' : 'false');
-    }
   };
 
   const { updateAgent, toggleAgent } = useAgent();
@@ -206,7 +208,7 @@ const UpdateAgent = () => {
   const onSubmit = async (data: FieldValues) => {
     console.log("Form data before updating:", data);
     console.log("Modules data:", data.modules);
-    
+
     if (data.clients.includes("discord")) {
       if (
         !data?.secrets?.DISCORD_APPLICATION_ID ||
@@ -221,11 +223,11 @@ const UpdateAgent = () => {
 
     setLoadingUpdate(true);
     const message = toast.loading("Updating AI Agent...");
-    
+
     // Extract modules data for use at both levels
-    const modulesData = data.modules as { education: boolean };
+    const modulesData = data.modules as { education: boolean, combat: boolean };
     console.log("Extracted modules data for submission:", modulesData);
-    
+
     const dataSubmit = {
       clientConfig: {
         telegram: {
@@ -297,7 +299,7 @@ const UpdateAgent = () => {
         },
       ]),
     };
-    
+
     try {
       console.log("Submitting data with modules:", dataSubmit.modules);
       const response = await updateAgent(agentId as string, dataSubmit);
@@ -305,7 +307,7 @@ const UpdateAgent = () => {
       if (response.success) {
         toast.success("AI Agent updated successfully");
       }
-      
+
       // Force refresh agent data to update the UI
       await fetchAgent();
     } catch (error: any) {
@@ -346,9 +348,8 @@ const UpdateAgent = () => {
                 type="button"
                 disabled={loadingUpdate}
                 onClick={exportTemplate}
-                className={`${
-                  agent?.isExportData ? "bg-red-600" : "bg-blue-600"
-                } text-white rounded-md py-1 px-2 flex items-center gap-1`}
+                className={`${agent?.isExportData ? "bg-red-600" : "bg-blue-600"
+                  } text-white rounded-md py-1 px-2 flex items-center gap-1`}
               >
                 {loadingUpdate && <Spinner size="1" />}
                 {agent?.isExportData ? "Unexport Template" : "Export Template"}
@@ -395,12 +396,13 @@ const UpdateAgent = () => {
             </Tabs.Content>
 
             <Tabs.Content value="modules">
-              <ModulesSettings 
-                register={register} 
-                watch={watch} 
-                control={control} 
+              <ModulesSettings
+                register={register}
+                watch={watch}
+                control={control}
                 onModuleChange={handleModuleChange}
                 setValue={setValue}
+                agentId={agentId as string}
               />
             </Tabs.Content>
           </Box>
@@ -409,9 +411,8 @@ const UpdateAgent = () => {
           <button
             disabled={loadingUpdate}
             type="submit"
-            className={`w-full ${
-              loadingUpdate ? "bg-orange-800" : "bg-orange-500"
-            } text-white rounded-md py-2`}
+            className={`w-full ${loadingUpdate ? "bg-orange-800" : "bg-orange-500"
+              } text-white rounded-md py-2`}
           >
             Update AI Agent
           </button>
