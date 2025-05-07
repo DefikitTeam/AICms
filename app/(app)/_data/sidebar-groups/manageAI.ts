@@ -13,5 +13,15 @@ export const manageAIGroup: SidebarGroup = {
 			label: 'Public Agent',
 			href: '/publicAgents',
 		},
+		{
+			icon: 'AppWindow',
+			label: 'Mini Apps',
+			href: '/miniapps',
+		},
+		{
+			icon: 'Plus',
+			label: 'Generate Agent',
+			href: '/generateAgent',
+		},
 	],
 };
