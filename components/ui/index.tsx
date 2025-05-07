@@ -1,6 +1,4 @@
 export * from "./alert-dialog";
-export * from "./animated-shiny-text";
-export * from "./avatar";
 export * from "./border-beam";
 export * from "./button";
 export * from "./card";
@@ -10,7 +8,6 @@ export * from "./hyper-text";
 export * from "./icon";
 export * from "./input";
 export * from "./logo";
-export * from "./markdown";
 export * from "./progress";
 export * from "./select";
 export * from "./separator";
