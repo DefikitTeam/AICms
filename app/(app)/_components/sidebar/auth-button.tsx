@@ -1,37 +1,36 @@
 'use client'
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 import { ChevronsUpDown, Coins, LogIn, LogOut, Wallet } from 'lucide-react';
 
 import { useLogin } from '@/hooks';
 
 import {
-    SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    useSidebar,
-    Skeleton,
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogFooter,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogAction,
-    AlertDialogCancel,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  Skeleton,
+  useSidebar,
 } from '@/components/ui';
 
 import { truncateAddress } from '@/lib/wallet';
-import Balances from './balances';
 
 const AuthButton: React.FC = () => {
 
@@ -118,7 +117,6 @@ const AuthButton: React.FC = () => {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <Balances address={user.wallet.address} />
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={() => fundWallet(user.wallet!.address, { amount: "0.01" })}>
