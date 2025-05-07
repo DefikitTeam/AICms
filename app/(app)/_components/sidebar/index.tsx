@@ -33,8 +33,6 @@ const Sidebar: React.FC<Props> = ({ children }) => {
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup group={manageAIGroup} />
-					{/* <SidebarGroup group={platformGroup} />
-					<SidebarGroup group={agentsGroup} /> */}
 				</SidebarContent>
 			</SidebarUI>
 			<SidebarInset>
