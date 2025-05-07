@@ -1,16 +1,11 @@
 'use client';
 
-import React, { Suspense } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
 import { SavedContentComponent } from '@defikitdotnet/education-module-ai/frontend';
-import { useSearchParams } from 'next/navigation';
+import Head from 'next/head';
+import React, { Suspense } from 'react';
 
 
 const SavedContentPageContent = () => {
-  const searchParams = useSearchParams();
-  const agentId = searchParams.get('agentId');
-
   return (
     <div className="container">
       <Head>

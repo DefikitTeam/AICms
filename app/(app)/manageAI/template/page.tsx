@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button, Spinner } from "@radix-ui/themes";
-import toast from "react-hot-toast";
 import useTemplateAgent from "@/app/(app)/manageAI/_hooks/useTemplateAgent";
+import { Button, Spinner } from "@radix-ui/themes";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Template {
   id: string;
@@ -24,7 +24,7 @@ const TemplatesPage = () => {
         const data = await getListTemplate();
         setAgentTemplates(data.templateAgents);
         setLoading(false);
-      } catch (error) {
+      } catch {
         toast.error("Failed to fetch templates");
       }
     };

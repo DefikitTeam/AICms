@@ -21,8 +21,8 @@ type ReactHookFormProps<TFieldValues extends FieldValues = FieldValues> = {
   register: UseFormRegister<TFieldValues>;
   errors: FieldErrors<TFieldValues>;
   fieldArrays: Record<string, ReturnType<typeof useFieldArray>>;
-  getValues: UseFormGetValues<TFieldValues>;
-  setValue: UseFormSetValue<TFieldValues>;
+  getValues?: UseFormGetValues<TFieldValues>;
+  setValue?: UseFormSetValue<TFieldValues>;
 };
 
 interface Template {
@@ -82,7 +82,7 @@ const BasicInfo = ({
         });
       }
       setLoading(false);
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch templates");
       setLoading(false);
     }

@@ -1,7 +1,6 @@
+import { Box, Text } from '@radix-ui/themes';
 import React, { useEffect } from 'react';
-import { Box, Text, Flex } from '@radix-ui/themes';
-import { Control, UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import { FieldValues } from 'react-hook-form';
+import { Control, FieldValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import useAgent from '../../_hooks/useAgent';
 import ModuleComponent, { ModuleFieldSetting } from './ModuleComponent';
 
@@ -164,7 +163,7 @@ const ModulesSettings = ({ control, watch, onModuleChange, setValue, agentId }: 
           Modules
         </Text>
         <Text size="2" color="gray">
-          Enable additional modules to extend your agent's capabilities
+          Enable additional modules to extend your agent&apos;s capabilities
         </Text>
       </Box>
 

@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 export default function PublicAgent() {
   const { ready, authenticated, getAccessToken } = usePrivy();
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const NEXT_PUBLIC_WIDGET_SERVICE_URL= process.env.NEXT_PUBLIC_WIDGET_SERVICE_URL
 
   useEffect(() => {
     const setToken = async () => {

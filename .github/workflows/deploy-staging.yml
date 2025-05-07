@@ -1,0 +1,94 @@
+name: Deploy to Cloudflare Staging
+
+on:
+  push:
+    branches:
+      - staging # or your default branch
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  deploy_staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+
+    env:
+      # Staging specific environment variables
+      # Assuming you have secrets like STAGING_NEXT_PUBLIC_BACKEND_URL, etc.
+      # If not, you might need to adjust these or use the same secrets if they are multi-environment.
+      NEXT_PUBLIC_BACKEND_URL: ${{ secrets.STAGING_NEXT_PUBLIC_BACKEND_URL || secrets.NEXT_PUBLIC_BACKEND_URL }}
+      NEXT_PUBLIC_WIDGET_SERVICE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_WIDGET_SERVICE_URL || secrets.NEXT_PUBLIC_WIDGET_SERVICE_URL }}
+      NEXT_PUBLIC_SOLANA_RPC_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SOLANA_RPC_URL || secrets.NEXT_PUBLIC_SOLANA_RPC_URL }}
+      NEXT_PUBLIC_PRIVY_APP_ID: ${{ secrets.STAGING_NEXT_PUBLIC_PRIVY_APP_ID || secrets.NEXT_PUBLIC_PRIVY_APP_ID }}
+      CDP_API_KEY_NAME: ${{ secrets.STAGING_CDP_API_KEY_NAME || secrets.CDP_API_KEY_NAME }}
+      CDP_API_KEY_PRIVATE_KEY: ${{ secrets.STAGING_CDP_API_KEY_PRIVATE_KEY || secrets.CDP_API_KEY_PRIVATE_KEY }}
+      TWITTER_BEARER_TOKEN: ${{ secrets.STAGING_TWITTER_BEARER_TOKEN || secrets.TWITTER_BEARER_TOKEN }}
+      HELIUS_RPC_URL: ${{ secrets.STAGING_HELIUS_RPC_URL || secrets.HELIUS_RPC_URL }}
+      PRIVY_APP_ID: ${{ secrets.STAGING_PRIVY_APP_ID || secrets.PRIVY_APP_ID }}
+      PRIVY_APP_SECRET: ${{ secrets.STAGING_PRIVY_APP_SECRET || secrets.PRIVY_APP_SECRET }}
+      COSMOS_ENDPOINT: ${{ secrets.STAGING_COSMOS_ENDPOINT || secrets.COSMOS_ENDPOINT }}
+      COSMOS_KEY: ${{ secrets.STAGING_COSMOS_KEY || secrets.COSMOS_KEY }}
+      OPENAI_API_KEY: ${{ secrets.STAGING_OPENAI_API_KEY || secrets.OPENAI_API_KEY }}
+      NEXT_PUBLIC_PROJECT_ID: ${{ secrets.STAGING_NEXT_PUBLIC_PROJECT_ID || secrets.NEXT_PUBLIC_PROJECT_ID }}
+      NEXTJS_ENV: development # Or 'staging' if you have specific build for it
+      DISABLE_NODE_FETCH_NATIVE_WARN: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.15.5
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+
+      - name: Generate Cloudflare types
+        run: pnpm run cf-typegen
+
+      - name: Build and prepare for Cloudflare
+        run: |
+          pnpm exec opennextjs-cloudflare build
+
+      - name: Deploy to Cloudflare Staging
+        working-directory: ${{ github.workspace }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }} # Assuming same API token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} # Assuming same Account ID
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          # Deploy to the 'staging' environment specified in wrangler.json
+          pnpm exec wrangler deploy --env staging

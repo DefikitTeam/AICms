@@ -24,7 +24,6 @@ const CardAgent = ({
 	bio,
 	status,
 	modelProvider,
-	modules = {},
 }: CardAgentType) => {
 	// State to control module visibility
 	const [showEducationModule, setShowEducationModule] = useState(false);
