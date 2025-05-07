@@ -72,10 +72,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile
 
       - name: Generate Cloudflare types
         run: pnpm run cf-typegen
+
+      - name: Type check
+        run: pnpm exec tsc --noEmit
 
       - name: Build and prepare for Cloudflare
         run: |

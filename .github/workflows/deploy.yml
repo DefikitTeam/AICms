@@ -73,6 +73,9 @@ jobs:
       - name: Generate Cloudflare types
         run: pnpm run cf-typegen
 
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
       - name: Build and prepare for Cloudflare
         run: |
           pnpm exec opennextjs-cloudflare build
