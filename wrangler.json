@@ -15,9 +15,8 @@
     }
   ],
   "observability": {
-    "logs": {
-      "enabled": true
-    }
+    "enabled": true,
+    "head_sampling_rate": 1
   },
   "env": {
     "production": {
