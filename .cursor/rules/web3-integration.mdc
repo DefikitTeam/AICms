@@ -1,0 +1,29 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Web3 Integration
+
+The application integrates with blockchain technologies for authentication and functionality.
+
+## Wallet Integration
+- [lib/wallet.ts](mdc:lib/wallet.ts): Wallet utilities
+- Uses RainbowKit for wallet connection
+- Supports wagmi for Ethereum interactions
+- Supports Solana via @solana/web3.js
+
+## Authentication
+- Privy authentication used for web3 login
+- Implements JWT-based session management
+- Protects routes with authentication middleware
+
+## Blockchain Interactions
+- Ethereum interactions via viem and wagmi
+- Solana interactions via @solana/web3.js
+- SPL token interactions via @solana/spl-token
+
+## Providers
+- Configures web3 providers in app layouts
+- Handles wallet connection state
+- Manages blockchain network detection and switching

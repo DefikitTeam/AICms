@@ -22,5 +22,5 @@ export const getBalances = async (address: string): Promise<TokenAccountsRespons
 
     const data = await response.json();
 
-    return data.result;
+    return data.result as TokenAccountsResponse;
 }

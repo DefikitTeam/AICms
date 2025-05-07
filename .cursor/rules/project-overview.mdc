@@ -1,0 +1,22 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# AICms Project Overview
+
+This is a Next.js 15 CMS application for managing AI agents with React 19 and TailwindCSS.
+
+## Key Files
+- [package.json](mdc:package.json): Project dependencies and scripts
+- [next.config.mjs](mdc:next.config.mjs): Next.js configuration
+- [tsconfig.json](mdc:tsconfig.json): TypeScript configuration
+- [tailwind.config.ts](mdc:tailwind.config.ts): TailwindCSS configuration
+
+## Directory Structure
+- `/app`: Next.js App Router pages and layouts
+- `/components`: Reusable UI components
+- `/lib`: Utility functions and services
+- `/public`: Static assets
+- `/hooks`: Custom React hooks
+- `/styles`: Global and shared styles

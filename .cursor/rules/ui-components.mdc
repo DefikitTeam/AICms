@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# UI Components
+
+The project uses a combination of custom UI components and components from Radix UI primitives.
+
+## UI Component Library
+- [components/ui/button.tsx](mdc:components/ui/button.tsx): Button component
+- [components/ui/input.tsx](mdc:components/ui/input.tsx): Input component
+- [components/ui/textarea.tsx](mdc:components/ui/textarea.tsx): Textarea component
+- [components/ui/select.tsx](mdc:components/ui/select.tsx): Select component
+- [components/ui/dialog.tsx](mdc:components/ui/dialog.tsx): Dialog component
+- [components/ui/dropdown-menu.tsx](mdc:components/ui/dropdown-menu.tsx): Dropdown menu
+- [components/ui/sidebar.tsx](mdc:components/ui/sidebar.tsx): Navigation sidebar
+- [components/ui/card.tsx](mdc:components/ui/card.tsx): Card component
+
+## UI Component Patterns
+- Components are built using the shadcn approach
+- Many components use Radix UI primitives for accessibility
+- All components are styled with TailwindCSS
+- Use composition patterns when building new components

@@ -1,5 +1,5 @@
-import useSWR from 'swr';
 import { JupiterTokenData, TokenAccount } from "@/types";
+import useSWR, { SWRConfiguration } from 'swr';
 
 const fetcher = async (url: string) => {
     const response = await fetch(url);
@@ -12,7 +12,8 @@ const fetcher = async (url: string) => {
 export const useTokenAccounts = (address: string | undefined) => {
     const { data, isLoading, error, mutate } = useSWR<(TokenAccount & { token_data: JupiterTokenData })[]>(
         address ? `/api/token-accounts/owner/${address}` : null,
-        fetcher
+        fetcher,
+        { suspense: false } as SWRConfiguration
     );
 
     return { 
