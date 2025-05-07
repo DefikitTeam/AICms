@@ -31,6 +31,12 @@ interface Pagination {
   hasPrev: boolean;
 }
 
+interface FetchHistoryResponse {
+  success: boolean;
+  data: FeedHistory[];
+  pagination: Pagination;
+}
+
 export default function FeedDataPage() {
   const [documentData, setDocumentData] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -61,7 +67,7 @@ export default function FeedDataPage() {
           ...(page > 1 ? { page } : {}),
         }),
       });
-      const data = await response.json();
+      const data: FetchHistoryResponse = await response.json();
       if (data.success) {
         setHistory(data.data);
         setPagination(data.pagination);
@@ -170,7 +176,7 @@ export default function FeedDataPage() {
       if (response.ok) {
         setDocumentData('');
         setSelectedFile(null);
-        // fetchHistory(currentPage);
+        fetchHistory(1); // Reset to first page and fetch history
         toast.success('Data submitted successfully');
       } else {
         const errorData = await response.json().catch(() => null);
