@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@defikitdotnet/education-module-ai": "0.1.16",
+    "@defikitdotnet/miniapps-module": "0.1.4",
     "@defikitdotnet/public-agent-module": "^0.1.40",
     "@defikitdotnet/x-ai-combat": "1.0.8",
     "@opennextjs/aws": "^3.4.2",

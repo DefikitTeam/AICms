@@ -1,5 +1,6 @@
 "use client";
 import { PublishAgentButton } from "@defikitdotnet/public-agent-module/frontend";
+import { AddMiniappButton } from "@defikitdotnet/miniapps-module/frontend";
 import { usePrivy } from "@privy-io/react-auth";
 import { Box, Spinner, Tabs } from "@radix-ui/themes";
 import { useParams } from "next/navigation";
@@ -364,6 +365,11 @@ const UpdateAgent = () => {
                 {agent?.isRunning ? "Running" : "Stopped"}
               </button>
               <PublishAgentButton
+                agentId={agentId as string}
+                accessToken={token as string}
+                disabled={!agent?.isRunning}
+              />
+              <AddMiniappButton
                 agentId={agentId as string}
                 accessToken={token as string}
                 disabled={!agent?.isRunning}
