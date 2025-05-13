@@ -531,7 +531,6 @@ input:focus {
 /* Form specific overrides */
 #ai-chat-widget-container #chat-form {
   background-color: #ffffff !important;
-  padding: 0 !important;
 }
 
 #ai-chat-widget-container #chat-form input {

@@ -1,15 +1,6 @@
 window.AIChatWidget = {
-  config: {
-    agents: {}, // Store agent-specific configurations
-    currentAgentId: null, // Track currently active agent
-    theme: 'light',
-    position: 'bottom-right',
-    widgetUrl: null,
-    serverUrl: null,
-    authToken: null
-  },
-  previousWelcomeMessage: null,
-
+  config: {},
+  previousWelcomeMessage: null, // Track the previous welcome message
   init: function(config) {
     // Validate required config parameters
     if (!config.widgetUrl) {
@@ -17,83 +8,45 @@ window.AIChatWidget = {
       return;
     }
 
+    // Store the previous welcome message if we have one
+    if (this.config.welcomeMessage) {
+      this.previousWelcomeMessage = this.config.welcomeMessage;
+    }
+
     // Normalize the widget URL (remove trailing slash if present)
     config.widgetUrl = config.widgetUrl.replace(/\/$/, '');
+    this.config = config;
+
+    // Generate or use provided roomId, now agent-specific
+    this.config.roomId = config.roomId || this.generateRoomId(config.agentId);
     
-    // Initialize base configuration
-    this.config.widgetUrl = config.widgetUrl;
-    this.config.serverUrl = config.serverUrl;
-    this.config.theme = config.theme || 'light';
-    this.config.position = config.position || 'bottom-right';
-    this.config.authToken = config.authToken;
+    // Store roomId in localStorage for persistence with agent-specific key
+    localStorage.setItem(`ai-chat-widget-roomId-${config.agentId}`, this.config.roomId);
+
+    // Check if this is a new conversation and set the flag
+    this.config.isNewConversation = this.isNewConversation();
+
+    // Check if welcome message has changed and update if needed
+    this.updateWelcomeMessageIfChanged();
+
+    // Verify the logo URL is accessible
+    const logoUrl = `${this.config.widgetUrl}/logo.png`;
+    this.verifyImageUrl(logoUrl).then(isValid => {
+      if (!isValid) {
+        console.warn(`Logo not found at ${logoUrl}, using fallback icon`);
+      }
+    });
 
     // Store auth token in localStorage for persistence
     if (config.authToken) {
       localStorage.setItem('ai-chat-widget-token', config.authToken);
     }
-
-    // Initialize agents configuration
-    if (Array.isArray(config.agents)) {
-      // Handle array of agent IDs with default settings
-      config.agents.forEach(agentId => {
-        console.log(typeof agentId);
-        if (typeof agentId === 'string') {
-          const roomId = this.generateRoomId(agentId);
-          const existingMessages = localStorage.getItem(`ai-chat-widget-messages-${agentId}-${roomId}`);
-          const hasHistory = existingMessages && JSON.parse(existingMessages).length > 0;
-
-          this.config.agents[agentId] = {
-            id: agentId,
-            name: `Agent ${agentId}`,
-            welcomeMessage: "Hello! How can I help you today?",
-            roomId: roomId,
-            isNewConversation: !hasHistory
-          };
-        } else if (typeof agentId === 'object') {
-          // Handle agent object with custom settings
-          const roomId = this.generateRoomId(agentId.id);
-          const existingMessages = localStorage.getItem(`ai-chat-widget-messages-${agentId.id}-${roomId}`);
-          console.log("key", `ai-chat-widget-messages-${agentId.id}-${roomId}`);
-          console.log('existingMessages', existingMessages);
-          const hasHistory = existingMessages && JSON.parse(existingMessages).length > 0;
-          console.log('hasHistory', hasHistory);
-
-          this.config.agents[agentId.id] = {
-            id: agentId.id,
-            name: agentId.name || `Agent ${agentId.id}`,
-            welcomeMessage: agentId.welcomeMessage || "Hello! How can I help you today?",
-            roomId: roomId,
-            isNewConversation: !hasHistory,
-            avatar: agentId.avatar
-          };
-        }
-      });
-    } else if (typeof config.agentId === 'string') {
-      // Backward compatibility for single agent
-      const roomId = this.generateRoomId(config.agentId);
-      const existingMessages = localStorage.getItem(`ai-chat-widget-messages-${config.agentId}-${roomId}`);
-      const hasHistory = existingMessages && JSON.parse(existingMessages).length > 0;
-
-      this.config.agents[config.agentId] = {
-        id: config.agentId,
-        name: config.agentName || `Agent ${config.agentId}`,
-        welcomeMessage: config.welcomeMessage || "Hello! How can I help you today?",
-        roomId: roomId,
-        isNewConversation: !hasHistory
-      };
-    }
-
-    // Set current agent to first one if not specified
-    const agentIds = Object.keys(this.config.agents);
-    if (agentIds.length > 0) {
-      this.config.currentAgentId = agentIds[0];
-    }
-
+    
     // Create container and set theme and position
     const widgetContainer = document.createElement('div');
     widgetContainer.id = 'ai-chat-widget-container';
-    widgetContainer.setAttribute('data-theme', this.config.theme);
-    widgetContainer.setAttribute('data-position', this.config.position);
+    widgetContainer.setAttribute('data-theme', config.theme || 'light');
+    widgetContainer.setAttribute('data-position', config.position || 'bottom-right'); // Add position attribute
     
     // Load styles
     if (!document.querySelector('link[href$="/styling.css"]')) {
@@ -111,124 +64,38 @@ window.AIChatWidget = {
     this.renderWidget(widgetContainer);
   },
 
-  // Add new method to switch between agents
-  switchAgent: function(agentId) {
-    if (!this.config.agents[agentId]) {
-      console.error(`Agent ${agentId} not found`);
-      return;
-    }
-
-    console.log('Switching to agent:', agentId);
-
-    this.config.currentAgentId = agentId;
-    const messagesContainer = document.querySelector('#chat-messages');
-    if (messagesContainer) {
-      // Clear existing messages
-      messagesContainer.innerHTML = '';
-      // Load messages for new agent - pass agentId explicitly
-      this.renderMessageHistory(messagesContainer, agentId);
-      // Add welcome message if new conversation
-      if (this.config.agents[agentId].isNewConversation) {
-        this.addWelcomeMessage(messagesContainer);
-      }
-    }
-
-    // Update agent name in header
-    const headerTitle = document.querySelector('.ai-chat-widget-modal h3');
-    if (headerTitle) {
-      headerTitle.textContent = this.config.agents[agentId].name;
-    }
-  },
-
-  // Add new method to start chat with specific agent
-  startChat: function(agentId) {
-    if (!this.config.agents[agentId]) {
-      console.error(`Agent ${agentId} not found`);
-      return;
-    }
-
-    this.config.currentAgentId = agentId;
-    const dialog = document.querySelector('.ai-chat-widget-modal');
-    const button = document.querySelector('.ai-chat-widget-button');
-    
-    if (dialog && button) {
-      // Update agent selector if it exists
-      const agentSelector = dialog.querySelector('#agent-selector');
-      if (agentSelector) {
-        agentSelector.value = agentId;
-      }
-
-      // Update agent name in header if no selector
-      const headerTitle = dialog.querySelector('h3');
-      if (headerTitle && !agentSelector) {
-        headerTitle.textContent = this.config.agents[agentId].name;
-      }
-
-      dialog.style.visibility = 'visible';
-      requestAnimationFrame(() => {
-        dialog.style.opacity = '1';
-        dialog.style.transform = 'scale(1)';
-      });
-      
-      // Update button state
-      button.innerHTML = `
-        <div class="flex items-center justify-center w-full h-full">
-          <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-      `;
-      
-      const messagesContainer = dialog.querySelector('#chat-messages');
-      if (messagesContainer) {
-        // Clear existing messages
-        messagesContainer.innerHTML = '';
-        // Load messages for new agent
-        this.renderMessageHistory(messagesContainer);
-        // Add welcome message if new conversation
-        if (this.config.agents[agentId].isNewConversation) {
-          this.addWelcomeMessage(messagesContainer);
-        }
-      }
-    }
-  },
-
   // Save a message to localStorage history (now agent-specific)
-  saveMessageToHistory: function(message, isUser, agentId = null) {
-    agentId = agentId || this.config.currentAgentId;
-    if (!agentId || !this.config.agents[agentId]) return [];
-
+  saveMessageToHistory: function(message, isUser) {
     const messageObj = {
       text: message,
       isUser,
       timestamp: new Date().toISOString()
     };
     
-    const messages = this.loadMessageHistory(agentId);
+    // Load current messages from agent-specific storage
+    const messages = this.loadMessageHistory();
+    
+    // Add new message
     messages.push(messageObj);
     
+    // Limit to last 50 messages to prevent localStorage overflow
     const limitedMessages = messages.slice(-50);
-    localStorage.setItem(`ai-chat-widget-messages-${agentId}-${this.config.agents[agentId].roomId}`, JSON.stringify(limitedMessages));
+    
+    // Store back in localStorage with agent-specific key
+    localStorage.setItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`, JSON.stringify(limitedMessages));
     
     return limitedMessages;
   },
   
   // Load message history from localStorage (now agent-specific)
-  loadMessageHistory: function(agentId = null) {
-    agentId = agentId || this.config.currentAgentId;
-    if (!agentId || !this.config.agents[agentId]) return [];
-
-    const savedMessages = localStorage.getItem(`ai-chat-widget-messages-${agentId}-${this.config.agents[agentId].roomId}`);
+  loadMessageHistory: function() {
+    const savedMessages = localStorage.getItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`);
     return savedMessages ? JSON.parse(savedMessages) : [];
   },
   
   // Render message history to chat container
-  renderMessageHistory: function(messagesContainer, agentId = null) {
-    // Sử dụng agentId được truyền vào hoặc currentAgentId
-    agentId = agentId || this.config.currentAgentId;
-    const messages = this.loadMessageHistory(agentId);
-
-    console.log('Rendering message history for agent:', agentId, messages);
+  renderMessageHistory: function(messagesContainer) {
+    const messages = this.loadMessageHistory();
     
     if (messages.length === 0) return;
     
@@ -237,28 +104,29 @@ window.AIChatWidget = {
     
     // Render each message
     messages.forEach(msg => {
-        if (msg.isUser) {
-            messagesContainer.innerHTML += `
-                <div class="flex justify-end">
-                    <div class="max-w-[80%]">
-                        <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
-                            ${this.escapeHTML(msg.text)}
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else {
-            const renderedHTML = this.renderMarkdown(msg.text);
-            messagesContainer.innerHTML += `
-                <div class="flex justify-start">
-                    <div class="max-w-[80%]">
-                        <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
-                            ${renderedHTML}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+      if (msg.isUser) {
+        messagesContainer.innerHTML += `
+          <div class="flex justify-end">
+            <div class="max-w-[80%]">
+              <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm">
+                ${this.escapeHTML(msg.text)}
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // Create a properly structured message bubble
+        const renderedHTML = this.renderMarkdown(msg.text);
+        messagesContainer.innerHTML += `
+          <div class="flex justify-start">
+            <div class="max-w-[80%]">
+              <div class="bg-gray-100 dark:bg-neutral-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl rounded-tl-sm markdown-content">
+                ${renderedHTML}
+              </div>
+            </div>
+          </div>
+        `;
+      }
     });
     
     // Process any markdown content to ensure styles are applied
@@ -333,20 +201,15 @@ window.AIChatWidget = {
   },
 
   generateRoomId: function(agentId) {
-    // Get stored roomId for this specific agent
+    // Get stored roomId for this specific agent or generate new one
     const storedRoomId = localStorage.getItem(`ai-chat-widget-roomId-${agentId}`);
     if (storedRoomId) {
       return storedRoomId;
     }
     
-    // Generate new roomId only if one doesn't exist
+    // Generate roomId based on domain name AND agent ID
     const domain = window.location.hostname;
-    const newRoomId = `room-${domain}-${agentId}-${Date.now()}`;
-    
-    // Store the new roomId
-    localStorage.setItem(`ai-chat-widget-roomId-${agentId}`, newRoomId);
-    
-    return newRoomId;
+    return `room-${domain}-${agentId}-${Date.now()}`;
   },
 
   verifyImageUrl: function(url) {
@@ -385,24 +248,21 @@ window.AIChatWidget = {
     }
   },
 
-  clearChat: function(agentId = null) {
-    agentId = agentId || this.config.currentAgentId;
-    if (!agentId || !this.config.agents[agentId]) return [];
-    
+  clearChat: function() {
     // Remove chat history for this specific agent
-    localStorage.removeItem(`ai-chat-widget-messages-${agentId}-${this.config.agents[agentId].roomId}`);
+    localStorage.removeItem(`ai-chat-widget-messages-${this.config.agentId}-${this.config.roomId}`);
     
     // Remove roomId for this specific agent
-    localStorage.removeItem(`ai-chat-widget-roomId-${agentId}`);
+    localStorage.removeItem(`ai-chat-widget-roomId-${this.config.agentId}`);
     
     // Generate new roomId for this agent
-    this.config.agents[agentId].roomId = this.generateRoomId(agentId);
+    this.config.roomId = this.generateRoomId(this.config.agentId);
     
     // Store new roomId in localStorage with agent-specific key
-    localStorage.setItem(`ai-chat-widget-roomId-${agentId}`, this.config.agents[agentId].roomId);
+    localStorage.setItem(`ai-chat-widget-roomId-${this.config.agentId}`, this.config.roomId);
     
     // Set isNewConversation to true to trigger welcome message
-    this.config.agents[agentId].isNewConversation = true;
+    this.config.isNewConversation = true;
     
     // Return empty message history
     return [];
@@ -462,48 +322,17 @@ window.AIChatWidget = {
     // Remove the individual margin styling since it's handled in CSS
     container.style.margin = '0';
     
-    // Create header with agent selection dropdown if multiple agents
-    const agentIds = Object.keys(this.config.agents);
-    const currentAgent = this.config.agents[this.config.currentAgentId];
-    const headerContent = agentIds.length > 1 
-      ? `
-        <div class="border-b p-4 flex justify-between items-center dark:border-neutral-700">
-          <div class="flex items-center gap-4 flex-1">
-            <select id="agent-selector" class="text-gray-900 dark:text-white bg-transparent">
-              ${agentIds.map(id => `
-                <option value="${id}" ${id === this.config.currentAgentId ? 'selected' : ''}>
-                  ${this.config.agents[id].name}
-                </option>
-              `).join('')}
-            </select>
-          </div>
-          <button class="close-button" aria-label="Close chat">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6L6 18"></path>
-              <path d="M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-      `
-      : `
-        <div class="border-b p-4 flex justify-between items-center dark:border-neutral-700">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">${currentAgent.name}</h3>
-          <button class="close-button" aria-label="Close chat">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6L6 18"></path>
-              <path d="M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-      `;
-    
     dialog.innerHTML = `
       <div class="flex flex-col bg-white dark:bg-neutral-800 h-full rounded-lg overflow-hidden">
-        ${headerContent}
+        <div class="border-b p-4 flex justify-between items-center dark:border-neutral-700">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">AI Assistant</h3>
+          <button class="close-button text-gray-500 hover:text-gray-700 dark:text-gray-200 dark:hover:text-gray-100">&times;</button>
+        </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4 -webkit-overflow-scrolling-touch" id="chat-messages"></div>
         <div class="border-t dark:border-neutral-700 dark:bg-neutral-700">
-          <div id="chat-form-container">
-            <form class="flex flex-row items-center gap-2 p-0" id="chat-form" style="display: flex !important; flex-wrap: nowrap !important;">
+          <div class="p-2" id="chat-form-container">
+            <!-- Replace the form with a modified version that preserves button positions -->
+            <form class="flex flex-row items-center gap-2" id="chat-form" style="display: flex !important; flex-wrap: nowrap !important;">
               <div style="flex: 0 0 auto;">
                 <button 
                   type="button" 
@@ -542,15 +371,18 @@ window.AIChatWidget = {
 
     let isOpen = false;
 
-    // Add agent selector event listener if multiple agents
-    if (agentIds.length > 1) {
-      const agentSelector = dialog.querySelector('#agent-selector');
-      agentSelector.addEventListener('change', (e) => {
-        this.switchAgent(e.target.value);
-      });
-    }
-
     // Toggle button handler
+    button.innerHTML = `
+      <div class="flex items-center">
+        <img 
+          src="${this.config.widgetUrl}/logo.png" 
+          alt="Chat with Agent"
+          class="h-10 w-10"
+          onerror="this.onerror=null; this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\' class=\'h-6 w-6 text-white\'><path d=\'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\'></path></svg>';"
+        />
+      </div>
+    `;
+
     button.addEventListener('click', () => {
       isOpen = !isOpen;
       if (isOpen) {
@@ -574,18 +406,14 @@ window.AIChatWidget = {
         // Update button style for close state
         button.style.backgroundColor = '#334155'; // slate-700
         
-        // Thay đổi phần này để đồng nhất với startChat
-        const messagesContainer = dialog.querySelector('#chat-messages');
-        if (messagesContainer) {
-          // Clear existing messages
-          messagesContainer.innerHTML = '';
-          // Load messages for current agent
-          this.renderMessageHistory(messagesContainer);
-          // Add welcome message if new conversation
-          if (this.config.agents[this.config.currentAgentId].isNewConversation) {
+        // Add welcome message if this is a new conversation
+        // (after a slight delay to ensure the container is ready)
+        setTimeout(() => {
+          const messagesContainer = dialog.querySelector('#chat-messages');
+          if (messagesContainer) {
             this.addWelcomeMessage(messagesContainer);
           }
-        }
+        }, 100);
       } else {
         this.closeWidget(dialog, button);
       }
@@ -662,7 +490,7 @@ window.AIChatWidget = {
     
     // Add welcome message immediately if we've loaded the widget for the first time
     // and there are no messages (but only if the dialog is visible)
-    if (this.config.agents[this.config.currentAgentId].isNewConversation && messagesContainer && 
+    if (this.config.isNewConversation && messagesContainer && 
         window.getComputedStyle(dialog).visibility !== 'hidden') {
       this.addWelcomeMessage(messagesContainer);
     }
@@ -715,18 +543,18 @@ window.AIChatWidget = {
 
         // Send message to agent
         const token = this.getStoredToken();
-        const response = await fetch(`${this.config.serverUrl}/${this.config.currentAgentId}/message`, {
+        const response = await fetch(`${this.config.serverUrl}/${this.config.agentId}/message`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ 
-            agentId: this.config.currentAgentId, 
+            agentId: this.config.agentId, 
             text: message,
             userId: 'widget-user',
             userName: 'Widget User',
-            roomId: this.config.agents[this.config.currentAgentId].roomId
+            roomId: this.config.roomId
           }),
         });
 
@@ -1014,96 +842,6 @@ window.AIChatWidget = {
         animation-iteration-count: infinite;
         font-weight: bold;
       }
-
-      /* Agent Selector Styling */
-      #agent-selector {
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.5rem center;
-        background-size: 1em;
-        padding-right: 2.5rem;
-        padding-left: 0.75rem;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        border-radius: 0.375rem;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        transition: all 0.2s ease;
-        width: auto;
-        min-width: 200px;
-      }
-
-      #agent-selector:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-      }
-
-      .dark #agent-selector {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
-      }
-
-      .dark #agent-selector:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
-      }
-
-      #agent-selector option {
-        padding: 0.5rem;
-        background-color: white;
-        color: black;
-      }
-
-      .dark #agent-selector option {
-        background-color: #1f2937;
-        color: white;
-      }
-
-      /* Close Button Styling */
-      .close-button {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-      }
-
-      .close-button:hover {
-        background-color: #f3f4f6;
-      }
-
-      .close-button svg {
-        width: 20px;
-        height: 20px;
-        stroke: #6b7280;
-        transition: stroke 0.2s ease;
-      }
-
-      .close-button:hover svg {
-        stroke: #374151;
-      }
-
-      .dark .close-button:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-
-      .dark .close-button svg {
-        stroke: #9ca3af;
-      }
-
-      .dark .close-button:hover svg {
-        stroke: #e5e7eb;
-      }
     `;
     document.head.appendChild(styleTag);
   },
@@ -1258,22 +996,17 @@ window.AIChatWidget = {
   },
 
   // Check if this is a new conversation (no message history)
-  isNewConversation: function(agentId = null) {
-    agentId = agentId || this.config.currentAgentId;
-    if (!agentId || !this.config.agents[agentId]) return true;
-
-    const messages = this.loadMessageHistory(agentId);
+  isNewConversation: function() {
+    const messages = this.loadMessageHistory();
     return messages.length === 0;
   },
   
   // Add a welcome message for new conversations
   addWelcomeMessage: function(messagesContainer) {
-    if (!this.config.agents[this.config.currentAgentId]) return;
-
-    if (!this.config.agents[this.config.currentAgentId].isNewConversation) return;
+    if (!this.config.isNewConversation) return;
     
     // Default welcome message
-    const welcomeMessage = this.config.agents[this.config.currentAgentId].welcomeMessage || "Hello! How can I help you today?";
+    const welcomeMessage = this.config.welcomeMessage || "Hello! How can I help you today?";
     
     // Save welcome message to history
     this.saveMessageToHistory(welcomeMessage, false);
@@ -1298,11 +1031,11 @@ window.AIChatWidget = {
     }
     
     // Mark that we've shown the welcome message
-    this.config.agents[this.config.currentAgentId].isNewConversation = false;
+    this.config.isNewConversation = false;
     
     // Store this welcome message as our reference
     this.previousWelcomeMessage = welcomeMessage;
-  },
+  }
 };
 
 function initializeExternalTriggers() {
