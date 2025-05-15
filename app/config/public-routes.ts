@@ -7,6 +7,7 @@
 // Route patterns (partial match using includes)
 export const PUBLIC_ROUTE_PATTERNS: string[] = [
     '/xaicombat',
+    '/miniapps',
     // Add more public route patterns here
 ];
 
