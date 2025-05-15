@@ -19,7 +19,6 @@ const CreateAgentPage = () => {
 
 const CreateAgent = () => {
   const {
-    reset,
     register,
     handleSubmit,
     control,

@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import Link from 'next/link';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
 // Create a wrapper component that uses searchParams
 const EducationContent = () => {
   const apiBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [apiStatus, setApiStatus] = useState<'loading' | 'online' | 'offline'>('loading');
   const searchParams = useSearchParams();
-  const [subjects, setSubjects] = useState<string[]>([
+  const [subjects] = useState<string[]>([
     'mathematics',
     'science',
     'history',
@@ -81,7 +81,7 @@ const EducationContent = () => {
           ) : apiStatus === 'online' ? (
             <span className="online">Online</span>
           ) : (
-            <span className="offline">Offline - Make sure to run the backend with 'pnpm run backend'</span>
+            <span className="offline">Offline - Make sure to run the backend with &apos;pnpm run backend&apos;</span>
           )}
         </div>
 

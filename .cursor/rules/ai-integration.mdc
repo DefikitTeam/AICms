@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# AI Integration
+
+The application integrates with AI capabilities through custom modules.
+
+## AI Modules
+- Uses @defikitdotnet/education-module-ai for educational content
+- Uses @defikitdotnet/public-agent-module for public AI agents
+- Uses @defikitdotnet/x-ai-combat for AI competition features
+
+## Agent Management
+- Provides interfaces for creating and configuring AI agents
+- Enables training and fine-tuning of AI models
+- Supports agent interaction and debugging
+
+## Educational Content
+- AI-powered educational modules
+- Interactive learning experiences
+- Progress tracking and assessment
+
+## API Integration
+- Connects to external AI services and APIs
+- Implements rate limiting and request caching
+- Handles streaming responses for real-time AI interactions

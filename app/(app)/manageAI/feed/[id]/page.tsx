@@ -179,7 +179,7 @@ export default function FeedDataPage() {
         fetchHistory(1); // Reset to first page and fetch history
         toast.success('Data submitted successfully');
       } else {
-        const errorData = await response.json().catch(() => null);
+        const errorData = await response.json().catch(() => ({})) as { message?: string };
         toast.error(errorData?.message || 'Failed to submit data');
       }
     } catch (error) {

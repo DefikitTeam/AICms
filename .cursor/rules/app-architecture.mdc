@@ -1,0 +1,22 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# App Architecture
+
+## App Router Structure
+- [app/layout.tsx](mdc:app/layout.tsx): Root layout with global providers
+- [app/page.tsx](mdc:app/page.tsx): Home page component
+- [app/(app)/layout.tsx](mdc:app/(app)/layout.tsx): App-specific layout with navigation
+
+## Key Directories
+- `app/_components`: App-level shared components
+- `app/_contexts`: React context providers
+- `app/_data`: Data fetching and state management
+- `app/(app)`: Main application routes
+  - `agents/`: Agent management
+  - `manageAI/`: AI configuration
+  - `plugins/`: Plugin management
+  - `education/`: Educational content
+  - `publicAgents/`: Public agent listings
