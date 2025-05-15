@@ -1,0 +1,53 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Echo secrets into .env file
+        run: |
+          echo "🚀 Generating .env by echoing each secret..."
+          echo "CDP_API_KEY_NAME=${{ secrets.STAGING_CDP_API_KEY_NAME }}" >> .env
+          echo "CDP_API_KEY_PRIVATE_KEY=${{ secrets.STAGING_CDP_API_KEY_PRIVATE_KEY }}" >> .env
+          echo "TWITTER_BEARER_TOKEN=${{ secrets.STAGING_TWITTER_BEARER_TOKEN }}" >> .env
+          echo "HELIUS_RPC_URL=${{ secrets.STAGING_HELIUS_RPC_URL }}" >> .env
+          echo "NEXT_PUBLIC_SOLANA_RPC_URL=${{ secrets.STAGING_NEXT_PUBLIC_SOLANA_RPC_URL }}" >> .env
+          echo "COSMOS_ENDPOINT=${{ secrets.STAGING_COSMOS_ENDPOINT }}" >> .env
+          echo "COSMOS_KEY=${{ secrets.STAGING_COSMOS_KEY }}" >> .env
+          echo "NETWORK_ID=${{ secrets.STAGING_NETWORK_ID }}" >> .env
+          echo "CRAWL_AUTH_CODE=${{ secrets.STAGING_CRAWL_AUTH_CODE }}" >> .env
+          echo "FIRECRAWL_API_KEY=${{ secrets.STAGING_FIRECRAWL_API_KEY }}" >> .env
+          echo "NEXT_PUBLIC_PRIVY_APP_ID=${{ secrets.STAGING_NEXT_PUBLIC_PRIVY_APP_ID }}" >> .env
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.STAGING_NEXT_PUBLIC_BACKEND_URL }}" >> .env
+          echo "NEXT_PUBLIC_WIDGET_SERVICE_URL=${{ secrets.STAGING_NEXT_PUBLIC_WIDGET_SERVICE_URL }}" >> .env
+
+      - name: Copy .env to VPS
+        run: |
+          scp -o StrictHostKeyChecking=no .env \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/AICms-staging/.env
+
+      - name: SSH into VPS and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /root/projects/AICms-staging
+            git fetch origin
+            git reset --hard origin/staging
+            . $HOME/.asdf/asdf.sh
+            . $HOME/.asdf/completions/asdf.bash
+            pm2 delete ai-cms-staging || true
+            pm2 start ./start-staging.sh --name ai-cms-staging
+          EOF
