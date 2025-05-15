@@ -6,4 +6,4 @@ pnpm install
 
 pnpm build
 
-pnpm start -p 6001
+pnpm start -p 3501
